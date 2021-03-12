@@ -3,7 +3,7 @@
 .Rapp.history
 
 # Session Data files
-.RData
+*.RData
 
 # User-specific files
 .Ruserdata
@@ -37,3 +37,11 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+.Rproj.user
+
+# reference directories
+*references/
+
+# local data directories
+*local_data/
+/rdata
