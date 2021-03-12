@@ -1,6 +1,7 @@
 setwd(
-  "/workspace/workspace_pipelines/pkc_cxcl8"
+  "/workspace/workspace_pipelines/lapalombella_whipp"
 )
+
 #libraries
 library("ggrepel")
 library("htmltools")
