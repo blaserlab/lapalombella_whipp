@@ -14,7 +14,7 @@ analysis_configs <-
     )
   )
 
-
+bb_load_multi_counts()
 # cds_list <-
 #   map(
 #     .x = analysis_configs %>% filter(lib_type == "gex") %>% pull(pipestance_names),
