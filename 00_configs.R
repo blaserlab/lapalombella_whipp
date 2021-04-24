@@ -31,3 +31,11 @@ summarybox_geom <- "crossbar"
 
 # 3 color heatmap
 heatmap_3_colors <- c("#313695","white","#A50026")
+
+add_cds_factor_columns<-function(cds, columns_to_add){
+  for (i in 1:length(columns_to_add)) {
+    colData(cds)$new<-unname(columns_to_add[i])
+    names(colData(cds))[names(colData(cds)) == "new"] <- names(columns_to_add[i])
+  }
+  return(cds)
+}

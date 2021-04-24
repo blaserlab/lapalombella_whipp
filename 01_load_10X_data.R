@@ -1,36 +1,38 @@
-source("00_packages_functions.R")
-
 analysis_configs <-
   read_excel(
-    "~/network/X/Labs/Blaser/single_cell/rosa_mar2021/analysis_configs.xlsx",
+    "~/network/X/Labs/Blaser/single_cell/lapalombella_whipp/analysis_configs.xlsx",
     sheet = "ingest"
   ) %>%
-  mutate(directory = fix_file_path(`10X_dir`)) %>%
+  mutate(directory = bb_fix_file_path(`10X_dir`)) %>%
   select(-`10X_dir`) %>%
   left_join(
     read_excel(
-      "~/network/X/Labs/Blaser/single_cell/rosa_mar2021/analysis_configs.xlsx",
+      "~/network/X/Labs/Blaser/single_cell/lapalombella_whipp/analysis_configs.xlsx",
       sheet = "metadata"
     )
   )
 
-bb_load_multi_counts()
-# cds_list <-
-#   map(
-#     .x = analysis_configs %>% filter(lib_type == "gex") %>% pull(pipestance_names),
-#     .f = function(x, data = analysis_configs %>% filter(lib_type == "gex")) {
-#       directory <- data %>% filter(pipestance_names == x) %>% pull(directory)
-#       cds <- load_cellranger_data(directory)
-#       cds <-
-#         add_cds_factor_columns(
-#           cds = cds,
-#           columns_to_add = c(
-#             "pt" = data %>% filter(pipestance_names == x) %>% pull(patient),
-#           )
-#         )
-#       return(cds)
-#     }
-#   ) %>% set_names(analysis_configs %>% filter(lib_type == "gex") %>% pull(pipestance_names))
+cds_list <-
+  map(
+    .x = analysis_configs %>% filter(lib_type == "gex") %>% pull(directory),
+    .f = function(x, 
+                  data = analysis_configs %>% filter(lib_type == "gex")) {
+      #directory <- data %>% filter(directory == x) %>% pull(directory)
+      cds <- bb_load_multi_counts(x)
+      cds <-
+        add_cds_factor_columns(
+          cds = cds,
+          columns_to_add = c(
+            "disease" = data %>% filter(directory == x) %>% pull(disease),
+            "tissue" = data %>% filter(directory == x) %>% pull(tissue),
+            "sample_date" = data %>% filter(directory == x) %>% pull(sample_date),
+            "myc" = data %>% filter(directory == x) %>% pull(myc)
+            
+          )
+        )
+      return(cds)
+    }
+  ) %>% set_names(analysis_configs %>% filter(lib_type == "gex") %>% pull(specimen))
 
 dir.create("data_out")
 
