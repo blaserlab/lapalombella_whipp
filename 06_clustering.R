@@ -10,9 +10,9 @@ colData(cds_aligned)$louvain <- clusters(cds_louvain)
 
 rm(cds_louvain)
 
-custom_variable_plot(cds_aligned, var = "partition")
-custom_variable_plot(cds_aligned, var = "leiden")
-custom_variable_plot(cds_aligned, var = "louvain")
+bb_var_umap(cds_aligned, var = "partition")
+bb_var_umap(cds_aligned, var = "leiden")
+bb_var_umap(cds_aligned, var = "louvain")
 
 marker_test_res_partition <-
   top_markers(
