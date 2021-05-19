@@ -6,8 +6,6 @@ library("circlize")
 library("ComplexHeatmap")
 library("fastSave")
 library("readxl")
-`%notin%` <- Negate(`%in%`)
-
 
 theme_set(theme_cowplot(font_size = 10))
 
