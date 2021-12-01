@@ -1,9 +1,7 @@
-# libraries-------------------------------------
-# set up the renv and repair with snapshot if needed
-renv::init()
-# renv::snapshot()
+# uncomment and run this first
+# renv::hydrate()
 
-# blaseRtools and additional dependencies you may have to install since they are not recognized by renv::init
+# blaseRtools and additional dependencies you may have to install 
 # renv::install("/usr/lib/R/site-library/blaseRtools")
 # renv::install("/usr/lib/R/site-library/DESeq2")
 # renv::install("/usr/lib/R/site-library/genefilter")
@@ -29,21 +27,21 @@ renv::init()
 # renv::install("/usr/lib/R/site-library/Rcpp")
 # renv::install("/usr/lib/R/site-library/pander")
 
+
 # load core packages for the analysis
-library("blaseRtools")
-library("tidyverse")
-library("monocle3")
-library("circlize")
-library("ComplexHeatmap")
-library("lazyData")
-library("cowplot")
-library("RColorBrewer")
-library("ggrepel")
-library("ggpubr")
-library("rstatix")
-library("readxl")
-library("knitr")
-library("pander")
+suppressPackageStartupMessages(library("blaseRtools"))
+suppressPackageStartupMessages(library("tidyverse"))
+suppressPackageStartupMessages(library("monocle3"))
+suppressPackageStartupMessages(library("circlize"))
+suppressPackageStartupMessages(library("ComplexHeatmap"))
+suppressPackageStartupMessages(library("lazyData"))
+suppressPackageStartupMessages(library("cowplot"))
+suppressPackageStartupMessages(library("RColorBrewer"))
+suppressPackageStartupMessages(library("ggrepel"))
+suppressPackageStartupMessages(library("ggpubr"))
+suppressPackageStartupMessages(library("rstatix"))
+suppressPackageStartupMessages(library("knitr"))
+suppressPackageStartupMessages(library("pander"))
 
 
 # run this to update the data package in renv
