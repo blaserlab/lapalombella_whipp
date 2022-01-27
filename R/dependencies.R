@@ -1,5 +1,5 @@
-# uncomment and run this first
-# renv::hydrate()
+# uncomment and run this to install packages indicated in lock file
+# renv::restore()
 
 # blaseRtools and additional dependencies you may have to install 
 # renv::install("/usr/lib/R/site-library/blaseRtools")
