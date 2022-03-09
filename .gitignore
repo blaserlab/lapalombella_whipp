@@ -4,3 +4,5 @@
 .httr-oauth
 .DS_Store
 *.rda
+R/local_configs.R
+R/git_commands.R
