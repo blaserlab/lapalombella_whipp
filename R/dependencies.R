@@ -1,34 +1,34 @@
-# uncomment and run this to install packages indicated in lock file
+# renv --------------------------------------------------------------------
+
+# set up the renv from scratch
+
+# renv::init(bioconductor = TRUE)
+
+# restore the renv from the lockfile
+
 # renv::restore()
 
-# blaseRtools and additional dependencies you may have to install 
-# renv::install("/usr/lib/R/site-library/blaseRtools")
-# renv::install("/usr/lib/R/site-library/DESeq2")
-# renv::install("/usr/lib/R/site-library/genefilter")
-# renv::install("/usr/lib/R/site-library/annotate")
-# renv::install("/usr/lib/R/site-library/AnnotationDbi")
-# renv::install("/usr/lib/R/site-library/KEGGREST")
-# renv::install("/usr/lib/R/site-library/Biostrings")
-# renv::install("/usr/lib/R/site-library/geneplotter")
-# renv::install("/usr/lib/R/site-library/DoubletFinder")
-# renv::install("/usr/lib/R/site-library/Seurat")
-# renv::install("/usr/lib/R/site-library/SeuratDisk")
-# renv::install("/usr/lib/R/site-library/rrvgo")
-# renv::install("/usr/lib/R/site-library/GO.db")
-# renv::install("/usr/lib/R/site-library/GOSemSim")
-# renv::install("/usr/lib/R/site-library/scater")
-# renv::install("/usr/lib/R/site-library/topGO")
-# renv::install("/usr/lib/R/site-library/fastSave")
-# renv::install("/usr/lib/R/site-library/fgsea")
-# renv::install("/usr/lib/R/site-library/fastmatch")
-# renv::install("/usr/lib/R/site-library/tinytex")
-# renv::install("/usr/lib/R/site-library/reshape2")
-# renv::install("/usr/lib/R/site-library/pheatmap")
-# renv::install("/usr/lib/R/site-library/Rcpp")
-# renv::install("/usr/lib/R/site-library/pander")
 
 
-# load core packages for the analysis
+# package installation ----------------------------------------------------
+
+# # Try this first...it's faster:
+# blaseRtemplates::easy_install("<package name>", how = "link_from_cache")
+# blaseRtemplates::easy_install("conflicted", how = "link_from_cache")
+
+# # If you need a new package or an update, try this:
+# blaseRtemplates::easy_install("<package name>", how = "new_or_update")
+
+# # If you are installing from a "tarball", use this:
+# blaseRtemplates::easy_install("/path/to/tarball.tar.gz")
+
+# # use "bioc::<package name>" for bioconductor packages
+# # use "<repo/package name>" for github source packages
+
+
+# load core packages for the analysis -------------------------------------
+suppressPackageStartupMessages(library("conflicted"))
+suppressPackageStartupMessages(library("blaseRtemplates"))
 suppressPackageStartupMessages(library("blaseRtools"))
 suppressPackageStartupMessages(library("tidyverse"))
 suppressPackageStartupMessages(library("monocle3"))
