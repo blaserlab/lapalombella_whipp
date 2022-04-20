@@ -2525,6 +2525,22 @@
         "formatR"
       ]
     },
+    "lapalombella.whipp.datapkg": {
+      "Package": "lapalombella.whipp.datapkg",
+      "Version": "0.0.0.9001",
+      "Source": "Local",
+      "RemoteType": "local",
+      "RemoteUrl": "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/datapkg/lapalombella.whipp.datapkg_0.0.0.9001.tar.gz",
+      "Hash": "3bc5636c04181c0650a545a7874bbec5",
+      "Requirements": [
+        "blaseRtools",
+        "cowplot",
+        "lazyData",
+        "monocle3",
+        "readxl",
+        "tidyverse"
+      ]
+    },
     "later": {
       "Package": "later",
       "Version": "1.3.0",
