@@ -14,10 +14,10 @@
 
 # # Try this first...it's faster:
 # blaseRtemplates::easy_install("<package name>", how = "link_from_cache")
-# blaseRtemplates::easy_install("conflicted", how = "link_from_cache")
+# blaseRtemplates::easy_install("fastSave", how = "link_from_cache")
 
 # # If you need a new package or an update, try this:
-# blaseRtemplates::easy_install("<package name>", how = "new_or_update")
+# blaseRtemplates::easy_install("barkasn/fastSave", how = "new_or_update")
 
 # # If you are installing from a "tarball", use this:
 # blaseRtemplates::easy_install("/path/to/tarball.tar.gz")
@@ -45,7 +45,7 @@ suppressPackageStartupMessages(library("pander"))
 
 
 # run this to update the data package in renv
-bb_renv_datapkg("~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/datapkg")
+blaseRtemplates::bb_renv_datapkg("~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/datapkg")
 
 
 # load the data set into a hidden environment

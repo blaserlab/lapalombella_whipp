@@ -4,7 +4,7 @@ renv::install("blaserlab/blaseRtemplates")
 
 blaseRtemplates::setup_git_collab()
 
-blasertemplates::fork_github_project(repo = <owner>/<repo>)
+# blasertemplates::fork_github_project(repo = <owner>/<repo>)
 
 
 #restore package library from lock file
