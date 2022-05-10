@@ -2,7 +2,7 @@ theme_set(theme_cowplot(font_size = 11))
 
 # conflicts ---------------------------------------------------------------
 # resolve conflicting function names here
-
+library(conflicted)
 conflict_prefer("filter", "dplyr")
 conflict_prefer("lag", "dplyr")
 conflict_prefer("select", "dplyr")
