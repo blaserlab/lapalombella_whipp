@@ -16,7 +16,7 @@ bb_gene_violinplot(cds_main[, colData(cds_main)$patient == "pt_2712" &
 # umap plot of PRMT5 expression
 bb_gene_umap(cds_main[, colData(cds_main)$patient == "pt_2712" &
                         colData(cds_main)$clonotype_id %in% "clonotype1"], 
-             gene_or_genes = "PRMT5")
+             gene_or_genes = "TP53")
 
 # gene dotplot for pt_2712 in malignant cells
 bb_gene_dotplot(
@@ -33,3 +33,36 @@ bb_gene_dotplot(
 bb_cellmeta(cds_main) %>%
   ggplot(mapping = aes(x = Size_Factor, color = sample)) +
   geom_density()
+
+bb_gene_modules(cds_main)
+
+colData(cds_main)
+rowData(cds_main)
+
+#bb_gene_umap(cds_main[, colData(cds_main)$patient == "pt_2712" &
+#                        colData(cds_main)$clonotype_id %in% "clonotype1"], 
+#             gene_or_genes = "PRMT5")
+
+#rowData(cds_main)$module
+
+ rowdata <- fData(cds_main)
+view(rowdata)
+
+rowData(cds_main)$supermodule == 1
+blaseRtools::bb_gene_modules
+
+cds_subset <- cds_main[, colData(cds_main)$patient == "pt_2712" &
+                         colData(cds_main)$clonotype_id %in% "clonotype1"]
+rowData(cds_subset)
+
+bb_gene_pseudotime(cds_subset)
+
+order_cells(cds_subset)
+learn_graph(cds_subset)
+
+cluster_cells(cds_subset, reduction_method = "UMAP")
+bb_gene_pseudotime(order_cells(learn_graph(cluster_cells(cds_subset, reduction_method = "UMAP"))))
+
+cds_subset <- choose_cells(cds_subset)
+
+blaseRtools::bb_gene_pseudotime
