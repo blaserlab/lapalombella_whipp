@@ -14,7 +14,7 @@
 
 # # Try this first...it's faster:
 # blaseRtemplates::easy_install("<package name>", how = "link_from_cache")
-# blaseRtemplates::easy_install("fastSave", how = "link_from_cache")
+# blaseRtemplates::easy_install("blaseRtools", how = "link_from_cache")
 
 # # If you need a new package or an update, try this:
 # blaseRtemplates::easy_install("barkasn/fastSave", how = "new_or_update")
