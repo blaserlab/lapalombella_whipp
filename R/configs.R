@@ -1,4 +1,4 @@
-theme_set(theme_cowplot(font_size = 11))
+theme_set(theme_cowplot(font_size = 10))
 
 # conflicts ---------------------------------------------------------------
 # resolve conflicting function names here
@@ -8,6 +8,10 @@ conflict_prefer("lag", "dplyr")
 conflict_prefer("select", "dplyr")
 conflict_prefer("rename", "dplyr")
 conflict_prefer("count", "dplyr")
+
+
+# output -------------------------------------------------
+figures_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/figures"
 
 # source local configs ----------------------------------------------------
 # these are sourced after main configs and will overwrite duplicate entries if

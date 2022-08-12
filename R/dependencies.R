@@ -14,7 +14,7 @@
 
 # # Try this first...it's faster:
 # blaseRtemplates::easy_install("<package name>", how = "link_from_cache")
-# blaseRtemplates::easy_install("blaseRtools", how = "link_from_cache")
+# blaseRtemplates::easy_install("ggrastr", how = "link_from_cache")
 
 # # If you need a new package or an update, try this:
 # blaseRtemplates::easy_install("barkasn/fastSave", how = "new_or_update")
@@ -42,7 +42,7 @@ suppressPackageStartupMessages(library("ggpubr"))
 suppressPackageStartupMessages(library("rstatix"))
 suppressPackageStartupMessages(library("knitr"))
 suppressPackageStartupMessages(library("pander"))
-
+suppressPackageStartupMessages(library("SingleCellExperiment"))
 
 # run this to update the data package in renv
 blaseRtemplates::bb_renv_datapkg("~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/datapkg")
