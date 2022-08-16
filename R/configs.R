@@ -8,7 +8,8 @@ conflict_prefer("lag", "dplyr")
 conflict_prefer("select", "dplyr")
 conflict_prefer("rename", "dplyr")
 conflict_prefer("count", "dplyr")
-
+conflict_prefer("rowRanges", "MatrixGenerics")
+conflict_prefer("reduce", "purrr")
 
 # output -------------------------------------------------
 figures_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/figures"
