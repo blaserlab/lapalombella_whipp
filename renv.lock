@@ -2322,6 +2322,25 @@
       "Hash": "d0ef6cd1546530da4d72179b52856e84",
       "Requirements": []
     },
+    "downlit": {
+      "Package": "downlit",
+      "Version": "0.4.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "79bf3f66590752ffbba20f8d2da94c7c",
+      "Requirements": [
+        "brio",
+        "desc",
+        "digest",
+        "evaluate",
+        "fansi",
+        "memoise",
+        "rlang",
+        "vctrs",
+        "withr",
+        "yaml"
+      ]
+    },
     "dplyr": {
       "Package": "dplyr",
       "Version": "1.0.9",
@@ -3626,11 +3645,11 @@
     },
     "lapalombella.whipp.datapkg": {
       "Package": "lapalombella.whipp.datapkg",
-      "Version": "0.0.0.9003",
+      "Version": "0.0.0.9004",
       "Source": "Local",
-      "RemotePkgRef": "local::/workspace/rst/renv/pkgcache/R/pkgcache/pkg/src/contrib/lapalombella.whipp.datapkg_0.0.0.9003.tar.gz",
+      "RemotePkgRef": "local::/workspace/rst/renv/pkgcache/R/pkgcache/pkg/src/contrib/lapalombella.whipp.datapkg_0.0.0.9004.tar.gz",
       "RemoteType": "local",
-      "Hash": "555e986c58b3318f91d205ae924bb251",
+      "Hash": "6a7f5a9e0d7dbd5d46058cccb22ce64b",
       "Requirements": []
     },
     "later": {
@@ -4349,6 +4368,41 @@
       "Hash": "01f28d4278f15c76cddbea05899c5d6f",
       "Requirements": []
     },
+    "pkgdown": {
+      "Package": "pkgdown",
+      "Version": "2.0.6",
+      "Source": "CRAN",
+      "Repository": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "pkgdown",
+      "RemoteRef": "pkgdown",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "2.0.6",
+      "Hash": "f958d0b2a5dabc5ffd414f062b1ffbe7",
+      "Requirements": [
+        "bslib",
+        "callr",
+        "cli",
+        "desc",
+        "digest",
+        "downlit",
+        "fs",
+        "httr",
+        "jsonlite",
+        "magrittr",
+        "memoise",
+        "purrr",
+        "ragg",
+        "rlang",
+        "rmarkdown",
+        "tibble",
+        "whisker",
+        "withr",
+        "xml2",
+        "yaml"
+      ]
+    },
     "pkgload": {
       "Package": "pkgload",
       "Version": "1.2.4",
@@ -4538,6 +4592,17 @@
       "Requirements": [
         "R6",
         "ps"
+      ]
+    },
+    "profvis": {
+      "Package": "profvis",
+      "Version": "0.3.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e9d21e79848e02e524bea6f5bd53e7e4",
+      "Requirements": [
+        "htmlwidgets",
+        "stringr"
       ]
     },
     "progress": {
@@ -5910,6 +5975,14 @@
         "vctrs"
       ]
     },
+    "tictoc": {
+      "Package": "tictoc",
+      "Version": "1.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5acb66b0266ad1f0ebf7ffe1aa36ff4c",
+      "Requirements": []
+    },
     "tidyr": {
       "Package": "tidyr",
       "Version": "1.2.0",
@@ -6124,6 +6197,18 @@
       "Hash": "6c374b265ba437f8d384ec7a313edd96",
       "Requirements": [
         "Rcpp"
+      ]
+    },
+    "urlchecker": {
+      "Package": "urlchecker",
+      "Version": "1.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "409328b8e1253c8d729a7836fe7f7a16",
+      "Requirements": [
+        "cli",
+        "curl",
+        "xml2"
       ]
     },
     "usethis": {

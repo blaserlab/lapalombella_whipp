@@ -12,7 +12,7 @@ colData(cds_main)$partition_assignment_1 <- recode(colData(cds_main)$partition, 
 
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") +
-  facet_wrap(~partient)
+  facet_wrap(~patient)
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition") +
   facet_wrap(~patient)
@@ -48,13 +48,13 @@ bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") +
   facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
-#Nadeu et al RT UP aggregate gene expression mapping 
+#Supp Fig - Nadeu et al RT UP aggregate gene expression mapping 
 bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
 ) + 
   facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
-####Plot Nadeu et al CLL genes/RT downreg genes
+####Supp Fig - Plot Nadeu et al CLL genes/RT downreg genes
 #rm(cds_main)
 #colData(cds_main)$disease_tissue <- paste0(colData(cds_main)$disease, " ", colData(cds_main)$tissue)
 #colData(cds_main)$partition_assignment_1 <- recode(colData(cds_main)$partition, "1" = "B", "2" = "B", "3" = "T", "4" = "T", "5" = "Mono", "6" = "B", "7" = "B")
@@ -73,11 +73,11 @@ bb_gene_umap(
 
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), "partition_assignment_1"
-  ) + facet_wrap(~disease_tissue)
+) + facet_wrap(~disease_tissue)
 
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_1245")), "partition_assignment_1"
- ) + facet_wrap(~disease_tissue)
+) + facet_wrap(~disease_tissue)
 
 # bb_gene_umap(
 #   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), "PRMT5"
@@ -85,7 +85,7 @@ bb_var_umap(
 
 #Gene dot plot
 bb_gene_dotplot(
-  cds_main[, colData(cds_main)$patient == "pt_1245" &
+  cds_main[, colData(cds_main)$patient == "pt_2712" &
              colData(cds_main)$clonotype_id %in% "clonotype1" &
              colData(cds_main)$partition_assignment_1 %in% "B"],
   markers = c("PRMT5", "MYC", "MKI67"),
@@ -99,14 +99,12 @@ bb_gene_dotplot(
 #   obj = filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")),
 #   genes = c("MYC", "PRMT5", "MKI67"), cell_grouping = "partition_assignment_1") + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
-
-
 view(unique(cds_main$sample))
 
 bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B") |> filter(clonotype_id == "clonotype1") |> filter(disease_tissue == "RT LN")
-             ), gene_or_genes = c("PRMT5", "MYC", "MKI67")
-  ) + facet_grid(row = vars(patient), col = vars(disease_tissue))
+  ), gene_or_genes = c("PRMT5", "MYC", "MKI67")
+) + facet_grid(row = vars(patient), col = vars(disease_tissue))
 
 # bb_gene_dotplot(
 #   cds_main[, colData(cds_main)$patient == "pt_2712" &
@@ -123,19 +121,27 @@ bb_gene_umap(
 #                               colData(cds_main)$clonotype_id %in% "clonotype1"], 
 #                    variable = "sample", 
 #                    genes_to_plot = "PRMT5")
+
 #####Fig 1A dotplot -> scatter plot
-library(Seurat)
-FeatureScatter(object = cds_main, feature1 = 'CD9', feature2 = 'CD3E')
-FeatureScatter(object = cds_main, feature1 = 'PRMT5', feature2 = 'MYC')
+#Still working on this...
 
-
-#clonotype1 <- cds_main[, colData(cds_main)$clonotype_id %in% "clonotype1"]
-# bb_gene_umap(
-  # filter_cds(clonotype1, cells = bb_cellmeta(clonotype1) |> filter(patient == "pt_1245")), gene_or_genes = c("PRMT5", "MYC", "MKI67")) + facet_wrap(~disease_tissue)
+#Fig1D
+bb_var_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main)|> filter(disease_tissue == "RT LN")), "partition_assignment_1") +
+  facet_wrap(~patient)
 
 bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = c("PRMT5", "MYC", "MKI67")
-  ) + facet_grid(row = vars(patient), col = vars(disease_tissue))
+) + facet_grid(row = vars(patient), col = vars(disease_tissue))
 
-FeaturePlot(cds_main, features = "MS4A1")
+bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = "PRMT5"
+) + facet_grid(row = vars(patient), col = vars(disease_tissue))
 
+bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = "MYC"
+) + facet_grid(row = vars(patient), col = vars(disease_tissue))
+
+bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = "MYC"
+) + facet_grid(row = vars(patient), col = vars(disease_tissue))
