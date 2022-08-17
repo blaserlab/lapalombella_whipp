@@ -79,9 +79,9 @@ bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_1245")), "partition_assignment_1"
 ) + facet_wrap(~disease_tissue)
 
-# bb_gene_umap(
-#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), "PRMT5"
-# ) + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
+ bb_gene_umap(
+   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), "PRMT5"
+ ) + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
 #Gene dot plot
 bb_gene_dotplot(
@@ -105,22 +105,6 @@ bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B") |> filter(clonotype_id == "clonotype1") |> filter(disease_tissue == "RT LN")
   ), gene_or_genes = c("PRMT5", "MYC", "MKI67")
 ) + facet_grid(row = vars(patient), col = vars(disease_tissue))
-
-# bb_gene_dotplot(
-#   cds_main[, colData(cds_main)$patient == "pt_2712" &
-#              colData(cds_main)$partition_assignment_1 == "B"],
-#   markers = c("PRMT5"),
-#   group_cells_by = "disease_tissue",
-#   group_ordering = c("CLL PBMC", "RT PBMC", "RT LN"),
-#   colorscale_name = "Expression",
-#   sizescale_name = "Proportion\nExpressing",
-# ) + labs(x = NULL, y = NULL)
-
-#### violin plot of PRMT5 expression
-# bb_gene_violinplot(cds_main[, colData(cds_main)$patient == "pt_2712" &
-#                               colData(cds_main)$clonotype_id %in% "clonotype1"], 
-#                    variable = "sample", 
-#                    genes_to_plot = "PRMT5")
 
 #####Fig 1A dotplot -> scatter plot
 #Still working on this...
