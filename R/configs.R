@@ -11,6 +11,11 @@ conflict_prefer("count", "dplyr")
 conflict_prefer("rowRanges", "MatrixGenerics")
 conflict_prefer("reduce", "purrr")
 
+# graphical parameters -------------------------------------------
+# 3 color heatmap
+heatmap_3_colors <- c("#313695","white","#A50026")
+
+
 # output -------------------------------------------------
 figures_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/figures"
 
