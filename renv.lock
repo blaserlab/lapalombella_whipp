@@ -199,7 +199,7 @@
     },
     "CellChat": {
       "Package": "CellChat",
-      "Version": "1.4.0",
+      "Version": "1.5.0",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
@@ -207,8 +207,8 @@
       "RemoteUsername": "sqjin",
       "RemotePkgRef": "github::sqjin/CellChat",
       "RemoteRef": "HEAD",
-      "RemoteSha": "84ec9c59052a0030a63ea07255febe1715df9e5e",
-      "Hash": "d74dbefad461c2020111e0efa36de844",
+      "RemoteSha": "7e0e903380277197301ec97e1a5683e37b8e048a",
+      "Hash": "130f1b1c13d0a1ac739b2d5435d4a8a1",
       "Requirements": [
         "BiocGenerics",
         "ComplexHeatmap",
@@ -535,6 +535,32 @@
       "RemoteSha": "0.1.2",
       "Hash": "c3f7b221e60c28f5f3533d74c6fef024",
       "Requirements": []
+    },
+    "HDF5Array": {
+      "Package": "HDF5Array",
+      "Version": "1.24.2",
+      "Source": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "HDF5Array",
+      "RemoteRef": "HDF5Array",
+      "RemoteRepos": "https://bioconductor.org/packages/3.15/bioc",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.24.2",
+      "git_url": "https://git.bioconductor.org/packages/HDF5Array",
+      "git_branch": "RELEASE_3_15",
+      "git_last_commit": "fb213ba",
+      "git_last_commit_date": "2022-08-01",
+      "Hash": "13693baafc480c1bb4005fe6f5e4172f",
+      "Requirements": [
+        "BiocGenerics",
+        "DelayedArray",
+        "IRanges",
+        "Matrix",
+        "Rhdf5lib",
+        "S4Vectors",
+        "rhdf5",
+        "rhdf5filters"
+      ]
     },
     "IRanges": {
       "Package": "IRanges",
@@ -975,6 +1001,23 @@
         "Matrix",
         "S4Vectors"
       ]
+    },
+    "Rhdf5lib": {
+      "Package": "Rhdf5lib",
+      "Version": "1.18.2",
+      "Source": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "Rhdf5lib",
+      "RemoteRef": "Rhdf5lib",
+      "RemoteRepos": "https://bioconductor.org/packages/3.15/bioc",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.18.2",
+      "git_url": "https://git.bioconductor.org/packages/Rhdf5lib",
+      "git_branch": "RELEASE_3_15",
+      "git_last_commit": "d104bbf",
+      "git_last_commit_date": "2022-05-12",
+      "Hash": "2958e31b9b8ea852e487bcb3c24b5b09",
+      "Requirements": []
     },
     "RhpcBLASctl": {
       "Package": "RhpcBLASctl",
@@ -1638,7 +1681,7 @@
     },
     "blaseRtools": {
       "Package": "blaseRtools",
-      "Version": "0.0.0.9100",
+      "Version": "0.0.0.9101",
       "Source": "GitHub",
       "Remotes": "github::blaserlab/blaseRdata,\n        github::cole-trapnell-lab/monocle3,\n        github::mojaveazure/seurat-disk,\n        github::chris-mcginnis-ucsf/DoubletFinder,\n        github::blaserlab/blaseRtemplates, github::sqjin/CellChat,\n        github::satijalab/seurat-wrappers",
       "RemoteType": "github",
@@ -1647,8 +1690,8 @@
       "RemoteUsername": "blaserlab",
       "RemotePkgRef": "blaserlab/blaseRtools",
       "RemoteRef": "HEAD",
-      "RemoteSha": "124923082b0358394ae817af5599459a119da5c4",
-      "Hash": "42bfca367e08c19260a2680475915704",
+      "RemoteSha": "b368f4f0ce90bf53224be4fcad561888ac9328f2",
+      "Hash": "7a75a2e1f748ccd20d176c945f263d72",
       "Requirements": [
         "BiocGenerics",
         "BiocManager",
@@ -3969,25 +4012,31 @@
     },
     "monocle3": {
       "Package": "monocle3",
-      "Version": "1.0.0",
-      "Source": "Repository",
-      "Repository": "https://blaserlab.r-universe.dev",
-      "Remotes": "VPetukhov/ggrastr, cole-trapnell-lab/leidenbase",
-      "RemoteUrl": "https://github.com/cole-trapnell-lab/monocle3",
+      "Version": "1.2.9",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "monocle3",
+      "RemoteUsername": "cole-trapnell-lab",
+      "RemotePkgRef": "github::cole-trapnell-lab/monocle3",
       "RemoteRef": "HEAD",
-      "RemoteSha": "004c096f3a3bdaf1e6709a65fb36f40ba775f1ab",
-      "Hash": "25a4e34f133135061e4661899623fd53",
+      "RemoteSha": "87f6e88760566065179ae5039d524da7d032cc15",
+      "Hash": "cfe3f8efe46c4227f933117aaef105f8",
       "Requirements": [
         "Biobase",
         "BiocGenerics",
+        "BiocParallel",
         "DelayedArray",
         "DelayedMatrixStats",
+        "HDF5Array",
         "MASS",
         "Matrix",
         "Matrix.utils",
         "RANN",
         "RColorBrewer",
         "Rcpp",
+        "RcppAnnoy",
+        "RcppHNSW",
         "RhpcBLASctl",
         "Rtsne",
         "S4Vectors",
@@ -3995,15 +4044,20 @@
         "SummarizedExperiment",
         "assertthat",
         "batchelor",
+        "digest",
         "dplyr",
+        "future",
         "ggplot2",
+        "ggrastr",
         "ggrepel",
         "grr",
         "igraph",
         "irlba",
         "leidenbase",
         "limma",
+        "lme4",
         "lmtest",
+        "openssl",
         "pbapply",
         "pbmcapply",
         "pheatmap",
@@ -4019,7 +4073,9 @@
         "spdep",
         "speedglm",
         "stringr",
+        "terra",
         "tibble",
+        "tictoc",
         "tidyr",
         "uwot",
         "viridis"
@@ -4930,6 +4986,45 @@
       "Hash": "7cfa4f73a070042ecf141d5c1d1bfcae",
       "Requirements": [
         "sp"
+      ]
+    },
+    "rhdf5": {
+      "Package": "rhdf5",
+      "Version": "2.40.0",
+      "Source": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "rhdf5",
+      "RemoteRef": "rhdf5",
+      "RemoteRepos": "https://bioconductor.org/packages/3.15/bioc",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "2.40.0",
+      "git_url": "https://git.bioconductor.org/packages/rhdf5",
+      "git_branch": "RELEASE_3_15",
+      "git_last_commit": "fb6c15a",
+      "git_last_commit_date": "2022-04-26",
+      "Hash": "46690d82f3e32c11679919456785c42c",
+      "Requirements": [
+        "Rhdf5lib",
+        "rhdf5filters"
+      ]
+    },
+    "rhdf5filters": {
+      "Package": "rhdf5filters",
+      "Version": "1.8.0",
+      "Source": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "rhdf5filters",
+      "RemoteRef": "rhdf5filters",
+      "RemoteRepos": "https://bioconductor.org/packages/3.15/bioc",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.8.0",
+      "git_url": "https://git.bioconductor.org/packages/rhdf5filters",
+      "git_branch": "RELEASE_3_15",
+      "git_last_commit": "b0b588b",
+      "git_last_commit_date": "2022-04-26",
+      "Hash": "aa885eebeb76d010138fdafe9e91245e",
+      "Requirements": [
+        "Rhdf5lib"
       ]
     },
     "rjson": {
@@ -5909,6 +6004,20 @@
         "rlang",
         "vctrs"
       ]
+    },
+    "tictoc": {
+      "Package": "tictoc",
+      "Version": "1.0.1",
+      "Source": "CRAN",
+      "Repository": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "tictoc",
+      "RemoteRef": "tictoc",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.0.1",
+      "Hash": "5acb66b0266ad1f0ebf7ffe1aa36ff4c",
+      "Requirements": []
     },
     "tidyr": {
       "Package": "tidyr",

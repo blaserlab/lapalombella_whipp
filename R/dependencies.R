@@ -17,7 +17,7 @@
 # blaseRtemplates::easy_install("ggrastr", how = "link_from_cache")
 
 # # If you need a new package or an update, try this:
-# blaseRtemplates::easy_install("barkasn/fastSave", how = "new_or_update")
+# blaseRtemplates::easy_install("blaserlab/blaseRtools", how = "new_or_update")
 
 # # If you are installing from a "tarball", use this:
 # blaseRtemplates::easy_install("/path/to/tarball.tar.gz")
