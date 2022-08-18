@@ -2929,6 +2929,26 @@
         "withr"
       ]
     },
+    "ggh4x": {
+      "Package": "ggh4x",
+      "Version": "0.2.1",
+      "Source": "CRAN",
+      "Repository": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "ggh4x",
+      "RemoteRef": "ggh4x",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "0.2.1",
+      "Hash": "5e0b1591bf8489cfacdb5aecf1697626",
+      "Requirements": [
+        "ggplot2",
+        "gtable",
+        "rlang",
+        "scales",
+        "vctrs"
+      ]
+    },
     "ggplot2": {
       "Package": "ggplot2",
       "Version": "3.3.6",

@@ -14,7 +14,7 @@
 
 # # Try this first...it's faster:
 # blaseRtemplates::easy_install("<package name>", how = "link_from_cache")
-# blaseRtemplates::easy_install("ggrastr", how = "link_from_cache")
+# blaseRtemplates::easy_install("ggh4x", how = "link_from_cache")
 
 # # If you need a new package or an update, try this:
 # blaseRtemplates::easy_install("blaserlab/blaseRtools", how = "new_or_update")

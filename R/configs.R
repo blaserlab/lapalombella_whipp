@@ -1,4 +1,5 @@
-theme_set(theme_cowplot(font_size = 10))
+the_font_size <- 10
+theme_set(theme_cowplot(font_size = the_font_size))
 
 # conflicts ---------------------------------------------------------------
 # resolve conflicting function names here
@@ -18,6 +19,7 @@ heatmap_3_colors <- c("#313695","white","#A50026")
 
 # output -------------------------------------------------
 figures_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/figures"
+tables_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/tables"
 
 # source local configs ----------------------------------------------------
 # these are sourced after main configs and will overwrite duplicate entries if
