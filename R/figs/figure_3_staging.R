@@ -60,7 +60,7 @@ bb_genebubbles(
   
           
 
-
+bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = , facet_by = "genotype")
 bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T)
 
 
@@ -81,7 +81,7 @@ bb_var_umap(
   labs(x = "UMAP 1", y= "UMAP 2") +
   theme(legend.justification = "center")
 # figure 3C
-fig3c_plotlist <- map(.x = c("Ighm", "Pax5"),
+fig3c_plotlist <- map(.x = c("Ighm","Pax5", "Ighd", "Ighe", "Ebf1", "Cd93", "Cd69", "Spn","Myc", "Mki67"),
                       .f = \(x, dat = mouse_cds_list[[1]]) {
                         p <- bb_gene_umap(
                           dat,
@@ -104,9 +104,8 @@ fig3c_plotlist <- map(.x = c("Ighm", "Pax5"),
                         p 
                       })
 
-fig3c_plotlist[[1]]/fig3c_plotlist[[2]]  
-  
-
+fig3c <- fig3c_plotlist[[1]]/fig3c_plotlist[[2]]/fig3c_plotlist[[3]]/fig3c_plotlist[[4]]/fig3c_plotlist[[5]]/fig3c_plotlist[[6]]/fig3c_plotlist[[7]]/fig3c_plotlist[[8]]/fig3c_plotlist[[9]]/fig3c_plotlist[[10]]
+#ggsave("fig3c.pdf", path = figures_out, width = 6, height = 15)
 
 # figure 3D
 
@@ -115,7 +114,7 @@ fig3c_plotlist[[1]]/fig3c_plotlist[[2]]
 markers <- fig3_kmeans_10_tm |> 
   filter(cell_group %in% c("2", "3", "4", "6", "8")) |> 
   pull(gene_short_name)
-
+markers
 # write_csv(fig3_kmeans_10_tm, file = file.path(tables_out, "fig3_kmeans_10_tm.csv"))
 
 fig3_mat <- bb_aggregate(obj = filter_cds(mouse_cds_list[[1]], 
@@ -133,19 +132,20 @@ rownames(fig3_mat) <- tibble(feature_id = rownames(fig3_mat)) |>
   left_join(bb_rowmeta(mouse_cds_list[[1]]) |> 
               select(feature_id, gene_short_name)) |> 
   pull(gene_short_name)
-
+fig3_mat
 fig3_colfun = circlize::colorRamp2(breaks = c(min(fig3_mat),
                                               0,
                                               max(fig3_mat)),
                                    colors = heatmap_3_colors)
 
-highlights <- c("Wnt10a")
+highlights <- c("Cd83", "Tubb5", "Tuba1b","Wnt10a", "Ccr7", "Cdk1", "Birc5","Junb","Atf4","Cd69","Nfkbia","Nfkbid","Rel","Ubc","Ccna2", "Blnk")
+#Markers discussed in prev manuscript version: c("Ccr7", "Cdk4", "Cxcr5", "Birc5", "Il4","Npm1","Jun","Junb", "Fos","Fosb","Atf3","Atf4","Myc","Cd69","Il10", "Top2a", "Hmgb1", "Hmgb2", "Cd83","Ube2a", "Tubb5", "Tuba1b")
 
 fig3_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
   at = which(rownames(fig3_mat) %in% highlights),
   labels = rownames(fig3_mat)[rownames(fig3_mat) %in% highlights],
   labels_gp = gpar(fontsize = 8),
-  padding = 2
+  padding = 0
 ))
 
 ComplexHeatmap::Heatmap(fig3_mat, 

@@ -17,7 +17,8 @@
 # blaseRtemplates::easy_install("ggh4x", how = "link_from_cache")
 
 # # If you need a new package or an update, try this:
-# blaseRtemplates::easy_install("blaserlab/blaseRtools", how = "new_or_update")
+#blaseRtemplates::easy_install("blaserlab/blaseRtools", how = "new_or_update")
+#blaseRtemplates::easy_install("blaseRtools", "link_from_cache")
 
 # # If you are installing from a "tarball", use this:
 # blaseRtemplates::easy_install("/path/to/tarball.tar.gz")
