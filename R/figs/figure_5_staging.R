@@ -8,8 +8,12 @@ unique(mouse_cds_list[[2]]$mouse)
 #Spleens
 ####PRMT5xTCL1:M0955-RT, M0942, M1040
 ####TCL1:M0244, M0228, M0229, M0322
-####Mistake? Eu-PRMT5 mouse included in dataset M0980 
-########- reassign to file1 mouse_cds_list[[1]]
+####PRMT5: M0980
+#Mistake, recode M0980 as Eu-PRMT5/TCL1
+colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
+                                                "PRMT5" = "Eμ-PRMT5/TCL1",
+                                                "TCL1" = "Eμ-TCL1",
+                                                "P/T" = "Eμ-PRMT5/TCL1")
 
 unique(mouse_cds_list[[4]]$mouse)
 #LN
@@ -18,22 +22,20 @@ unique(mouse_cds_list[[4]]$mouse)
 
 #Fig5 Figs
 colData(mouse_cds_list[[2]])
-unique(mouse_cds_list[[1]]$genotype)
+unique(mouse_cds_list[[2]]$genotype)
 cds_sub <- mouse_cds_list[[2]]
-unique(cds_sub$genotype)
+
 #filter for PRMT5xTCL1 & TCL1 mice only
-cds_sub <- cds_sub[,colData(cds_sub)$genotype == "P/T" |
-                     colData(cds_sub)$genotype == "TCL1"]
+cds_sub <- cds_sub[,colData(cds_sub)$genotype == "Eμ-PRMT5/TCL1" |
+                     colData(cds_sub)$genotype == "Eμ-TCL1"]
 unique(cds_sub$genotype)
 unique(colData(cds_sub)$mouse)
 
-bb_var_umap(cds_sub, var = "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", facet_by = "genotype")
-bb_var_umap(cds_sub, var = "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", facet_by = "genotype")
-
-bb_var_umap(mouse_cds_list[[2]], "kmeans_10_harmonized", facet_by = "mouse", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
-
-
 #recode clusters
+colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
+                                                "PRMT5" = "Eμ-PRMT5/TCL1",
+                                                "TCL1" = "Eμ-TCL1",
+                                                "P/T" = "Eμ-PRMT5/TCL1")
 colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- recode(colData(mouse_cds_list[[2]])$kmeans_10_clusters, 
                                                             "1" = "5.1",
                                                             "2" = "5.2",
@@ -89,3 +91,8 @@ bb_genebubbles(
   theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
   theme(axis.text.y = element_text(face = "italic")) +
   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
+
+bb_var_umap(cds_sub, var = "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", facet_by = "genotype", overwrite_labels = T)
+bb_var_umap(cds_sub, var = "density", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", facet_by = "genotype")
+
+bb_var_umap(mouse_cds_list[[2]], "kmeans_10_harmonized", facet_by = "mouse", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
