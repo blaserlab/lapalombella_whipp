@@ -22,6 +22,10 @@ mouse_cds_list[[1]] <- bb_cellmeta(mouse_cds_list[[1]]) |>
   mutate(cd19_cd5_label = "CD19+/CD5+ cells") |> 
   bb_tbl_to_coldata(mouse_cds_list[[1]], min_tbl = _)
 
+unique(mouse_cds_list[[1]]$tissue)
+#sample_id
+#mouse
+#Run
 
 # figure 3A
 bb_var_umap(mouse_cds_list[[1]], "density", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
@@ -60,7 +64,7 @@ bb_genebubbles(
   
           
 
-bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = , facet_by = "genotype")
+bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype")
 bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T)
 
 
