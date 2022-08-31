@@ -1,23 +1,12 @@
 WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
 WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
 
-#mouse_cds_list
-  #File1 - Spleen - PRMT5 vs TCL1
-  #File2 - Spleen - PRMT5xTCL1 vs TCL1
-  #File3 - LN - PRMT5 vs TCL1
-  #File4 - LN - PRMT5xTCL1 vs TCL1
-
-# unique(mouse_cds_list[[2]]$mouse)
-# #Spleens
-# ####PRMT5xTCL1:M0955-RT, M0942, M1040
-# ####TCL1:M0244, M0228, M0229, M0322
-# ####PRMT5: M0980
-# #Mistake, recode M0980 as Eu-PRMT5/TCL1
+#Mistake, recode M0980 as Eu-PRMT5/TCL1
 colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
                                                 "PRMT5" = "PRMT5/TCL1",
                                                 "TCL1" = "TCL1",
                                                 "P/T" = "PRMT5/TCL1")
-unique(mouse_cds_list[[2]]$genotype)
+unique(mouse_cds_list[[4]]$mouse)
 
 # unique(mouse_cds_list[[4]]$mouse)
 # #LN

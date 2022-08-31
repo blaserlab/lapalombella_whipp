@@ -3,15 +3,37 @@ colData(cds_main)$disease_tissue <- paste0(colData(cds_main)$disease, " ", colDa
 # Reordering group factor levels - For following graphing order
 cds_main$disease_tissue <- factor(cds_main$disease_tissue,      
                                   levels = c("CLL PBMC", "RT PBMC", "RT LN"))
-
 #partition assignment
 bb_genebubbles(
   obj = filter_cds(cds_main, cells = bb_cellmeta(cds_main)),
-  genes = c("CD14", "CD3E", "CD79A", "MS4A1", "CD19"), cell_grouping = "partition") + labs(x = "Partition Cluster", y = NULL) 
+  genes = c("CD14", "CD3E", "CD79A", "MS4A1", "CD19","CD8"), cell_grouping = "partition") + labs(x = "Partition Cluster", y = NULL) 
 colData(cds_main)$partition_assignment_1 <- recode(colData(cds_main)$partition, "1" = "B", "2" = "B", "3" = "T", "4" = "T", "5" = "Mono", "6" = "B", "7" = "B")
 
+#supp Fig 1A
+suppfig_1A <- bb_genebubbles(
+  cds_main,
+  genes = c("CD14", "CD3E", "CD79A", "MS4A1", "CD19","CD8"
+ ),
+  cell_grouping = c("partition", "partition_assignment_1"),
+  return_value = "data"
+) |> 
+  ggplot(mapping = aes(x = partition, 
+                       y = gene_short_name, 
+                       color = expression,
+                       size = proportion)) +
+  geom_point() +
+  scale_size_area() +
+  scale_color_viridis_c() +
+  facet_wrap(~partition_assignment_1, scales = "free_x", ) +
+  theme_minimal_grid(font_size = the_font_size) +
+  theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
+  theme(axis.text.y = element_text(face = "italic")) +
+  labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
+#suppfig_1A
+#ggsave("suppfig_1A.pdf", path = figures_out, width = 4.95, height = 2.45)
+
 bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") + facet_wrap(~patient)
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") + facet_grid(~patient)
 
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition") +
@@ -30,8 +52,9 @@ bb_var_umap(
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)|>filter(patient == "pt_2712")), "partition_assignment_1") +
   facet_wrap(~disease_tissue)
+
 bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), gene_or_genes = "PRMT5"
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient = "pt_2712")), gene_or_genes = "PRMT5"
 ) + 
   facet_wrap(~disease_tissue)
 
@@ -167,9 +190,7 @@ bb_gene_umap(
 
 bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = "MYC"
-) + facet_grid(row = vars(patient), col = vars(disease_tissue))
-=======
-             ), gene_or_genes = c("PRMT5", "MYC", "MKI67")
+) + facet_grid(row = vars(patient), col = vars(disease_tissue))), gene_or_genes = c("PRMT5", "MYC", "MKI67")
   ) + facet_grid(row = vars(patient), col = vars(disease_tissue))
 
 # bb_gene_dotplot(
@@ -202,5 +223,3 @@ bb_gene_umap(
   ) + facet_grid(row = vars(patient), col = vars(disease_tissue))
 
 FeaturePlot(cds_main, features = "MS4A1")
-
->>>>>>> Stashed changes

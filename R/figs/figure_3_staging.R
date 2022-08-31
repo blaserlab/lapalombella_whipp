@@ -25,7 +25,11 @@ mouse_cds_list[[1]] <- bb_cellmeta(mouse_cds_list[[1]]) |>
 # figure 3A
 bb_var_umap(mouse_cds_list[[1]], "density", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
 
-bb_var_umap(mouse_cds_list[[1]], "k_10_assignment", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T)
+bb_var_umap(mouse_cds_list[[1]], "k_10_assignment", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T)
+
+# low_q<- mouse_cds_list[[1]]
+# low_q <- low_q[,colData(low_q)$k_10_assignment == "Low Quality"]
+# monocle3::top_markers(low_q, group_cells_by = "genotype", genes_to_test_per_group = 100, cores = 10)
 
 # supplemental figure
 bb_genebubbles(
