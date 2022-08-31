@@ -11,15 +11,20 @@ bb_genebubbles(
 colData(cds_main)$partition_assignment_1 <- recode(colData(cds_main)$partition, "1" = "B", "2" = "B", "3" = "T", "4" = "T", "5" = "Mono", "6" = "B", "7" = "B")
 
 bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") +
-<<<<<<< Updated upstream
-  facet_wrap(~patient)
-=======
-  facet_wrap(~partient)
->>>>>>> Stashed changes
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") + facet_wrap(~patient)
+
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition") +
   facet_wrap(~patient)
+
+# LN_B_clst2 <-cds_main[,colData(cds_main)$partition == "2"]
+# colData(LN_B_clst2)
+
+#Top Markers Partition Cluster 2
+# Fig1_tm <- monocle3::top_markers(cds_main,
+#                      group_cells_by = "partition", genes_to_test_per_group = 300, cores = 10)
+# write_csv(Fig1_tm, file = file.path(WalkerTables, "Fig1_300tm.csv"))
+
 
 #Fig1A
 bb_var_umap(

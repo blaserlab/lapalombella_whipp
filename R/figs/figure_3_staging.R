@@ -22,11 +22,6 @@ mouse_cds_list[[1]] <- bb_cellmeta(mouse_cds_list[[1]]) |>
   mutate(cd19_cd5_label = "CD19+/CD5+ cells") |> 
   bb_tbl_to_coldata(mouse_cds_list[[1]], min_tbl = _)
 
-unique(mouse_cds_list[[1]]$tissue)
-#sample_id
-#mouse
-#Run
-
 # figure 3A
 bb_var_umap(mouse_cds_list[[1]], "density", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
 
@@ -112,6 +107,8 @@ fig3c <- fig3c_plotlist[[1]]/fig3c_plotlist[[2]]/fig3c_plotlist[[3]]/fig3c_plotl
 #ggsave("fig3c.pdf", path = figures_out, width = 6, height = 15)
 
 # figure 3D
+fig3_kmeans_10_tm_Top100 <-monocle3::top_markers(mouse_cds_list[[2]], group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 100, cores = 10)
+# write_csv(fig3_kmeans_10_tm_Top100, file = file.path(tables_out, "fig3_kmeans_10_tm.csv"))
 
 
 
