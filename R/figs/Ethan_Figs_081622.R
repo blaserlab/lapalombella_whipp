@@ -10,7 +10,7 @@ bb_genebubbles(
 colData(cds_main)$partition_assignment_1 <- recode(colData(cds_main)$partition, "1" = "B", "2" = "B", "3" = "T", "4" = "T", "5" = "Mono", "6" = "B", "7" = "B")
 
 #supp Fig 1A
-suppfig_1A <- bb_genebubbles(
+S1A <- bb_genebubbles(
   cds_main,
   genes = c("CD14", "CD3E", "CD79A", "MS4A1", "CD19","CD8"
  ),
@@ -29,15 +29,12 @@ suppfig_1A <- bb_genebubbles(
   theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
   theme(axis.text.y = element_text(face = "italic")) +
   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
-#suppfig_1A
 #ggsave("suppfig_1A.pdf", path = figures_out, width = 4.95, height = 2.45)
 
-bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") + facet_grid(~patient)
+F1A <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main)|>filter(patient == "pt_2712")), "partition_assignment_1", facet_by = "disease_tissue")
 
 bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition") +
-  facet_wrap(~patient)
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main)|>filter(patient == "pt_2712")), "partition", facet_by = "disease_tissue") 
 
 # LN_B_clst2 <-cds_main[,colData(cds_main)$partition == "2"]
 # colData(LN_B_clst2)
@@ -49,14 +46,18 @@ bb_var_umap(
 
 
 #Fig1A
-bb_var_umap(
+F1A <- bb_var_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main)|>filter(patient == "pt_2712")), "partition") +
+  facet_wrap(~disease_tissue)
+F1A1<- bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)|>filter(patient == "pt_2712")), "partition_assignment_1") +
   facet_wrap(~disease_tissue)
 
-bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient = "pt_2712")), gene_or_genes = "PRMT5"
+F1A2 <- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), gene_or_genes = "PRMT5"
 ) + 
   facet_wrap(~disease_tissue)
+Fig1A <- F1A/F1A1/F1A2
 
 #Compare to Lit data - Nadeu et al
 nadeu_11b <- readxl::read_excel("~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/queries/41591_2022_1927_MOESM3_ESM.xlsx", sheet = "Supplementary Table 11b", skip = 5, col_names = c("feature_id", "gene_short_name", "mean", "l2fc", "se", "p", "padj", "direction"))
@@ -71,31 +72,26 @@ cds_main <- nadeu_11b |>
 
 #Density Mapping. 
 ##Can sub "log_local_n" for "density"
-bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main)),
-  "log_local_n") +
-  facet_grid(row = vars(patient),col = vars(disease_tissue))
+S1B<- bb_var_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")),
+  "log_local_n",
+  facet_by = "disease_tissue"
+)
 
-bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main)), "partition_assignment_1") +
-  facet_grid(row = vars(patient), col = (vars(disease_tissue)))
-
-<<<<<<< Updated upstream
 #Supp Fig - Nadeu et al RT UP aggregate gene expression mapping 
-=======
 #Nadeu et al RT UP aggregate gene expression mapping 
->>>>>>> Stashed changes
-bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
-) + 
-  facet_grid(row = vars(patient), col = (vars(disease_tissue)))
+# bb_gene_umap(
+#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
+# ) + 
+#   facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
-<<<<<<< Updated upstream
+S1C<- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
+) + 
+  facet_wrap(~disease_tissue)
+SuppFig1 <-(S1B)/S1C
 ####Supp Fig - Plot Nadeu et al CLL genes/RT downreg genes
-=======
 ####Plot Nadeu et al CLL genes/RT downreg genes
->>>>>>> Stashed changes
-#rm(cds_main)
 #colData(cds_main)$disease_tissue <- paste0(colData(cds_main)$disease, " ", colData(cds_main)$tissue)
 #colData(cds_main)$partition_assignment_1 <- recode(colData(cds_main)$partition, "1" = "B", "2" = "B", "3" = "T", "4" = "T", "5" = "Mono", "6" = "B", "7" = "B")
 
@@ -107,13 +103,12 @@ bb_gene_umap(
 #  bb_tbl_to_rowdata(obj = cds_main, min_tbl = _)
 # 
 # bb_gene_umap(
-#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
+#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
 # ) + 
 #   facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
 bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), "partition_assignment_1"
-<<<<<<< Updated upstream
 ) + facet_wrap(~disease_tissue)
 
 bb_var_umap(
@@ -127,21 +122,6 @@ bb_var_umap(
 #Gene dot plot
 bb_gene_dotplot(
   cds_main[, colData(cds_main)$patient == "pt_2712" &
-=======
-  ) + facet_wrap(~disease_tissue)
-
-bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_1245")), "partition_assignment_1"
- ) + facet_wrap(~disease_tissue)
-
-# bb_gene_umap(
-#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), "PRMT5"
-# ) + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
-
-#Gene dot plot
-bb_gene_dotplot(
-  cds_main[, colData(cds_main)$patient == "pt_1245" &
->>>>>>> Stashed changes
              colData(cds_main)$clonotype_id %in% "clonotype1" &
              colData(cds_main)$partition_assignment_1 %in% "B"],
   markers = c("PRMT5", "MYC", "MKI67"),
@@ -155,43 +135,37 @@ bb_gene_dotplot(
 #   obj = filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")),
 #   genes = c("MYC", "PRMT5", "MKI67"), cell_grouping = "partition_assignment_1") + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
-<<<<<<< Updated upstream
-=======
-
-
->>>>>>> Stashed changes
-view(unique(cds_main$sample))
-
 bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B") |> filter(clonotype_id == "clonotype1") |> filter(disease_tissue == "RT LN")
-<<<<<<< Updated upstream
-  ), gene_or_genes = c("PRMT5", "MYC", "MKI67")
-) + facet_grid(row = vars(patient), col = vars(disease_tissue))
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")
+  ), gene_or_genes = c("PRMT5")
+) + facet_wrap(~patient) 
 
 #####Fig 1A dotplot -> scatter plot
 #Still working on this...
 
 #Fig1D
-bb_var_umap(
+F1D <- bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)|> filter(disease_tissue == "RT LN")), "partition_assignment_1") +
   facet_wrap(~patient)
 
-bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = c("PRMT5", "MYC", "MKI67")
-) + facet_grid(row = vars(patient), col = vars(disease_tissue))
+F1D1<- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
+  gene_or_genes = c("PRMT5")
+) + facet_wrap(~patient)
+F1D2<- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
+  gene_or_genes = c("MYC")
+) + facet_wrap(~patient)
+F1D3 <- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
+  gene_or_genes = c("MKI67")
+) + facet_wrap(~patient)
+F1D4<- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
+  gene_or_genes = c("BIRC5")
+) + facet_wrap(~patient)
 
-bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = "PRMT5"
-) + facet_grid(row = vars(patient), col = vars(disease_tissue))
-
-bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = "MYC"
-) + facet_grid(row = vars(patient), col = vars(disease_tissue))
-
-bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = "MYC"
-) + facet_grid(row = vars(patient), col = vars(disease_tissue))), gene_or_genes = c("PRMT5", "MYC", "MKI67")
-  ) + facet_grid(row = vars(patient), col = vars(disease_tissue))
+F1D/((F1D1+F1D2)/(F1D3+F1D4))
 
 # bb_gene_dotplot(
 #   cds_main[, colData(cds_main)$patient == "pt_2712" &
@@ -221,5 +195,3 @@ FeatureScatter(object = cds_main, feature1 = 'PRMT5', feature2 = 'MYC')
 bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(clonotype_id == "clonotype1") |> filter(partition_assignment_1 == "B")), gene_or_genes = c("PRMT5", "MYC", "MKI67")
   ) + facet_grid(row = vars(patient), col = vars(disease_tissue))
-
-FeaturePlot(cds_main, features = "MS4A1")
