@@ -147,25 +147,45 @@ bb_gene_umap(
 F1D <- bb_var_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main)|> filter(disease_tissue == "RT LN")), "partition_assignment_1") +
   facet_wrap(~patient)
+F1D0 <- bb_var_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main)|> filter(disease_tissue == "RT LN")), "partition") +
+  facet_wrap(~patient)
 
 F1D1<- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
-  gene_or_genes = c("PRMT5")
-) + facet_wrap(~patient)
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
+  gene_or_genes = c("PRMT5") 
+) + facet_wrap(~patient)+ labs(title = "PRMT5")
 F1D2<- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
-  gene_or_genes = c("MYC")
-) + facet_wrap(~patient)
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
+  gene_or_genes = c("MYC") 
+) + facet_wrap(~patient)+ labs(title = "MYC")
 F1D3 <- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
   gene_or_genes = c("MKI67")
-) + facet_wrap(~patient)
+) + facet_wrap(~patient)+ labs(title = "MKI67")
 F1D4<- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN") |> filter(partition_assignment_1 == "B")), 
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
   gene_or_genes = c("BIRC5")
-) + facet_wrap(~patient)
+) + facet_wrap(~patient)+ labs(title = "BIRC5")
 
-F1D/((F1D1+F1D2)/(F1D3+F1D4))
+#Patchwork
+devtools::install_github("thomasp85/patchwork")
+library(patchwork)
+
+#F1D/((F1D1+F1D2)/(F1D3+F1D4))
+layout <- '
+AAACC
+AAADD
+BBBEE
+BBBGG'
+
+Fig1D <-wrap_plots(A= F1D0, B = F1D, C = F1D1, D = F1D2, E = F1D3, G= F1D4, design = layout)
+Fig1D <- Fig1D + plot_annotation(title = 'D',
+                theme = theme(plot.title = element_text(size = 18)))
+Fig1D
+#ggsave("Fig1D.pdf", path = figures_out)
+#renv::status()
+#renv::restore()
 
 # bb_gene_dotplot(
 #   cds_main[, colData(cds_main)$patient == "pt_2712" &
