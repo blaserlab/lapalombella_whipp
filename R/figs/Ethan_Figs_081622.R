@@ -26,9 +26,13 @@ cds_main <- nadeu_11b |>
  mutate(nadeu_CLL_gene = TRUE) |>
  bb_tbl_to_rowdata(obj = cds_main, min_tbl = _)
 
+colData(cds_main)$pt_recode <- recode(colData(cds_main)$patient, "pt_2712" = "Pt 1", "pt_1245" = "Pt 2")
+colData(cds_main)$pt_recode <- paste0(colData(cds_main)$disease_tissue, "-", colData(cds_main)$pt_recode)
+
 
 #supplemental figs
-S1A <- bb_var_umap(cds_main, "patient", facet_by = "value", legend_pos = "none", foreground_alpha = 0.2)
+S1A <- bb_var_umap(cds_main, "pt_recode", facet_by = "value", legend_pos = "none", foreground_alpha = 0.2)
+bb_var_umap()
 # possible alt S1A
 # bb_var_umap(cds_main, "patient", value_to_highlight = "pt_2712", legend_pos = "none", plot_title = "pt_2712") +
 # bb_var_umap(cds_main, "patient", value_to_highlight = "pt_1245", legend_pos = "none", plot_title = "pt_1245")
@@ -67,12 +71,36 @@ S1C
 S1DP1 <- bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
 ) + 
-  facet_wrap(~disease_tissue)
+  facet_wrap(~disease_tissue)+
+  theme(
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*RT Gene*<br>Expression") +
+  theme(legend.title = ggtext::element_markdown())
 S1DP2 <- bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_CLL_gene)
 ) +
-  facet_wrap(~disease_tissue)
-S1D <- S1DP1/S1DP2
+  facet_wrap(~disease_tissue)+
+  theme(strip.text = element_blank()) +
+   theme(
+  #   axis.line.x = element_blank(),
+  #   axis.ticks.x = element_blank(),
+  #   axis.text.y = element_blank(),
+     axis.title.x = element_blank(),
+     axis.title.y = element_blank()
+   ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*CLL Gene*<br>Expression") +
+  theme(legend.title = ggtext::element_markdown())
+#S1D <- S1DP1/S1DP2
+#library(gridExtra)
+#library(patchwork)
+S1D <- grid.arrange(patchworkGrob(S1DP1/S1DP2), left = S1DP1$labels$y, bottom = textGrob(S1DP1$labels$x, hjust = 0.9))
 
 #ggsave("suppfig_1A.pdf", path = figures_out, width = 4.95, height = 2.45)
 
@@ -100,13 +128,14 @@ F1AP1 <-
     axis.line.x = element_blank(),
     axis.ticks.x = element_blank(),
     axis.text.x = element_blank(),
-    axis.title.x = element_blank()
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
   ) +
   theme(panel.background = element_rect(color = "black")) +
   labs(fill = "Cluster")
-F1AP2 <- bb_gene_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")),
-                      gene_or_genes = "PRMT5") +
-  facet_wrap( ~ disease_tissue) +
+F1AP2 <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")),
+                     "log_local_n",
+                     facet_by = "disease_tissue") +
   theme(strip.text = element_blank()) +
   theme(
     axis.line.x = element_blank(),
@@ -115,14 +144,17 @@ F1AP2 <- bb_gene_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filt
     axis.title.x = element_blank()
   ) +
   theme(panel.background = element_rect(color = "black")) +
-  labs(color = "*PRMT5*<br>Expression") +
-  theme(legend.title = ggtext::element_markdown())
-F1AP3 <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")),
-                     "log_local_n",
-                     facet_by = "disease_tissue") +
-  theme(strip.text = element_blank()) +
-  theme(panel.background = element_rect(color = "black")) +
   labs(color = "Log<sub>10</sub><br>Cells") +
+  theme(legend.title = ggtext::element_markdown())
+F1AP3 <- bb_gene_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")),
+                      gene_or_genes = "PRMT5") +
+  facet_wrap( ~ disease_tissue) +
+  theme(strip.text = element_blank()) +
+  theme(
+    axis.title.y = element_blank()
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*PRMT5*<br>Expression") +
   theme(legend.title = ggtext::element_markdown())
   
 F1A <- F1AP1/F1AP2/F1AP3
@@ -131,17 +163,17 @@ F1A <- F1AP1/F1AP2/F1AP3
 
 
 
-bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), "partition_assignment_1"
-) + facet_wrap(~disease_tissue)
-
-bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_1245")), "partition_assignment_1"
-) + facet_wrap(~disease_tissue)
-
- bb_gene_umap(
-   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), "PRMT5"
- ) + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
+# bb_var_umap(
+#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), "partition_assignment_1"
+# ) + facet_wrap(~disease_tissue)
+# 
+# bb_var_umap(
+#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_1245")), "partition_assignment_1"
+# ) + facet_wrap(~disease_tissue)
+# 
+#  bb_gene_umap(
+#    filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), "PRMT5"
+#  ) + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
 
 #Gene dot plot
 bb_gene_dotplot(
@@ -156,45 +188,105 @@ bb_gene_dotplot(
 ) + labs(x = NULL, y = NULL)
 
 # bb_genebubbles(
-#   obj = filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")),
-#   genes = c("MYC", "PRMT5", "MKI67"), cell_grouping = "partition_assignment_1") + facet_grid(row = vars(patient), col = (vars(disease_tissue)))
+#   obj = filter_cds(
+#     cds_main,
+#     cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")
+#     ),
+#   genes = c("MYC", "PRMT5", "MKI67"),
+#   cell_grouping = "partition_assignment_1") + facet_wrap(~disease_tissue)
 
-bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")
-  ), gene_or_genes = c("PRMT5")
-) + facet_wrap(~patient) 
-
-#####Fig 1A dotplot -> scatter plot
-#Still working on this...
 
 #Fig1D
-F1D0 <- bb_var_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main)|> filter(disease_tissue == "RT LN")), "partition_assignment_1") +
-  facet_wrap(~patient)
+F1D0 <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")),
+                    "partition_assignment_1", facet_by = "pt_recode") +
+    theme(
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )+
+  theme(panel.background = element_rect(color = "black"))
+F1D1<- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")),
+                   "density", facet_by = "pt_recode") + 
+  theme(strip.text = element_blank()) +
+  theme(
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*Cell<br>Density*") +
+  theme(legend.title = ggtext::element_markdown())
 
-F1D1<- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
-  gene_or_genes = c("PRMT5") 
-) + facet_wrap(~patient)+ labs(title = "PRMT5")
 F1D2<- bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
+  gene_or_genes = c("PRMT5") 
+) + facet_wrap(~pt_recode)+
+  theme(strip.text = element_blank()) +
+  theme(
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*PRMT5*") +
+  theme(legend.title = ggtext::element_markdown())
+F1D3<- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
   gene_or_genes = c("MYC") 
-) + facet_wrap(~patient)+ labs(title = "MYC")
-F1D3 <- bb_gene_umap(
+) + facet_wrap(~pt_recode)+
+  theme(strip.text = element_blank()) +
+  theme(
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*MYC*") +
+  theme(legend.title = ggtext::element_markdown())
+F1D4 <- bb_gene_umap(
   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
   gene_or_genes = c("MKI67")
-) + facet_wrap(~patient)+ labs(title = "MKI67")
-F1D4<- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
-  gene_or_genes = c("BIRC5")
-) + facet_wrap(~patient)+ labs(title = "BIRC5")
+) + facet_wrap(~pt_recode)+
+  theme(strip.text = element_blank()) +
+  theme(
+    # axis.line.x = element_blank(),
+    # axis.ticks.x = element_blank(),
+    # axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*MKI67*") +
+  theme(legend.title = ggtext::element_markdown())
+# F1D5<- bb_gene_umap(
+#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")), 
+#   gene_or_genes = c("BIRC5")
+# ) + facet_wrap(~pt_recode)+
+#   theme(strip.text = element_blank()) +
+#   theme(
+#     axis.title.x = element_blank(),
+#     axis.title.y = element_blank()
+#   )+
+#   theme(panel.background = element_rect(color = "black")) +
+#   labs(color = "*BIRC5*") +
+#   theme(legend.title = ggtext::element_markdown())
 
-F1D <- 
-F1D0 /
-F1D1 /
-F1D2 /
-F1D3 /
-F1D4 
+F1D <-
+  grid.arrange(
+    patchworkGrob(F1D0 / F1D1 / F1D2 / F1D3 / F1D4),
+    left = F1D3$labels$y,
+    bottom = textGrob(F1D3$labels$x, hjust = 0.8)
+  )
 
-
-
+F1D0$labels
+F1D0$facet
+#blaseRtools:::get_density
+  
