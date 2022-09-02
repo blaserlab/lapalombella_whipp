@@ -6,7 +6,7 @@ F1rowtwo <- plot_grid(
   F1A,
   NULL,
   ncol = 2,
-  rel_widths = c(1, 1),
+  rel_widths = c(1.3, 1),
   labels = c("B", "C")
 )
 
@@ -15,7 +15,7 @@ F1rowthree <- plot_grid(
   NULL,
   #heatmap goes here
   ncol = 2,
-  rel_widths = c(1, 1),
+  rel_widths = c(1.3, 1),
   labels = c("D", "E")
 )
 
@@ -23,7 +23,7 @@ F1 <- plot_grid(F1top,
                 F1rowtwo,
                 F1rowthree,
                 nrow = 3,
-                rel_heights = c(0.2, 1, 1))
+                rel_heights = c(0.1, 1, 1.5))
 
 save_plot(F1,
           filename = "temp1.png",

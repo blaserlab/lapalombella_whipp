@@ -26,4 +26,4 @@ tables_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_ne
 # present. The file local_configs.R is ignored by git and so is useful for user-
 # specific configurations such as output directories or formatting.
 
-source("R/local_configs.R")
+#source("R/local_configs.R")
