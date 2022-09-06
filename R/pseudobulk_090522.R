@@ -47,14 +47,22 @@ pseudobulk_res$Header
 
 # Differential expression results.  Positive L2FC indicates up in B vs T
 #upregulated
-leiden_3n11_vs_1n9_upregulated <- pseudobulk_res$Result %>%
+leiden_3n11_vs_1n9_up <- pseudobulk_res$Result %>%
   filter(log2FoldChange > 0) %>%
   arrange(padj)
-write_csv(leiden_3n11_vs_1n9_upregulated, file = file.path(WalkerTables, "leiden_3n11_vs_1n9_upregulated.csv"))
+
+RTup<- leiden_3n11_vs_1n9_up[1:100,2]
+RTup<- as.vector(RTup$gene_short_name)
+#write_csv(leiden_3n11_vs_1n9_upregulated, file = file.path(WalkerTables, "leiden_3n11_vs_1n9_upregulated.csv"))
 
 #downregulated
 leiden_3n11_vs_1n9_downregulated<- pseudobulk_res$Result %>%
   filter(log2FoldChange < 0) %>%
   arrange(padj)
-write_csv(leiden_3n11_vs_1n9_downregulated, file = file.path(WalkerTables, "leiden_3n11_vs_1n9_downregulated.csv"))
+#write_csv(leiden_3n11_vs_1n9_downregulated, file = file.path(WalkerTables, "leiden_3n11_vs_1n9_downregulated.csv"))
 
+#GO
+bb_goenrichment(RTup, as_tibble(rowData(cds_main)))
+blaseRtools:::bb_goenrichment
+
+colData(rowData(cds_main))
