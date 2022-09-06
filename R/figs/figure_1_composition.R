@@ -1,4 +1,4 @@
-# source("R/Ethan_Figs_081622.R")
+source("R/figs/Ethan_Figs_081622.R")
 
 F1top <- plot_grid(NULL, labels = "A")
 
@@ -12,7 +12,7 @@ F1rowtwo <- plot_grid(
 
 F1rowthree <- plot_grid(
   F1D,
-  NULL,
+  F1E,
   #heatmap goes here
   ncol = 2,
   rel_widths = c(1.3, 1),

@@ -1,20 +1,15 @@
 WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
 WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
 
-#Mistake, recode M0980 as Eu-PRMT5/TCL1
+#recode M0980 as Eu-PRMT5/TCL1
 colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
                                                 "PRMT5" = "PRMT5/TCL1",
                                                 "TCL1" = "TCL1",
                                                 "P/T" = "PRMT5/TCL1")
 unique(mouse_cds_list[[4]]$mouse)
 
-# unique(mouse_cds_list[[4]]$mouse)
-# #LN
-# ###Mice:"M0244"    "M0955-RT" "M0228"   "M0322"    "M0942"    "M1040"    "M0980"
-# #same mice besides M0229
-
 #Fig5 Figs
-#recode/harmoize clusters
+#recode and harmoize clusters
 colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- recode(colData(mouse_cds_list[[2]])$kmeans_10_clusters, 
                                                             "1" = "5.1",
                                                             "2" = "5.2",
@@ -29,17 +24,17 @@ colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- recode(colData(mouse_cds_li
 
 colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- factor(colData(mouse_cds_list[[2]])$kmeans_10_harmonized, 
                                                             levels = paste0("5.", 1:10))
-#kmeans_10 UMAP
-#fig5_k10_harmonized<- 
+#kmeans10 UMAP
+fig5_k10_harmonized<- 
 bb_var_umap(mouse_cds_list[[2]], var = "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T) +
   facet_wrap(~genotype)
 #ggsave("fig5_k10_harmonized.pdf", path = figures_out, width = 7.8, height = 4.7)
 
-#fig5_density_supp <- 
+fig5_density_supp <- 
 bb_var_umap(mouse_cds_list[[2]], "density", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
 #ggsave("fig5_density_supp.pdf", path = figures_out, width = 7.8, height = 4.7)
 
-#celltype calling
+#cell type calling
 cds_sub <- mouse_cds_list[[2]]
 
 # cds_sub$kmeans_10_harmonized <- factor(cds_sub$kmeans_10_harmonized,
@@ -61,7 +56,7 @@ ggsave("fig5d.pdf", path = figures_out, width = 7.8, height = 4.7)
 colData(cds_sub)
 
 #Gene dotplot
-#fig5_marker_genebubbles_supp2 <- 
+fig5_marker_genebubbles_supp2 <- 
 bb_genebubbles(
   cds_sub,
   genes = c(
@@ -156,7 +151,6 @@ ComplexHeatmap::Heatmap(fig5_mat,
 fig5_kmeans_10_tm_Top100 |> filter(cell_group == "5.6") |> arrange(desc(marker_score))
 fig5_kmeans_10_tm_Top100 |> filter(cell_group == "5.6") |> arrange(desc(mean_expression))
 
-############################################################################################################################
 #Graph based Analysis
 
 #fig5_graphbased_UMAP<- bb_var_umap(mouse_cds_list[[2]], var = "graphclust", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T) +
@@ -255,6 +249,3 @@ bb_gene_umap(
   alt_dim_x = "aggr_UMAP_1",
   alt_dim_y = "aggr_UMAP_2"
 ) + facet_wrap(~genotype)
-#####################################
-
-         

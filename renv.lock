@@ -1646,7 +1646,7 @@
     },
     "blaseRtemplates": {
       "Package": "blaseRtemplates",
-      "Version": "0.0.0.9120",
+      "Version": "0.0.0.9122",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
@@ -1654,8 +1654,8 @@
       "RemoteUsername": "blaserlab",
       "RemotePkgRef": "blaserlab/blaseRtemplates",
       "RemoteRef": "HEAD",
-      "RemoteSha": "9dff6982ae5e0de615fe9d0dc3a8dc0bd03f0b6a",
-      "Hash": "84d9a7907c88fcf4742dd3a2eef54238",
+      "RemoteSha": "e6069125fecb018c3b8e2a9a670f06e96734042a",
+      "Hash": "15d0676cb39dd546b1dcf86067c80e92",
       "Requirements": [
         "cli",
         "devtools",
@@ -2364,6 +2364,25 @@
       "RemoteSha": "1.0-1",
       "Hash": "d0ef6cd1546530da4d72179b52856e84",
       "Requirements": []
+    },
+    "downlit": {
+      "Package": "downlit",
+      "Version": "0.4.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "79bf3f66590752ffbba20f8d2da94c7c",
+      "Requirements": [
+        "brio",
+        "desc",
+        "digest",
+        "evaluate",
+        "fansi",
+        "memoise",
+        "rlang",
+        "vctrs",
+        "withr",
+        "yaml"
+      ]
     },
     "dplyr": {
       "Package": "dplyr",
@@ -3756,8 +3775,14 @@
     "lazyData": {
       "Package": "lazyData",
       "Version": "1.1.0",
-      "Source": "Repository",
+      "Source": "CRAN",
       "Repository": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "lazyData",
+      "RemoteRef": "lazyData",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.1.0",
       "Hash": "c73e3a2c3e2086606e25698038465bd8",
       "Requirements": []
     },
@@ -4480,6 +4505,41 @@
       "Hash": "01f28d4278f15c76cddbea05899c5d6f",
       "Requirements": []
     },
+    "pkgdown": {
+      "Package": "pkgdown",
+      "Version": "2.0.6",
+      "Source": "CRAN",
+      "Repository": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "pkgdown",
+      "RemoteRef": "pkgdown",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "2.0.6",
+      "Hash": "f958d0b2a5dabc5ffd414f062b1ffbe7",
+      "Requirements": [
+        "bslib",
+        "callr",
+        "cli",
+        "desc",
+        "digest",
+        "downlit",
+        "fs",
+        "httr",
+        "jsonlite",
+        "magrittr",
+        "memoise",
+        "purrr",
+        "ragg",
+        "rlang",
+        "rmarkdown",
+        "tibble",
+        "whisker",
+        "withr",
+        "xml2",
+        "yaml"
+      ]
+    },
     "pkgload": {
       "Package": "pkgload",
       "Version": "1.2.4",
@@ -4669,6 +4729,17 @@
       "Requirements": [
         "R6",
         "ps"
+      ]
+    },
+    "profvis": {
+      "Package": "profvis",
+      "Version": "0.3.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e9d21e79848e02e524bea6f5bd53e7e4",
+      "Requirements": [
+        "htmlwidgets",
+        "stringr"
       ]
     },
     "progress": {
@@ -5045,6 +5116,16 @@
         "png",
         "rappdirs",
         "withr"
+      ]
+    },
+    "rex": {
+      "Package": "rex",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "ae34cd56890607370665bee5bd17812f",
+      "Requirements": [
+        "lazyeval"
       ]
     },
     "rgeos": {
@@ -6202,6 +6283,19 @@
         "xml2"
       ]
     },
+    "todor": {
+      "Package": "todor",
+      "Version": "0.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c98f11db2d150554b43b3ab0557af50b",
+      "Requirements": [
+        "R.utils",
+        "rex",
+        "rstudioapi",
+        "stringr"
+      ]
+    },
     "topGO": {
       "Package": "topGO",
       "Version": "2.48.0",
@@ -6308,6 +6402,18 @@
       "Hash": "6c374b265ba437f8d384ec7a313edd96",
       "Requirements": [
         "Rcpp"
+      ]
+    },
+    "urlchecker": {
+      "Package": "urlchecker",
+      "Version": "1.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "409328b8e1253c8d729a7836fe7f7a16",
+      "Requirements": [
+        "cli",
+        "curl",
+        "xml2"
       ]
     },
     "usethis": {
