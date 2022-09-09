@@ -85,7 +85,7 @@ cds_main <- nadeu_11b |>
 #rowData(cds_main)
 
 ln_cds<-cds_main[,colData(cds_main)$disease_tissue == "RT LN" &
-                   colData(cds_main)$clonotype_id %in% "clonotype1"]
+                   colData(cds_main)$leiden_assignment_1 == "B"]
 
 
 #supplemental figs - to show clustering pattern is due to clustering of both pts
@@ -360,96 +360,55 @@ F1D <-
   )
 
 
-# Fig1E 
-# COMBAK finish heatmap
+ 
 
-# TODO determine number of genes to look into and 
-LN_Top500_tm <-monocle3::top_markers(ln_cds, group_cells_by = "partition", genes_to_test_per_group = 50, cores = 10)
-#write_csv(LN_Top500_tm, file = file.path(WalkerTables, "LN_Top500_tm.csv"))
-
-# TODO determine markers discussed in human RT and those discussed in mouse data for heatmap annotation + any additions
-#FIXME bb_gene_umap(cds_main[,colData(cds_main)$disease_tissue == "RT LN"],gene_or_genes = "PRMT5")
-
-#bb_var_umap(cds_main, "partition", facet_by = "patient")
-#bb_var_umap(cds_main, "partition_assignment_1", facet_by = "patient")
-
-markers <- LN_Top50_tm |> filter(cell_group %in% c("1","2","6")) |> pull(gene_short_name)
-
-f1_mat <- bb_aggregate(obj = filter_cds(ln_cds, 
-                                          cells = bb_cellmeta(ln_cds) |> 
-                                            filter(partition %in% c("1","2","6")),
-                                          genes = bb_rowmeta(ln_cds) |> 
-                                            filter(gene_short_name %in% markers)), 
-                         cell_group_df = bb_cellmeta(ln_cds) |> 
-                           select(cell_id, partition)) |> 
-  t() |> 
-  scale() |> 
-  t()
-
-rownames(f1_mat) <- tibble(feature_id = rownames(f1_mat)) |> 
-  left_join(bb_rowmeta(ln_cds) |> 
-              select(feature_id, gene_short_name)) |> 
-  pull(gene_short_name)
-#f1_mat
-f1_colfun = circlize::colorRamp2(breaks = c(min(f1_mat),
-                                              0,
-                                              max(f1_mat)),
-                                   colors = heatmap_3_colors)
-
-highlights <- as.list(LN_Top50_tm |> filter(cell_group %in% c("2")) |>
-            head(sort(LN_Top100_tm$marker_score, decreasing =
-                        TRUE), n = 20) |> pull(gene_short_name))
-#TODO fill in remaining genes from paper
-#paper_highlights <- list(c("Myc","MKI67","PRMT5",))
-
-#highlights <- c("Rel","PRMT5","Myc","CD83", "TUBB5", "TUBA1B","WNT10A", "CCR7", "CDK1", "BIRC5","JUNB","ATF4","CD69","NFKBIA","NFKBID","REL","UBC","CCNA2", "BLNK")
-
-#NOTE: Mouse markers discussed in prev manuscript version: c("Ccr7", "Cdk4", "Cxcr5", "Birc5", "Il4","Npm1","Jun","Junb", "Fos","Fosb","Atf3","Atf4","Myc","Cd69","Il10", "Top2a", "Hmgb1", "Hmgb2", "Cd83","Ube2a", "Tubb5", "Tuba1b")
-
-fig1_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
-  at = which(rownames(f1_mat) %in% highlights),
-  labels = rownames(f1_mat)[rownames(f1_mat) %in% highlights],
-  labels_gp = gpar(fontsize = 4),
-  padding = 0.5
-))
-
-F1E <-
-  grid.grabExpr(draw(ComplexHeatmap::Heatmap(
-    f1_mat,
-    col = f1_colfun,
-    name = "Expression",
-    show_row_names = F,
-    right_annotation = fig1_anno,
-    heatmap_legend_param = list(legend_direction = "vertical",
-                                legend_width = unit(5, "cm"), 
-                                title_position = "topcenter", 
-                                title_gp = gpar(fontsize = 8)
-    ))))
-  
-#F1E<- grid.grabExpr(draw(F1E, heatmap_legend_side = "right"))
 #############################################################################################################################
 
 #Alt Fig 1 E: Leiden heatmap clusters
- bb_genebubbles(
-  obj = filter_cds(
-    cds_main,
-    cells = bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")
-    ),
-  genes = c("CD79A", "MS4A1", "CD19","CD3E", "CD8A","CD4","CD14"),
-  cell_grouping = "leiden") + facet_wrap(~disease_tissue)
 
-LN_leiden_Top500_tm <- monocle3::top_markers(ln_cds, group_cells_by = "leiden", genes_to_test_per_group = 500, cores = 12)
-write_csv(LN_leiden_Top500_tm, file = file.path(T_Figs, "LN_leiden_Top500_tm.csv"))
+#Select clusters of interest
+p1 <-bb_var_umap(cds_main, "leiden", overwrite_labels = T)+facet_wrap(~disease_tissue)
+p2 <- bb_var_umap(ln_cds, "leiden", overwrite_labels = T)+labs(title = "RT LN")
 
+p3 <- bb_genebubbles(
+  ln_cds,
+  genes = c("CD14","CD4","CD8A", "CD3E", "CD79A", "MS4A1", "CD19"
+  ),
+  cell_grouping = c("leiden", "leiden_assignment_1"),
+  return_value = "data"
+) |> 
+  ggplot(mapping = aes(x = leiden, 
+                       y = gene_short_name, 
+                       color = expression,
+                       size = proportion)) +
+  geom_point() +
+  scale_size_area() +
+  scale_color_viridis_c() +
+  facet_wrap(~leiden_assignment_1, scales = "free_x", ) +
+  theme_minimal_grid(font_size = 8) +
+  theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
+  theme(axis.text.y = element_text(face = "italic")) +
+  labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
+p1/p2/p3
+
+#Heatmap: 
+###filter for clusters of interst: c('3','11','6','2','5','9','1')
+
+#Top markers should be used to look at 50genes X # of clusters. (50x7)
+LN_B_leiden_Top50_tm <- monocle3::top_markers(ln_cds, group_cells_by = "leiden", genes_to_test_per_group = 50, cores = 12)
+write_csv(LN_B_leiden_Top50_tm, file = file.path(WalkerTables, "LN_B_leiden_Top50_tm.csv"))
+LN_leiden3.11.6.2.5.8.1_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Fig1 human RT data/leiden clustering/LN_leiden3.11.6.2.5.8.1_Top350_tm.csv")
 #bb_var_umap(ln_cds,"leiden", overwrite_labels = T) /S1D
-
+clust11<- filter(LN_leiden3.11.6.2.5.8.1_Top50_tm, cell_group == '11')
+clust3<- filter(LN_leiden3.11.6.2.5.8.1_Top50_tm, cell_group == '3')
+clust6<- filter(LN_leiden3.11.6.2.5.8.1_Top50_tm, cell_group == '6')
 #All leiden_assignment_1 B cell clusters
-markers <- LN_leiden_Top500_tm |> filter(cell_group %in% c("3","11","2","6","5","1","9","15","17")) |> pull(gene_short_name)
+markers <- LN_leiden3.11.6.2.5.8.1_Top50_tm |> filter(cell_group %in% c("3","11","6","5","1","2","9")) |> pull(gene_short_name)
 
 
 f1_mat <- bb_aggregate(obj = filter_cds(ln_cds,
                                         cells = bb_cellmeta(ln_cds) |>
-                                          filter(leiden %in% c("3","11","2","6","5","1","9","15","17")),
+                                          filter(leiden %in% c('3','11','6','2','5','9','1')),
                                         genes = bb_rowmeta(ln_cds) |>
                                           filter(gene_short_name %in% markers)),
                        cell_group_df = bb_cellmeta(ln_cds) |>
@@ -468,24 +427,24 @@ f1_colfun = circlize::colorRamp2(breaks = c(min(f1_mat),
                                             max(f1_mat)),
                                  colors = heatmap_3_colors)
 
-# QUESTION determine genes to highlight &
-#   how to come up with that list (nadeu et al - lymphma / leukemia gens &CLL / RT gense, paper mentioned genes - both mus&homo)
-
-highlights <-
-  as.list(LN_leiden_Top500_tm |> filter(cell_group %in% c("3","11")) |>
-            head(sort(LN_leiden_Top500_tm$marker_score, decreasing =
-                        TRUE), n = 20) |> pull(gene_short_name))|>unique() ## highlights[[!duplicated(highlights$gene_short_name),]]
-
-
-highlights2 <- c("Rel","PRMT5","Myc","CD83", "TUBB5", "TUBA1B","WNT10A", "CCR7", "CDK1", "BIRC5","JUNB","ATF4","CD69","NFKBIA","NFKBID","REL","UBC","CCNA2", "BLNK")
 #Mouse markers discussed in prev manuscript version: c("Ccr7", "Cdk4", "Cxcr5", "Birc5", "Il4","Npm1","Jun","Junb", "Fos","Fosb","Atf3","Atf4","Myc","Cd69","Il10", "Top2a", "Hmgb1", "Hmgb2", "Cd83","Ube2a", "Tubb5", "Tuba1b")
-# COMBAK
-highlights_bcr <-
-  readxl::read_excel(
-    "~/network/T/Labs/EHL/Rosa/Ethan/10X/Deepa_CLL_study/BCR genelist.xls",
-    skip = 1,
-  ) |> as.list()
-  
+#Human markers discussed "PRMT5", "MKI67", "TOP2A","PCNA","CALM2","CALM3","HMGB1","HMGB2", "UBE2C", "UBE2S", "TUBA1A","TUBA1B", "TUBA1C", "BCL21A", "IL4l1", "CD83", "TCL1A", "CCL3", "CCL4"
+#######human markers in top 50/clust = MKI67, TOP2A, HMGB2, UBE2C, UBE2S, TUBB4B(not TUBA1A or TUBA1C), TCL1A, CD83, TCL1A 
+###added to list due to presence in mouse data CDK4, BIRC5,NPM1,Junb (up)
+###other interesting genes CDK1, RRM2, CCNA2, CCNB1, CCNB2, CDC20,	CDCA3, CDCA5, CDCA8, MS4A1, (KIF proteins)
+
+highlights <- c("MKI67", "TOP2A","HMGB2", "UBE2C", "UBE2S", "TUBB4B","TUBA1B", "TUBA1C", "TUBB", "CD83", "TCL1A", "CDK4", "BIRC5", "NPM1", "CDK4", "CDK1", "JUNB")#, "AURKB", "PLK1")
+
+# highlights <-
+#   as.list(LN_B_leiden_Top50_tm |> filter(cell_group %in% c("3","11")) |>
+#             head(sort(LN_leiden3.11.6.2.5.8.1_Top350_t$marker_score, decreasing =
+#                         TRUE), n = 20) |> pull(gene_short_name))|>unique()
+# highlights <- #BCR gene list
+#   readxl::read_excel(
+#     "~/network/T/Labs/EHL/Rosa/Ethan/10X/Deepa_CLL_study/BCR genelist.xlsx",
+#     skip = 1,
+#   ) |> as.vector()
+
   
 fig1_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
   at = which(rownames(f1_mat) %in% highlights),
@@ -494,6 +453,86 @@ fig1_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
   padding = 0
 ))
 
-ComplexHeatmap::Heatmap(f1_mat,
+F1E <-
+  grid.grabExpr(draw(ComplexHeatmap::Heatmap(f1_mat,
                         col = f1_colfun,
-                        name = "Expression", show_row_names = F, right_annotation = fig1_anno)
+                        name = "Expression", 
+                        show_row_names = F, 
+                        right_annotation = fig1_anno,
+                        heatmap_legend_param = list(legend_direction = "vertical",
+                                                    legend_width = unit(4, "cm"), 
+                                                    title_position = "topcenter", 
+                                                    title_gp = gpar(fontsize = 8)
+                        ))))
+
+#View
+# ComplexHeatmap::Heatmap(f1_mat,
+#                         col = f1_colfun,
+#                         name = "Expression", show_row_names = F, right_annotation = fig1_anno)
+
+p1/p2
+
+#########################################################################################################
+#Fig 1E - partition clusters
+# COMBAK finish heatmap
+
+# TODO determine number of genes to look into and 
+# LN_Top500_tm <-monocle3::top_markers(ln_cds, group_cells_by = "partition", genes_to_test_per_group = 50, cores = 10)
+#write_csv(LN_Top500_tm, file = file.path(WalkerTables, "LN_Top500_tm.csv"))
+
+#bb_var_umap(cds_main, "partition", facet_by = "patient")
+#bb_var_umap(cds_main, "partition_assignment_1", facet_by = "patient")
+
+# markers <- LN_Top50_tm |> filter(cell_group %in% c("1","2","6")) |> pull(gene_short_name)
+# 
+# f1_mat <- bb_aggregate(obj = filter_cds(ln_cds, 
+#                                         cells = bb_cellmeta(ln_cds) |> 
+#                                           filter(partition %in% c("1","2","6")),
+#                                         genes = bb_rowmeta(ln_cds) |> 
+#                                           filter(gene_short_name %in% markers)), 
+#                        cell_group_df = bb_cellmeta(ln_cds) |> 
+#                          select(cell_id, partition)) |> 
+#   t() |> 
+#   scale() |> 
+#   t()
+# 
+# rownames(f1_mat) <- tibble(feature_id = rownames(f1_mat)) |> 
+#   left_join(bb_rowmeta(ln_cds) |> 
+#               select(feature_id, gene_short_name)) |> 
+#   pull(gene_short_name)
+# #f1_mat
+# f1_colfun = circlize::colorRamp2(breaks = c(min(f1_mat),
+#                                             0,
+#                                             max(f1_mat)),
+#                                  colors = heatmap_3_colors)
+
+# highlights <- as.list(LN_Top50_tm |> filter(cell_group %in% c("2")) |>
+#                         head(sort(LN_Top100_tm$marker_score, decreasing =
+#                                     TRUE), n = 20) |> pull(gene_short_name))
+# 
+# 
+# #highlights <- c("Rel","PRMT5","Myc","CD83", "TUBB5", "TUBA1B","WNT10A", "CCR7", "CDK1", "BIRC5","JUNB","ATF4","CD69","NFKBIA","NFKBID","REL","UBC","CCNA2", "BLNK")
+# 
+# #NOTE: Mouse markers discussed in prev manuscript version: c("Ccr7", "Cdk4", "Cxcr5", "Birc5", "Il4","Npm1","Jun","Junb", "Fos","Fosb","Atf3","Atf4","Myc","Cd69","Il10", "Top2a", "Hmgb1", "Hmgb2", "Cd83","Ube2a", "Tubb5", "Tuba1b")
+# 
+# fig1_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
+#   at = which(rownames(f1_mat) %in% highlights),
+#   labels = rownames(f1_mat)[rownames(f1_mat) %in% highlights],
+#   labels_gp = gpar(fontsize = 4),
+#   padding = 0.5
+# ))
+# 
+# F1E <-
+#   grid.grabExpr(draw(ComplexHeatmap::Heatmap(
+#     f1_mat,
+#     col = f1_colfun,
+#     name = "Expression",
+#     show_row_names = F,
+#     right_annotation = fig1_anno,
+#     heatmap_legend_param = list(legend_direction = "vertical",
+#                                 legend_width = unit(5, "cm"), 
+#                                 title_position = "topcenter", 
+#                                 title_gp = gpar(fontsize = 8)
+#     ))))
+
+#F1E<- grid.grabExpr(draw(F1E, heatmap_legend_side = "right"))
