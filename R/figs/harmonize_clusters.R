@@ -47,6 +47,6 @@ harmony_cluster_matrix <- map_dfr(.x = fig3_fig5$clust,
 
 harmony_colfun <- circlize::colorRamp2(breaks = c(0, 1), colors = c("grey80", "red"))
 
-ComplexHeatmap::Heatmap(harmonized_cluster_matrix, 
+ComplexHeatmap::Heatmap(harmony_cluster_matrix, 
                         col = harmony_colfun, 
                         name = "Jaccard")

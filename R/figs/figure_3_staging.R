@@ -227,6 +227,7 @@ S3E1 <- S3E_plotlist[[1]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]],
                                                         cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                           filter(k_10_assignment == "B")), variable = "genotype",
                                              genes_to_plot = "Ccr7", pseudocount = 0)+ theme(strip.text = element_blank())
+
 S3E2 <- S3E_plotlist[[2]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
@@ -239,7 +240,9 @@ S3E4 <-S3E_plotlist[[4]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]],
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
                                        genes_to_plot = "Cd93", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
-S3Ea <- (S3E1 | S3E2 | S3E3 | S3E4)  
+# S2E_1 <- (S3E1 | S3E2 | S3E3 | S3E4)
+# ggsave("S2E_1.pdf", path = T_Figs, width = 7.5, height = 9.75)
+
 
 S3E5 <- S3E_plotlist[[5]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
@@ -262,4 +265,76 @@ S3E9 <-S3E_plotlist[[9]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]],
                                                   filter(k_10_assignment == "B")), variable = "genotype",
                                      genes_to_plot = "Npm1", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
 
-S3Eb <- (S3E5 | S3E6 | S3E7 | S3E8 | S3E9) 
+# S2E_2 <- (S3E5 | S3E6 | S3E7 | S3E8 | S3E9) 
+# ggsave("S2E_2.pdf", path = T_Figs, width = 7.5, height = 3)
+
+# ####################################################################################################################################################
+# S3E1a <- S3E_plotlist[[1]]|S3E_plotlist[[2]]|S3E_plotlist[[3]]|S3E_plotlist[[4]]
+# S3E1a2 <- bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+#                               cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
+#                                 filter(k_10_assignment == "B")), variable = "genotype",
+#                    genes_to_plot = "Ccr7", pseudocount = 0) | bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+#                               cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
+#                                 filter(k_10_assignment == "B")), variable = "genotype",
+#                    genes_to_plot = "Il4", pseudocount = 0) +theme(axis.title.y = element_blank()) | bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+#                                         cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
+#                                           filter(k_10_assignment == "B")), variable = "genotype",
+#                              genes_to_plot = "Cd69", pseudocount = 0) +theme(axis.title.y = element_blank()) | bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+#                                         cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
+#                                           filter(k_10_assignment == "B")), variable = "genotype",
+#                              genes_to_plot = "Cd93", pseudocount = 0) +theme(axis.title.y = element_blank())
+# # S3E1aOne <- S3E1a1 | S3E1a2 | S3E1a3 | S3E1a4
+# # S3E1a / S3E1aOne + plot_layout(widths = c(5,1))
+# 
+# S3E1b <- S3E_plotlist[[5]]|S3E_plotlist[[6]]|S3E_plotlist[[7]]|S3E_plotlist[[8]]|S3E_plotlist[[9]]
+# b2 <- bb_gene_violinplot(
+#   filter_cds(
+#     mouse_cds_list[[1]],
+#     cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+#       filter(k_10_assignment == "B")
+#   ),
+#   variable = "genotype",
+#   genes_to_plot = "Cxcr5",
+#   pseudocount = 0
+# )+ theme(axis.title.y = element_blank()) | bb_gene_violinplot(
+#   filter_cds(
+#     mouse_cds_list[[1]],
+#     cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+#       filter(k_10_assignment == "B")
+#   ),
+#   variable = "genotype",
+#   genes_to_plot = "Myc",
+#   pseudocount = 0
+# ) + theme(axis.title.y = element_blank()) |
+#   bb_gene_violinplot(
+#     filter_cds(
+#       mouse_cds_list[[1]],
+#       cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+#         filter(k_10_assignment == "B")
+#     ),
+#     variable = "genotype",
+#     genes_to_plot = "Il10",
+#     pseudocount = 0
+#   ) + theme(axis.title.y = element_blank()) |
+#   bb_gene_violinplot(
+#     filter_cds(
+#       mouse_cds_list[[1]],
+#       cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+#         filter(k_10_assignment == "B")
+#     ),
+#     variable = "genotype",
+#     genes_to_plot = "Mki67",
+#     pseudocount = 0
+#   ) + theme(axis.title.y = element_blank()) |
+#   bb_gene_violinplot(
+#     filter_cds(
+#       mouse_cds_list[[1]],
+#       cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+#         filter(k_10_assignment == "B")
+#     ),
+#     variable = "genotype",
+#     genes_to_plot = "Npm1",
+#     pseudocount = 0
+#   ) + theme(axis.title.y = element_blank())
+# 
+# S3E1b / S3E1b2
