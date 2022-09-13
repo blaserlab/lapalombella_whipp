@@ -7,66 +7,83 @@ library(depmixS4)
 # all files associated with program in Documents>R>R-3.6.0>R.4Cker-master>R
 
 # only need to dump one time, re-source if change .R file
-dump("createR4CkerObject", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/createR4CkerObject.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/createR4CkerObject.R")
+# dump("createR4CkerObject", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/createR4CkerObject.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/createR4CkerObject.R")
 
-enz_file=read.table("T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/hg19_csp6i_flanking_sites_30_unique_2.bed", stringsAsFactors=FALSE)
+enz_file <- read.table("~/network/T/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/hg19_csp6i_flanking_sites_30_unique_2.bed", stringsAsFactors=FALSE)
 # had to set working directory otherwise, Error in file(file, "rt") : cannot open the connection
 # setwd("T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C")
 
 # this command takes awhile to run
-my_obj_1=createR4CkerObjectFromFiles(files=c("T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/sample9_1_aligned.bedGraph"),bait_chr="chr14",bait_coord=23398794,bait_name="PRMT5",primary_enz="GTAC",samples=c("PRMT5_9"),conditions="PRMT5",replicates=1,species="hs",output_dir="T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/4Cker",enz_file=enz_file)
+dir.create("data")
+my_obj_1 = createR4CkerObjectFromFiles(
+  files = c(
+    "~/network/T/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/sample9_1_aligned.bedGraph"
+  ),
+  bait_chr = "chr14",
+  bait_coord = 23398794,
+  bait_name = "PRMT5",
+  primary_enz = "GTAC",
+  samples = c("PRMT5_9"),
+  conditions = "PRMT5",
+  replicates = 1,
+  species = "hs",
+  output_dir = "data",
+  enz_file = enz_file
+)
 
-dump("transAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/transAnalysis.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/transAnalysis.R")
-
-dump("buildAdaptiveWindowsTrans", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsTrans.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsTrans.R")
-
-dump("getWindowCounts", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/getWindowCounts.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/getWindowCounts.R")
-
-dump("removePCR", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/removePCR.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/removePCR.R")
-
-dump("startingValues", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/startingValues.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/startingValues.R")
-
-dump("parameterEstimation", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/parameterEstimation.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/parameterEstimation.R")
-
-dump("differentialAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/differentialAnalysis.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/differentialAnalysis.R")
-
-dump("merge_windows", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/merge_windows.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/merge_windows.R")
-
-dump("normalizeCounts", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/normalizeCounts.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/normalizeCounts.R")
-
-dump("validateParameters", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/validateParameters.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/validateParameters.R")
-
-dump("viterbi3State", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/viterbi3State.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/viterbi3State.R")
-
-dump("generateSyntheticSamples", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/generateSyntheticSamples.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/generateSyntheticSamples.R")
-
-dump("buildAdaptiveWindowsCis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsCis.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsCis.R")
-
-dump("cisAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/cisAnalysis.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/cisAnalysis.R")
-
-dump("nearBaitAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/nearBaitAnalysis.R")
-source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/nearBaitAnalysis.R")
-
-transAnalysis(my_obj_1,k=50)
+# do we need this section? ---------------------------------
+# probably the answer is not any more
+# dump("transAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/transAnalysis.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/transAnalysis.R")
+# 
+# dump("buildAdaptiveWindowsTrans", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsTrans.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsTrans.R")
+# 
+# dump("getWindowCounts", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/getWindowCounts.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/getWindowCounts.R")
+# 
+# dump("removePCR", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/removePCR.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/removePCR.R")
+# 
+# dump("startingValues", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/startingValues.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/startingValues.R")
+# 
+# dump("parameterEstimation", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/parameterEstimation.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/parameterEstimation.R")
+# 
+# dump("differentialAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/differentialAnalysis.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/differentialAnalysis.R")
+# 
+# dump("merge_windows", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/merge_windows.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/merge_windows.R")
+# 
+# dump("normalizeCounts", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/normalizeCounts.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/normalizeCounts.R")
+# 
+# dump("validateParameters", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/validateParameters.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/validateParameters.R")
+# 
+# dump("viterbi3State", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/viterbi3State.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/viterbi3State.R")
+# 
+# dump("generateSyntheticSamples", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/generateSyntheticSamples.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/generateSyntheticSamples.R")
+# 
+# dump("buildAdaptiveWindowsCis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsCis.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/buildAdaptiveWindowsCis.R")
+# 
+# dump("cisAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/cisAnalysis.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/cisAnalysis.R")
+# 
+# dump("nearBaitAnalysis", file="C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/nearBaitAnalysis.R")
+# source("C:/Users/brin43/Documents/R/R-3.6.0/R.4Cker-master/R/nearBaitAnalysis.R")
+# 
+# transAnalysis(my_obj_1,k=50)
 #######################
 #format my data following transAnalysis
-trans_data_circos_high <- read.table("T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/4Cker/PRMT5_9_trans_highinter.bed")
-trans_data_circos_low <- read.table("T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/4Cker/PRMT5_9_trans_lowinter.bed")
+trans_data_circos_high <- read.table("~/network/T/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/4Cker/PRMT5_9_trans_highinter.bed")
+trans_data_circos_low <- read.table("~/network/T/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/4Cker/PRMT5_9_trans_lowinter.bed")
 names(trans_data_circos_high)[1]<-"chromosome.1"
 names(trans_data_circos_high)[2]<-"chromStart.1"
 names(trans_data_circos_high)[3]<-"chromEnd.1"
@@ -93,7 +110,7 @@ cyto.info<-UCSC.HG19.Human.CytoBandIdeogram;
 tracks.inside<-2;
 tracks.outside<-0;
 RCircos.Set.Core.Components(cyto.info,chr.exclude,tracks.inside,tracks.outside);
-out.file<-"T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/CircosPlot_high.pdf";
+out.file <- fs::path(figures_out, "circos_plot.pdf");
 pdf(file=out.file,height=8,width=8,compress=TRUE);
 RCircos.Set.Plot.Area();
 RCircos.Chromosome.Ideogram.Plot()
@@ -112,7 +129,6 @@ dev.off()
 trans_data_circos_low_2 <-rbind(trans_data_circos_low[1:62,],trans_data_circos_low[64:lengths(trans_data_circos_low[1]),])
 #######################
 # make circos plot - low interactions
-library(RCircos)
 data(UCSC.HG19.Human.CytoBandIdeogram);
 chr.exclude<-NULL;
 cyto.info<-UCSC.HG19.Human.CytoBandIdeogram;
@@ -120,7 +136,7 @@ cyto.info<-UCSC.HG19.Human.CytoBandIdeogram;
 tracks.inside<-2;
 tracks.outside<-0;
 RCircos.Set.Core.Components(cyto.info,chr.exclude,tracks.inside,tracks.outside);
-out.file<-"T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/CircosPlot_low.pdf";
+out.file<-fs::path(figures_out, "circos_plot_low.pdf");
 pdf(file=out.file,height=8,width=8,compress=TRUE);
 RCircos.Set.Plot.Area();
 RCircos.Chromosome.Ideogram.Plot()
@@ -197,7 +213,6 @@ trans_data_circos_12 <-rbind(trans_data_circos_11[1:631,],
 trans_data_circos_9<-trans_data_circos_8[312:441,]
 ########################
 # make circos plot
-library(RCircos)
 data(UCSC.HG19.Human.CytoBandIdeogram);
 chr.exclude<-NULL;
 cyto.info<-UCSC.HG19.Human.CytoBandIdeogram;
@@ -205,7 +220,7 @@ cyto.info<-UCSC.HG19.Human.CytoBandIdeogram;
 tracks.inside<-2;
 tracks.outside<-0;
 RCircos.Set.Core.Components(cyto.info,chr.exclude,tracks.inside,tracks.outside);
-out.file<-"T:/Labs/EHL/Rosa/Lindsey/3_PUBLICATIONS/4C/CircosPlot7.pdf";
+out.file<-fs::path(figures_out, "circos_plot_7.pdf");
 pdf(file=out.file,height=8,width=8,compress=TRUE);
 RCircos.Set.Plot.Area();
 RCircos.Chromosome.Ideogram.Plot()

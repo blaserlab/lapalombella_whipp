@@ -782,6 +782,20 @@
       "Hash": "d128ea05a972d3e67c6f39de52c72bd7",
       "Requirements": []
     },
+    "RCircos": {
+      "Package": "RCircos",
+      "Version": "1.2.2",
+      "Source": "bioc",
+      "Repository": "CRAN",
+      "RemoteType": "bioc",
+      "RemotePkgRef": "bioc::RCircos",
+      "RemoteRef": "bioc::RCircos",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.2.2",
+      "Hash": "1026fa3512070081dddf1a0981d39a48",
+      "Requirements": []
+    },
     "RColorBrewer": {
       "Package": "RColorBrewer",
       "Version": "1.1-3",
@@ -1073,6 +1087,22 @@
         "XVector",
         "bitops",
         "zlibbioc"
+      ]
+    },
+    "Rsolnp": {
+      "Package": "Rsolnp",
+      "Version": "1.16",
+      "Source": "CRAN",
+      "Repository": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "Rsolnp",
+      "RemoteRef": "Rsolnp",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.16",
+      "Hash": "2cd14f57e6b9f0c22e6b458db5cfc710",
+      "Requirements": [
+        "truncnorm"
       ]
     },
     "Rtsne": {
@@ -1646,7 +1676,7 @@
     },
     "blaseRtemplates": {
       "Package": "blaseRtemplates",
-      "Version": "0.0.0.9137",
+      "Version": "0.0.0.9139",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
@@ -1654,8 +1684,8 @@
       "RemoteUsername": "blaserlab",
       "RemotePkgRef": "blaserlab/blaseRtemplates",
       "RemoteRef": "HEAD",
-      "RemoteSha": "aae040ef519ec765b786ced42b70409c66beb333",
-      "Hash": "5afe93dc28c060551600369f01a6b650",
+      "RemoteSha": "5cd99b149fc61cf26de188d3f935e5545eccc0db",
+      "Hash": "8fa2f0f13eb752026e52cf1ce3ba3dea",
       "Requirements": [
         "cli",
         "devtools",
@@ -2238,6 +2268,25 @@
       "Hash": "65a3d4e2a1619bb85ae0fb64628da972",
       "Requirements": []
     },
+    "depmixS4": {
+      "Package": "depmixS4",
+      "Version": "1.5-0",
+      "Source": "CRAN",
+      "Repository": "CRAN",
+      "RemoteType": "standard",
+      "RemotePkgRef": "depmixS4",
+      "RemoteRef": "depmixS4",
+      "RemoteRepos": "https://cloud.r-project.org",
+      "RemotePkgPlatform": "source",
+      "RemoteSha": "1.5-0",
+      "Hash": "a90f0268de714902d81b8bc01b0d66a0",
+      "Requirements": [
+        "MASS",
+        "Rsolnp",
+        "nlme",
+        "nnet"
+      ]
+    },
     "desc": {
       "Package": "desc",
       "Version": "1.4.1",
@@ -2365,25 +2414,6 @@
       "RemoteSha": "1.0-1",
       "Hash": "d0ef6cd1546530da4d72179b52856e84",
       "Requirements": []
-    },
-    "downlit": {
-      "Package": "downlit",
-      "Version": "0.4.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "79bf3f66590752ffbba20f8d2da94c7c",
-      "Requirements": [
-        "brio",
-        "desc",
-        "digest",
-        "evaluate",
-        "fansi",
-        "memoise",
-        "rlang",
-        "vctrs",
-        "withr",
-        "yaml"
-      ]
     },
     "dplyr": {
       "Package": "dplyr",
@@ -4506,41 +4536,6 @@
       "Hash": "01f28d4278f15c76cddbea05899c5d6f",
       "Requirements": []
     },
-    "pkgdown": {
-      "Package": "pkgdown",
-      "Version": "2.0.6",
-      "Source": "CRAN",
-      "Repository": "CRAN",
-      "RemoteType": "standard",
-      "RemotePkgRef": "pkgdown",
-      "RemoteRef": "pkgdown",
-      "RemoteRepos": "https://cloud.r-project.org",
-      "RemotePkgPlatform": "source",
-      "RemoteSha": "2.0.6",
-      "Hash": "f958d0b2a5dabc5ffd414f062b1ffbe7",
-      "Requirements": [
-        "bslib",
-        "callr",
-        "cli",
-        "desc",
-        "digest",
-        "downlit",
-        "fs",
-        "httr",
-        "jsonlite",
-        "magrittr",
-        "memoise",
-        "purrr",
-        "ragg",
-        "rlang",
-        "rmarkdown",
-        "tibble",
-        "whisker",
-        "withr",
-        "xml2",
-        "yaml"
-      ]
-    },
     "pkgload": {
       "Package": "pkgload",
       "Version": "1.2.4",
@@ -4730,17 +4725,6 @@
       "Requirements": [
         "R6",
         "ps"
-      ]
-    },
-    "profvis": {
-      "Package": "profvis",
-      "Version": "0.3.7",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "e9d21e79848e02e524bea6f5bd53e7e4",
-      "Requirements": [
-        "htmlwidgets",
-        "stringr"
       ]
     },
     "progress": {
@@ -5117,16 +5101,6 @@
         "png",
         "rappdirs",
         "withr"
-      ]
-    },
-    "rex": {
-      "Package": "rex",
-      "Version": "1.2.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "ae34cd56890607370665bee5bd17812f",
-      "Requirements": [
-        "lazyeval"
       ]
     },
     "rgeos": {
@@ -6284,19 +6258,6 @@
         "xml2"
       ]
     },
-    "todor": {
-      "Package": "todor",
-      "Version": "0.1.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "c98f11db2d150554b43b3ab0557af50b",
-      "Requirements": [
-        "R.utils",
-        "rex",
-        "rstudioapi",
-        "stringr"
-      ]
-    },
     "topGO": {
       "Package": "topGO",
       "Version": "2.48.0",
@@ -6403,18 +6364,6 @@
       "Hash": "6c374b265ba437f8d384ec7a313edd96",
       "Requirements": [
         "Rcpp"
-      ]
-    },
-    "urlchecker": {
-      "Package": "urlchecker",
-      "Version": "1.0.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "409328b8e1253c8d729a7836fe7f7a16",
-      "Requirements": [
-        "cli",
-        "curl",
-        "xml2"
       ]
     },
     "usethis": {
