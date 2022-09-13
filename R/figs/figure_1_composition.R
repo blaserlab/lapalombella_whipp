@@ -1,5 +1,5 @@
 #source("R/figs/Ethan_Figs_081622.R")
-#T_Figs <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
+T_Figs <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
 
 
 F1top <- plot_grid(NULL, labels = "A")
@@ -8,16 +8,15 @@ F1rowtwo <- plot_grid(
   F1A,
   NULL,
   ncol = 2,
-  rel_widths = c(1, 1.1),
+  rel_widths = c(1.4, 1),
   labels = c("B", "C")
 )
 
 F1rowthree <- plot_grid(
   F1D,
   F1E,
-  #heatmap goes here
   ncol = 2,
-  rel_widths = c(1.3, 1),
+  rel_widths = c(1.4, 1),
   labels = c("D", "E")
 )
 
@@ -25,13 +24,13 @@ F1 <- plot_grid(F1top,
                 F1rowtwo,
                 F1rowthree,
                 nrow = 3,
-                rel_heights = c(0.15, 1, 1.2))
+                rel_heights = c(0.15, 1, 1.25))
 
 save_plot(F1,
           filename = "tempF1.png",
           base_width = 7.5,
           base_height = 9.75)
-#ggsave("F1.pdf", path = T_Figs, width = 7.5, height = 9.75)
+#ggsave("F1_leiden.pdf", path = figures_out, width = 7.5, height = 9.75)
 
 #Supplemental Fig1
 

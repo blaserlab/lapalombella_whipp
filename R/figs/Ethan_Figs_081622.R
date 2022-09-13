@@ -9,17 +9,18 @@ cds_main$disease_tissue <- factor(cds_main$disease_tissue,
 # bb_genebubbles(
 #   obj = filter_cds(cds_main, cells = bb_cellmeta(cds_main)),
 #   genes = c("CD14", "CD3E", "CD79A", "MS4A1", "CD19","CD8A", "CD4"), cell_grouping = "partition") + labs(x = "Partition Cluster", y = NULL) 
-colData(cds_main)$partition_assignment_1 <-
-  recode(
-    colData(cds_main)$partition,
-    "1" = "B",
-    "2" = "B",
-    "3" = "T",
-    "4" = "T",
-    "5" = "Mono",
-    "6" = "B",
-    "7" = "B"
-  )
+# colData(cds_main)$partition_assignment_1 <-
+#   recode(
+#     colData(cds_main)$partition,
+#     "1" = "B",
+#     "2" = "B",
+#     "3" = "T",
+#     "4" = "T",
+#     "5" = "Mono",
+#     "6" = "B",
+#     "7" = "B"
+#   )
+
 #leiden assignment
 # bb_genebubbles(
 #   obj = filter_cds(cds_main, cells = bb_cellmeta(cds_main)),
@@ -185,7 +186,7 @@ S1E <- as_ggplot(grid.arrange(patchworkGrob(S1EP1/S1EP2), left = S1EP1$labels$y,
 F1AP1 <-
   bb_var_umap(
     filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "Pt 1")),
-    "leiden_assignment_1",
+    "leiden_assignment_1", overwrite_labels = T,
     facet_by = "disease_tissue"
   ) +
   theme(
@@ -196,7 +197,6 @@ F1AP1 <-
     axis.title.y = element_blank()
   ) +
   theme(panel.background = element_rect(color = "black")) +
-  labs(fill = "Cluster")+ 
   theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
 F1AP2 <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "Pt 1")),
                      "log_local_n",
@@ -210,6 +210,8 @@ F1AP2 <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filte
   ) +
   theme(panel.background = element_rect(color = "black")) +
   labs(color = "Log<sub>10</sub><br>Cells") +
+  theme(legend.title=element_text(size=9))+
+  theme(legend.key.size = unit(0.4,"cm"))+
   theme(legend.title = ggtext::element_markdown())
 F1AP3 <- bb_gene_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "Pt 1")),
                       gene_or_genes = "PRMT5") +
@@ -220,14 +222,12 @@ F1AP3 <- bb_gene_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filt
   ) +
   theme(panel.background = element_rect(color = "black")) +
   labs(color = "*PRMT5*") +
+  theme(legend.title=element_text(size=9))+
+  theme(legend.key.size = unit(0.4,"cm"))+
   theme(legend.title = ggtext::element_markdown())+ 
   theme(plot.margin = unit(c(0.2, 0, 0, 0), "cm"))
   
 F1A <- F1AP1/F1AP2/F1AP3
-
-
-
-
 
 # bb_var_umap(
 #   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "pt_2712")), "partition_assignment_1"
@@ -279,7 +279,7 @@ F1D1<- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(
   theme(panel.background = element_rect(color = "black")) +
   labs(color = "*Density*") +
   theme(legend.title=element_text(size=9))+
-  theme(legend.key.size = unit(0.2,"cm"))+
+  theme(legend.key.size = unit(0.3,"cm"))+
   theme(legend.title = ggtext::element_markdown())+ 
   theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
 
@@ -298,7 +298,7 @@ F1D2<- bb_gene_umap(
   theme(panel.background = element_rect(color = "black")) +
   labs(color = "*PRMT5*") +
   theme(legend.title=element_text(size=9))+
-  theme(legend.key.size = unit(0.2,"cm"))+
+  theme(legend.key.size = unit(0.3,"cm"))+
   theme(legend.title = ggtext::element_markdown())+ 
   theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
 F1D3<- bb_gene_umap(
@@ -316,7 +316,7 @@ F1D3<- bb_gene_umap(
   theme(panel.background = element_rect(color = "black")) +
   labs(color = "*MYC*") +
   theme(legend.title=element_text(size=9))+
-  theme(legend.key.size = unit(0.2,"cm"))+
+  theme(legend.key.size = unit(0.3,"cm"))+
   theme(legend.title = ggtext::element_markdown())+ 
   theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
 F1D4 <- bb_gene_umap(
@@ -334,7 +334,7 @@ F1D4 <- bb_gene_umap(
   theme(panel.background = element_rect(color = "black")) +
   labs(color = "*MKI67*") +
   theme(legend.title=element_text(size=8)) +
-  theme(legend.key.size = unit(0.2,"cm"))+
+  theme(legend.key.size = unit(0.3,"cm"))+
   theme(legend.title = ggtext::element_markdown())+ 
   theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
 #+ theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
@@ -359,51 +359,49 @@ F1D <-
     bottom = textGrob(F1D3$labels$x, hjust = 0.8, vjust = -0.5))
   )
 
-
- 
-
 #############################################################################################################################
 
-#Alt Fig 1 E: Leiden heatmap clusters
+#Fig 1E: heatmap (leiden clusters)
 
 #Select clusters of interest
-p1 <-bb_var_umap(cds_main, "leiden", overwrite_labels = T)+facet_wrap(~disease_tissue)
-p2 <- bb_var_umap(ln_cds, "leiden", overwrite_labels = T)+labs(title = "RT LN")
+# bb_genebubbles(
+#   cds_main,
+#   genes = c("CD14","CD4","CD8A", "CD3E", "CD79A", "MS4A1", "CD19"
+#   ),
+#   cell_grouping = c("leiden", "leiden_assignment_1"),
+#   return_value = "data"
+# ) |> 
+#   ggplot(mapping = aes(x = leiden, 
+#                        y = gene_short_name, 
+#                        color = expression,
+#                        size = proportion)) +
+#   geom_point() +
+#   scale_size_area() +
+#   scale_color_viridis_c() +
+#   facet_wrap(~leiden_assignment_1, scales = "free_x", ) +
+#   theme_minimal_grid(font_size = 8) +
+#   theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
+#   theme(axis.text.y = element_text(face = "italic")) +
+#   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
 
-p3 <- bb_genebubbles(
-  ln_cds,
-  genes = c("CD14","CD4","CD8A", "CD3E", "CD79A", "MS4A1", "CD19"
-  ),
-  cell_grouping = c("leiden", "leiden_assignment_1"),
-  return_value = "data"
-) |> 
-  ggplot(mapping = aes(x = leiden, 
-                       y = gene_short_name, 
-                       color = expression,
-                       size = proportion)) +
-  geom_point() +
-  scale_size_area() +
-  scale_color_viridis_c() +
-  facet_wrap(~leiden_assignment_1, scales = "free_x", ) +
-  theme_minimal_grid(font_size = 8) +
-  theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
-  theme(axis.text.y = element_text(face = "italic")) +
-  labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
-p1/p2/p3
+F1E1 <- bb_var_umap(ln_cds, "leiden", overwrite_labels = T
+  ) + labs(title = "RT LN")
+F1E1
+
+#p3 <- bb_var_umap(ln_cds, "leiden", overwrite_labels = T)+labs(title = "RT LN")
 
 #Heatmap: 
 ###filter for clusters of interst: c('3','11','6','2','5','9','1')
 
-#Top markers should be used to look at 50genes X # of clusters. (50x7)
+#Top markers should be used to look at top 50genes in clusters of interest.
 LN_B_leiden_Top50_tm <- monocle3::top_markers(ln_cds, group_cells_by = "leiden", genes_to_test_per_group = 50, cores = 12)
-write_csv(LN_B_leiden_Top50_tm, file = file.path(WalkerTables, "LN_B_leiden_Top50_tm.csv"))
-LN_leiden3.11.6.2.5.8.1_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Fig1 human RT data/leiden clustering/LN_leiden3.11.6.2.5.8.1_Top350_tm.csv")
-#bb_var_umap(ln_cds,"leiden", overwrite_labels = T) /S1D
-clust11<- filter(LN_leiden3.11.6.2.5.8.1_Top50_tm, cell_group == '11')
-clust3<- filter(LN_leiden3.11.6.2.5.8.1_Top50_tm, cell_group == '3')
-clust6<- filter(LN_leiden3.11.6.2.5.8.1_Top50_tm, cell_group == '6')
+#T_tables_out <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv"
+#write_csv(LN_B_leiden_Top50_tm, file = file.path(T_tables_out, "LN_B_leiden_Top50_tm.csv"))
+#LN_B_leiden_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
+#bb_var_umap(ln_cds,"leiden", overwrite_labels = T) /p3
+
 #All leiden_assignment_1 B cell clusters
-markers <- LN_leiden3.11.6.2.5.8.1_Top50_tm |> filter(cell_group %in% c("3","11","6","5","1","2","9")) |> pull(gene_short_name)
+markers <- LN_B_leiden_Top50_tm |> filter(cell_group %in% c("3","11","6","5","1","2","9")) |> pull(gene_short_name)
 
 
 f1_mat <- bb_aggregate(obj = filter_cds(ln_cds,
@@ -433,12 +431,15 @@ f1_colfun = circlize::colorRamp2(breaks = c(min(f1_mat),
 ###added to list due to presence in mouse data CDK4, BIRC5,NPM1,Junb (up)
 ###other interesting genes CDK1, RRM2, CCNA2, CCNB1, CCNB2, CDC20,	CDCA3, CDCA5, CDCA8, MS4A1, (KIF proteins)
 
-highlights <- c("MKI67", "TOP2A","HMGB2", "UBE2C", "UBE2S", "TUBB4B","TUBA1B", "TUBA1C", "TUBB", "CD83", "TCL1A", "CDK4", "BIRC5", "NPM1", "CDK4", "CDK1", "JUNB")#, "AURKB", "PLK1")
+highlights <- c("MKI67", "TOP2A","HMGB2", "UBE2C", "UBE2S","TUBA1B", "TUBA1C", "TUBB", "TCL1A", "BIRC5", "NPM1", "CDK1", "JUNB")#, "AURKB", "PLK1", "CDK4","TUBB4B","CD83")
 
-# highlights <-
-#   as.list(LN_B_leiden_Top50_tm |> filter(cell_group %in% c("3","11")) |>
-#             head(sort(LN_leiden3.11.6.2.5.8.1_Top350_t$marker_score, decreasing =
-#                         TRUE), n = 20) |> pull(gene_short_name))|>unique()
+#Additional lymphoma associated genes
+# lymphoma_genes<- readxl::read_excel("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/disgenet.org_LymphomaGenes_C0024299_disease_gda_summary.xlsx")[3]
+# filt<- LN_B_leiden_Top50_tm |> filter(LN_B_leiden_Top50_tm$gene_short_name %in% lymphoma_genes$Gene)
+# tm_gois <- filter(filt, cell_group %in% c('11','3'))[["gene_short_name"]]
+# highlights_plus <- unique(c(highlights, tm_gois))
+
+#BCR associated genes
 # highlights <- #BCR gene list
 #   readxl::read_excel(
 #     "~/network/T/Labs/EHL/Rosa/Ethan/10X/Deepa_CLL_study/BCR genelist.xlsx",
@@ -449,90 +450,32 @@ highlights <- c("MKI67", "TOP2A","HMGB2", "UBE2C", "UBE2S", "TUBB4B","TUBA1B", "
 fig1_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
   at = which(rownames(f1_mat) %in% highlights),
   labels = rownames(f1_mat)[rownames(f1_mat) %in% highlights],
-  labels_gp = gpar(fontsize = 8),
-  padding = 0
+  labels_gp = gpar(fontsize = 5),
+  padding = unit(2.8, "mm")
+  # link_width = unit(5, "mm"),
+  # link_height = link_width,
+  #link_gp = unit(10, "mm"),
+  # extend = unit(0, "mm)
 ))
 
-F1E <-
-  grid.grabExpr(draw(ComplexHeatmap::Heatmap(f1_mat,
+
+F1E2 <- grid.grabExpr(draw(
+    ComplexHeatmap::Heatmap(f1_mat,
                         col = f1_colfun,
                         name = "Expression", 
                         show_row_names = F, 
                         right_annotation = fig1_anno,
+                        row_dend_width = unit(4, "mm"),
+                        column_dend_height = unit(2, "mm"),
                         heatmap_legend_param = list(legend_direction = "vertical",
-                                                    legend_width = unit(4, "cm"), 
-                                                    title_position = "topcenter", 
-                                                    title_gp = gpar(fontsize = 8)
-                        ))))
+                                                    #legend_width = unit(1, "mm"),
+                                                    title_position = "topleft-rot", 
+                                                    title_gp = gpar(fontsize = 6)
+                                               ))))
+#F1E2 <- grid.grabExpr(draw(F1E2, heatmap_legend_side = "bottom"))
 
-#View
-# ComplexHeatmap::Heatmap(f1_mat,
-#                         col = f1_colfun,
-#                         name = "Expression", show_row_names = F, right_annotation = fig1_anno)
 
-p1/p2
-
-#########################################################################################################
-#Fig 1E - partition clusters
-# COMBAK finish heatmap
-
-# TODO determine number of genes to look into and 
-# LN_Top500_tm <-monocle3::top_markers(ln_cds, group_cells_by = "partition", genes_to_test_per_group = 50, cores = 10)
-#write_csv(LN_Top500_tm, file = file.path(WalkerTables, "LN_Top500_tm.csv"))
-
-#bb_var_umap(cds_main, "partition", facet_by = "patient")
-#bb_var_umap(cds_main, "partition_assignment_1", facet_by = "patient")
-
-# markers <- LN_Top50_tm |> filter(cell_group %in% c("1","2","6")) |> pull(gene_short_name)
-# 
-# f1_mat <- bb_aggregate(obj = filter_cds(ln_cds, 
-#                                         cells = bb_cellmeta(ln_cds) |> 
-#                                           filter(partition %in% c("1","2","6")),
-#                                         genes = bb_rowmeta(ln_cds) |> 
-#                                           filter(gene_short_name %in% markers)), 
-#                        cell_group_df = bb_cellmeta(ln_cds) |> 
-#                          select(cell_id, partition)) |> 
-#   t() |> 
-#   scale() |> 
-#   t()
-# 
-# rownames(f1_mat) <- tibble(feature_id = rownames(f1_mat)) |> 
-#   left_join(bb_rowmeta(ln_cds) |> 
-#               select(feature_id, gene_short_name)) |> 
-#   pull(gene_short_name)
-# #f1_mat
-# f1_colfun = circlize::colorRamp2(breaks = c(min(f1_mat),
-#                                             0,
-#                                             max(f1_mat)),
-#                                  colors = heatmap_3_colors)
-
-# highlights <- as.list(LN_Top50_tm |> filter(cell_group %in% c("2")) |>
-#                         head(sort(LN_Top100_tm$marker_score, decreasing =
-#                                     TRUE), n = 20) |> pull(gene_short_name))
-# 
-# 
-# #highlights <- c("Rel","PRMT5","Myc","CD83", "TUBB5", "TUBA1B","WNT10A", "CCR7", "CDK1", "BIRC5","JUNB","ATF4","CD69","NFKBIA","NFKBID","REL","UBC","CCNA2", "BLNK")
-# 
-# #NOTE: Mouse markers discussed in prev manuscript version: c("Ccr7", "Cdk4", "Cxcr5", "Birc5", "Il4","Npm1","Jun","Junb", "Fos","Fosb","Atf3","Atf4","Myc","Cd69","Il10", "Top2a", "Hmgb1", "Hmgb2", "Cd83","Ube2a", "Tubb5", "Tuba1b")
-# 
-# fig1_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
-#   at = which(rownames(f1_mat) %in% highlights),
-#   labels = rownames(f1_mat)[rownames(f1_mat) %in% highlights],
-#   labels_gp = gpar(fontsize = 4),
-#   padding = 0.5
-# ))
-# 
-# F1E <-
-#   grid.grabExpr(draw(ComplexHeatmap::Heatmap(
-#     f1_mat,
-#     col = f1_colfun,
-#     name = "Expression",
-#     show_row_names = F,
-#     right_annotation = fig1_anno,
-#     heatmap_legend_param = list(legend_direction = "vertical",
-#                                 legend_width = unit(5, "cm"), 
-#                                 title_position = "topcenter", 
-#                                 title_gp = gpar(fontsize = 8)
-#     ))))
-
-#F1E<- grid.grabExpr(draw(F1E, heatmap_legend_side = "right"))
+F1E <- F1E1 / F1E2 +
+  plot_layout(heights = c(1, 2.5))
+F1E
+as_ggplot(F1E2)

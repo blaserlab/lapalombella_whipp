@@ -16,7 +16,7 @@ conflict_prefer("reduce", "purrr")
 # 3 color heatmap
 heatmap_3_colors <- c("#313695","white","#A50026")
 
-
+`%!in%` = Negate(`%in%`)
 # output -------------------------------------------------
 figures_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/figures"
 tables_out <- "~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/tables"
