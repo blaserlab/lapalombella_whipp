@@ -1,3 +1,37 @@
+# modifications to CDS.  Should incorporate into data package -----------
+# aggr_umap_tbl <- read_csv("~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/cellranger_aggr/lapalombella_whipp_aggr_20211130/outs/count/analysis/umap/2_components/projection.csv", col_names = c("cell_id", "aggr_UMAP_1", "aggr_UMAP_2"), skip = 1) |> 
+#   mutate(barcode_truncated = str_remove(cell_id, "[[:digit:]]")) |> 
+#   mutate(sample_num = str_extract(cell_id, "[[:digit:]]")) |> 
+#   mutate(sample_name = recode(sample_num, 
+#                               "1" = "L33_19972712RTLN", 
+#                               "2" = "L34_19972712RTPBMC", 
+#                               "3" = "L35_19972712CLLPBMC", 
+#                               "4" = "L36_19971245RTLN", 
+#                               "5" = "L37_19971245RTPBMC", 
+#                               "6" = "L38_19971245CLLPBMC", 
+#                               )) |> 
+#   mutate(cell_id = paste0(barcode_truncated, "1_", sample_name)) |> count(sample_name)
+#   select(cell_id, aggr_UMAP_1, aggr_UMAP_2)
+# 
+# aggr_cluster_tbl <- read_csv("~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/cellranger_aggr/lapalombella_whipp_aggr_20211130/outs/count/analysis/clustering/kmeans_9_clusters/clusters.csv", col_names = c("cell_id", "cluster"), skip = 1) |> 
+#   mutate(barcode_truncated = str_remove(cell_id, "[[:digit:]]")) |> 
+#   mutate(sample_num = str_extract(cell_id, "[[:digit:]]")) |> 
+#   mutate(sample_name = recode(sample_num, 
+#                               "1" = "L33_19972712RTLN", 
+#                               "2" = "L34_19972712RTPBMC", 
+#                               "3" = "L35_19972712CLLPBMC", 
+#                               "4" = "L36_19971245RTLN", 
+#                               "5" = "L37_19971245RTPBMC", 
+#                               "6" = "L38_19971245CLLPBMC", 
+#                               )) |> 
+#   mutate(cell_id = paste0(barcode_truncated, "1_", sample_name)) |>
+#   select(cell_id, aggr_cluster = cluster) |> 
+#   mutate(aggr_cluster = as.character(aggr_cluster))
+# 
+# 
+# cds_main <- bb_tbl_to_coldata(obj = cds_main, min_tbl = aggr_umap_tbl)
+# cds_main <- bb_tbl_to_coldata(obj = cds_main, min_tbl = aggr_cluster_tbl)
+
 #Create Disease_tissue column in cds
 colData(cds_main)$disease_tissue <-
   paste0(colData(cds_main)$disease, " ", colData(cds_main)$tissue)
@@ -469,7 +503,7 @@ F1E2 <- grid.grabExpr(draw(
                         column_dend_height = unit(2, "mm"),
                         heatmap_legend_param = list(legend_direction = "vertical",
                                                     #legend_width = unit(1, "mm"),
-                                                    title_position = "topleft-rot", 
+                                                    title_position = "lefttop", 
                                                     title_gp = gpar(fontsize = 6)
                                                ))))
 #F1E2 <- grid.grabExpr(draw(F1E2, heatmap_legend_side = "bottom"))
