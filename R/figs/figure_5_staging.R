@@ -1,12 +1,11 @@
-WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
-WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
+# WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
+# WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
 
-#recode M0980 as Eu-PRMT5/TCL1
 colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
                                                 "PRMT5" = "PRMT5/TCL1",
                                                 "TCL1" = "TCL1",
                                                 "P/T" = "PRMT5/TCL1")
-unique(mouse_cds_list[[4]]$mouse)
+#unique(mouse_cds_list[[2]]$tissue)
 
 #Fig5 Figs
 #recode and harmoize clusters
@@ -24,57 +23,134 @@ colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- recode(colData(mouse_cds_li
 
 colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- factor(colData(mouse_cds_list[[2]])$kmeans_10_harmonized, 
                                                             levels = paste0("5.", 1:10))
-#kmeans10 UMAP
-fig5_k10_harmonized<- 
-bb_var_umap(mouse_cds_list[[2]], var = "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T) +
-  facet_wrap(~genotype)
-#ggsave("fig5_k10_harmonized.pdf", path = figures_out, width = 7.8, height = 4.7)
-
-fig5_density_supp <- 
-bb_var_umap(mouse_cds_list[[2]], "density", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
-#ggsave("fig5_density_supp.pdf", path = figures_out, width = 7.8, height = 4.7)
-
 #cell type calling
-cds_sub <- mouse_cds_list[[2]]
-
+# cds_sub <- mouse_cds_list[[2]]
 # cds_sub$kmeans_10_harmonized <- factor(cds_sub$kmeans_10_harmonized,
 #                                                    levels = c("5.1", "5.2", "5.3", "5.4", "5.5", "5.6","5.7","5.8","5.9","5.10"))
 # levels(cds_sub$kmeans_10_harmonized) <- c("5.1", "5.2", "5.3", "5.4", "5.5", "5.6","5.7","5.8","5.9","5.10")
+# bb_genebubbles(
+#   obj = mouse_cds_list[[2]],
+#   genes = c(
+#     "Cd19",
+#     "Ms4a1",
+#     "Cd79a",
+#     "Cd3d",
+#     "Cd4",
+#     "Cd14",
+#     "Itgam",
+#     "Cd8a",
+#     "Cd177",
+#     "Pdcd1",
+#     "Foxp3"
+#   ),
+#   cell_grouping = "kmeans_10_harmonized"
+# ) 
 
-fig5_marker_genebubbles_supp <- bb_genebubbles(
-  obj = filter_cds(cds_sub, cells = bb_cellmeta(cds_sub)),
-  genes = c("Cd19", "Ms4a1", "Cd79a", "Cd3d","Cd4","Cd14","Itgam","Cd8a","Cd177","Pdcd1","Foxp3"), cell_grouping = "kmeans_10_harmonized") 
-ggsave("fig5_marker_genebubbles_supp.pdf", path = figures_out, width = 4.6, height = 2.9)
+#cluster/cell type assignment
+colData(mouse_cds_list[[2]])$k_10_assignment <- recode(colData(mouse_cds_list[[2]])$kmeans_10_harmonized, "5.1" = "B", "5.2" = "Cd8+ T", "5.3" = "B", "5.4" = "Cd4+ T", "5.5" = "B", "5.6" = "B", "5.7" = "Neutrophils", "5.8" = "B", "5.9" = "B", "5.10" = "Monocytes")
+
+# make logical values for CD19+CD5+ cells
+mat <- monocle3::exprs(mouse_cds_list[[2]])
+
+cd19_tbl <- colnames(mat[ ,mat["ENSMUSG00000030724", ] > 0]) |> as_tibble() |> mutate(Cd19_pos = TRUE) |> rename(cell_id = value)
+mouse_cds_list[[2]] <- bb_tbl_to_coldata(mouse_cds_list[[2]], min_tbl = cd19_tbl)
+
+cd5_tbl <- colnames(mat[ ,mat["ENSMUSG00000024669", ] > 0]) |> as_tibble() |> mutate(Cd5_pos = TRUE) |> rename(cell_id = value)
+mouse_cds_list[[2]] <- bb_tbl_to_coldata(mouse_cds_list[[2]], min_tbl = cd5_tbl)
 
 
-#cluster assignment
-colData(cds_sub)$k_10_assignment <- recode(colData(cds_sub)$kmeans_10_harmonized, "5.1" = "B", "5.2" = "Cd8+ T", "5.3" = "B", "5.4" = "Cd4+ T", "5.5" = "B", "5.6" = "B", "5.7" = "Neutrophils", "5.8" = "B", "5.9" = "B", "5.10" = "Monocytes")
+colData(mouse_cds_list[[2]])$cd19_cd5_pos <- colData(mouse_cds_list[[2]])$Cd19_pos & colData(mouse_cds_list[[2]])$Cd5_pos  
 
-fig5d <- bb_var_umap(cds_sub, "k_10_assignment", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype")
-ggsave("fig5d.pdf", path = figures_out, width = 7.8, height = 4.7)
+mouse_cds_list[[2]] <- bb_cellmeta(mouse_cds_list[[2]]) |> 
+  filter(cd19_cd5_pos) |> 
+  select(cell_id) |> 
+  mutate(cd19_cd5_label = "CD19+/CD5+ cells") |> 
+  bb_tbl_to_coldata(mouse_cds_list[[2]], min_tbl = _)
+colData(mouse_cds_list[[2]])$cd19_cd5_label
 
-colData(cds_sub)
 
-#Gene dotplot
-fig5_marker_genebubbles_supp2 <- 
-bb_genebubbles(
-  cds_sub,
-  genes = c(
-    "Ms4a1",
-    "Cd79a",
-    "Cd19",
-    "Cd3d",
-    "Cd4",
-    "Cd14",
-    "Itgam",
-    "Cd8a",
-    "Cd177",
-    "Pdcd1",
-    "Foxp3"
+#Supp Figs
+S4E <- bb_var_umap(
+  mouse_cds_list[[2]],
+  "cd19_cd5_label",
+  facet_by = "genotype",
+  alt_dim_x = "aggr_UMAP_1",
+  alt_dim_y = "aggr_UMAP_2",
+  value_to_highlight = "CD19+/CD5+ cells",
+  palette = "#ed718d", 
+  legend_pos = "bottom", 
+  foreground_alpha = 0.6
+) +
+  #theme(axis.text = element_blank()) +
+  #theme(axis.ticks = element_blank()) +
+  labs(x = "UMAP 1", y= "UMAP 2") +
+  theme(legend.justification = "center")
+
+S4F_plotlist <- map(.x = c("Cd93", "Il4"),
+                           .f = \(x, dat = mouse_cds_list[[2]]) {
+                             p <- bb_gene_umap(
+                               dat,
+                               gene_or_genes = x,
+                               alt_dim_x = "aggr_UMAP_1",
+                               alt_dim_y = "aggr_UMAP_2"
+                             ) +
+                               scale_color_distiller(palette = "Oranges",
+                                                     direction = 1,
+                                                     na.value = "grey80") +
+                               facet_wrap( ~ genotype) +
+                               theme(panel.background = element_rect(color = "black")) +
+                               theme(axis.line = element_blank()) +
+                               theme(axis.ticks = element_blank()) +
+                               theme(axis.text = element_blank()) +
+                               #labs(x = NULL, y = x) +
+                               labs(x = x, y = NULL) +
+                               theme(axis.title.y = element_text(face = "italic")) +
+                               theme(legend.position = "none") + theme(strip.text = element_blank())
+                             #if (x != "Cd93") p <- p + theme(strip.text = element_blank())
+                             p 
+                           })
+S4F1 <- S4F_plotlist[[1]]/S4F_plotlist[[2]]
+S4F2a <- bb_gene_violinplot(
+  filter_cds(
+    mouse_cds_list[[2]],
+    cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+      filter(k_10_assignment == "B")),
+  variable = "genotype",
+  genes_to_plot = "Cd93",
+  pseudocount = 0
+) +theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
+S4F2b <- bb_gene_violinplot(
+  filter_cds(
+    mouse_cds_list[[2]],
+    cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+      filter(k_10_assignment == "B")
   ),
-  cell_grouping = c("kmeans_10_harmonized", "k_10_assignment"),
-  return_value = "data"
-) |> 
+  variable = "genotype",
+  genes_to_plot = "Il4",
+  pseudocount = 0) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
+
+#S4F <- S4F1 | S4F2a/S4F2b + plot_layout(widths = c(2,1))
+S4F<- S4F_plotlist[[1]]/S4F2a | S4F_plotlist[[2]]/S4F2b
+
+S4_genebubble <- 
+  bb_genebubbles(
+    mouse_cds_list[[2]],
+    genes = c(
+      "Ms4a1",
+      "Cd79a",
+      "Cd19",
+      "Cd3d",
+      "Cd4",
+      "Cd14",
+      "Itgam",
+      "Cd8a",
+      "Cd177",
+      "Pdcd1",
+      "Foxp3"
+    ),
+    cell_grouping = c("kmeans_10_harmonized", "k_10_assignment"),
+    return_value = "data"
+  ) |> 
   ggplot(mapping = aes(x = kmeans_10_harmonized, 
                        y = gene_short_name, 
                        color = expression,
@@ -87,7 +163,21 @@ bb_genebubbles(
   theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
   theme(axis.text.y = element_text(face = "italic")) +
   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
-#ggsave("fig5_marker_genebubbles_supp2.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs", height = 6.1, width = 5.8)
+#ggsave("S4_genebubble.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs", height = 6.1, width = 5.8)
+
+#kmeans10 UMAP
+fig5_k10_harmonized<- 
+bb_var_umap(mouse_cds_list[[2]], var = "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T) +
+  facet_wrap(~genotype)
+F3D1 / fig5_k10_harmonized
+#ggsave("fig5_k10_harmonized.pdf", path = figures_out, width = 7.8, height = 4.7)
+
+fig5_density_supp <- 
+bb_var_umap(mouse_cds_list[[2]], "density", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2")
+#ggsave("fig5_density_supp.pdf", path = figures_out, width = 7.8, height = 4.7)
+
+F5D <- bb_var_umap(cds_sub, "k_10_assignment", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype")
+#ggsave("fig5d.pdf", path = figures_out, width = 7.8, height = 4.7)
 
 #UMAPs
 #"fig5_mouse_facet_supp" <- 
@@ -97,10 +187,10 @@ bb_genebubbles(
 
 #Heatmap/topmarkers
   #top markers
-fig5_kmeans_10_tm_Top100 <-monocle3::top_markers(mouse_cds_list[[2]], group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 100, cores = 10)
+fig5_kmeans_10_tm_Top100 <-monocle3::top_markers(mouse_cds_list[[2]], group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 10)
 write_csv(fig5_kmeans_10_tm_Top100, file = file.path(tables_out, "fig5_kmeans_100_tm.csv"))
 
-  #Bcell top markers btwn genotypes
+#Bcell top markers btwn genotypes
 SplnB_km10<-cds_sub[,colData(cds_sub)$k_10_assignment == "B"]
 colData(SplnB_km10)
 Fig5_Spln_AllB_km10_Top100 <- monocle3::top_markers(SplnB_km10,
@@ -109,7 +199,7 @@ Fig5_Spln_AllB_km10_Top100 <- monocle3::top_markers(SplnB_km10,
 #rm(Fig5_Spln_AllB_km10_Top100)
 
 
-markers <- fig5_kmeans_10_tm_Top100 |> 
+markers <- fig5_kmeans_10_tm_Top50 |> 
   filter(cell_group %in% c("5.1", "5.3", "5.5", "5.6", "5.8","5.9")) |> 
   pull(gene_short_name)
 
@@ -151,6 +241,7 @@ ComplexHeatmap::Heatmap(fig5_mat,
 fig5_kmeans_10_tm_Top100 |> filter(cell_group == "5.6") |> arrange(desc(marker_score))
 fig5_kmeans_10_tm_Top100 |> filter(cell_group == "5.6") |> arrange(desc(mean_expression))
 
+####################################################################################################################################
 #Graph based Analysis
 
 #fig5_graphbased_UMAP<- bb_var_umap(mouse_cds_list[[2]], var = "graphclust", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T) +
