@@ -15,14 +15,14 @@ F5top <- plot_grid(
 
 F5rowtwo <- plot_grid(
   F5D,
-  NULL,
+  FEa,
   ncol = 2,
   rel_widths = c(1.2, 1),
   labels = c("D", "E")
 )
 F5rowthree <- plot_grid(
   F5F,
-  NULL,
+  FEb,
   ncol = 2,
   rel_widths = c(1.2, 1),
   labels = c("F", NULL)

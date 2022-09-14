@@ -75,30 +75,6 @@ F5D2 <- bb_var_umap(mouse_cds_list[[2]], "density", facet_by = "genotype", alt_d
 F5D <- F5D1 / F5D2 + plot_layout(heights = c(1.5,1))
 
 ############F5E
-F5E_plotlist2 <- map(.x = c("Myc", "Mki67", "Egr1", "Cxcr5", "Ccr7", "Il10", "Ctla4", "Cd274"),
-                    .f = \(x, dat = mouse_cds_list[[2]]) {
-                      p <- bb_gene_umap(
-                        dat,
-                        gene_or_genes = x,
-                        alt_dim_x = "aggr_UMAP_1",
-                        alt_dim_y = "aggr_UMAP_2"
-                      ) +
-                        scale_color_distiller(palette = "Oranges",
-                                              direction = 1,
-                                              na.value = "grey80") +
-                        facet_wrap( ~ genotype) +
-                        theme(panel.background = element_rect(color = "black")) +
-                        theme(axis.line = element_blank()) +
-                        theme(axis.ticks = element_blank()) +
-                        theme(axis.text = element_blank()) +
-                        #labs(x = NULL, y = x) +
-                        labs(x = x, y = NULL) +
-                        theme(axis.title.y = element_text(face = "italic")) +
-                        theme(strip.text = element_blank()) + 
-                        theme(legend.title = element_blank()) #+theme(legend.position = "none")
-                      #if (x != "Myc") p <- p + theme(strip.text = element_blank())
-                      p 
-                    })
 F5E_plotlist <- map(.x = c("Myc", "Mki67", "Egr1", "Cxcr5", "Ccr7", "Il10", "Ctla4", "Cd274"),
                     .f = \(x, dat = mouse_cds_list[[2]]) {
                       p <- bb_gene_umap(
@@ -168,15 +144,59 @@ F5E_2 <-
     genes_to_plot = "Cxcr5",
     pseudocount = 0
   ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
-F5E_1/F5E_2 + plot_layout(heights = c(1.5,1))
+FEa <- F5E_1/F5E_2 + plot_layout(heights = c(1.5,1))
 
 F5E_3 <- 
   F5E_plotlist[[5]] |
   F5E_plotlist[[6]] |
   F5E_plotlist[[7]] |
-  F5E_plotlist[[8]] + theme(legend.position = "topleft")
+  F5E_plotlist[[8]] + theme(legend.position = "top")
 
-####################################################################
+F5E_4 <-
+  bb_gene_violinplot(
+    filter_cds(
+      mouse_cds_list[[2]],
+      cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+        filter(k_10_assignment == "B")
+    ),
+    variable = "genotype",
+    genes_to_plot = "Ccr7",
+    pseudocount = 0
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
+  bb_gene_violinplot(
+    filter_cds(
+      mouse_cds_list[[2]],
+      cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+        filter(k_10_assignment == "B")
+    ),
+    variable = "genotype",
+    genes_to_plot = "Il10",
+    pseudocount = 0
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
+  bb_gene_violinplot(
+    filter_cds(
+      mouse_cds_list[[2]],
+      cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+        filter(k_10_assignment == "B")
+    ),
+    variable = "genotype",
+    genes_to_plot = "Ctla4",
+    pseudocount = 0
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
+  bb_gene_violinplot(
+    filter_cds(
+      mouse_cds_list[[2]],
+      cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+        filter(k_10_assignment == "B")
+    ),
+    variable = "genotype",
+    genes_to_plot = "Cd274",
+    pseudocount = 0
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
+FEb <- F5E_3/F5E_4 + plot_layout(heights = c(1.5,1))
+
+
+######Fig 5F
 #kmeans10 UMAP
 F5F1<- 
   bb_var_umap(mouse_cds_list[[2]], var = "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T) +
@@ -187,8 +207,8 @@ F5F1<-
 #top markers
 F5_k10_Top50_tm <-monocle3::top_markers(filter_cds(mouse_cds_list[[2]], 
                                                    cells = bb_cellmeta(mouse_cds_list[[2]]) |> 
-                                                     filter(kmeans_10_harmonized %in% c("5.1", "5.3", "5.5", "5.6", "5.9"))), group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 10)
-#write_csv(fig5_kmeans_10_tm_Top100, file = file.path(tables_out, "fig5_k10_Top50_tm.csv"))
+                                                     filter(kmeans_10_harmonized %in% c("5.1", "5.3", "5.5", "5.6", "5.9"))), group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 12)
+#write_csv(F5_k10_Top50_tm, file = file.path(WalkerTables, "F5_k10_Top50_tm.csv"))
 
 markers <- F5_k10_Top50_tm |> 
   filter(cell_group %in% c("5.1", "5.6")) |> 
