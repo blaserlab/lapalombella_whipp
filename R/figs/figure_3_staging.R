@@ -40,7 +40,9 @@ theme(
 F3A2 <- bb_var_umap(mouse_cds_list[[1]], "density", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2") + 
   theme(strip.text = element_blank(),
         axis.title.y = element_blank(),
-        axis.title.x = element_blank())
+        axis.title.x = element_blank()) +
+  theme(legend.key.size = unit(3, 'mm'))
+
 F3A <- (F3A1/F3A2) 
 F3A 
 
