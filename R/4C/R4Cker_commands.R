@@ -1,6 +1,7 @@
 library(devtools)
 library(fitdistrplus)
 library(depmixS4)
+library(R.4Cker)
 # install_github("rr1859/R.4Cker")
 # library(R.4Cker)
 # proxy won't allow install -> use dump/source
