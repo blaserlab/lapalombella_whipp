@@ -1,6 +1,6 @@
-#source("R/figs/Ethan_Figs_081622.R")
+# #source("R/figs/Ethan_Figs_081622.R")
 T_Figs <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
-#T_tables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
+# T_tables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
 
 
 
@@ -21,7 +21,6 @@ F3rowtwo <- plot_grid(
 
 F3 <- plot_grid(F3top,
                 F3rowtwo,
-                #F3rowthree,
                 nrow = 2,
                 rel_heights = c(0.4, 1))
 
@@ -29,7 +28,8 @@ save_plot(F3,
           filename = "tempF3.png",
           base_width = 7.5,
           base_height = 9.75)
-#ggsave("F3.pdf", path = T_Figs, width = 7.5, height = 9.75)
+
+ggsave("F3.pdf", path = T_Figs, width = 7.5, height = 9.75)
 
 #Supplemental Fig2
 S2E_1 <- (S3E1 | S3E2 | S3E3 | S3E4)

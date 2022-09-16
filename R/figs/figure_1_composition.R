@@ -1,6 +1,6 @@
 #source("R/figs/Ethan_Figs_081622.R")
-T_Figs <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
-
+#T_Figs <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
+#T_Tables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
 
 F1top <- plot_grid(NULL, labels = "A")
 
@@ -20,17 +20,17 @@ F1rowthree <- plot_grid(
   labels = c("D", "E")
 )
 
-F1 <- plot_grid(F1top,
+F1_leiden <- plot_grid(F1top,
                 F1rowtwo,
                 F1rowthree,
                 nrow = 3,
                 rel_heights = c(0.15, 1, 1.25))
 
-save_plot(F1,
+save_plot(F1_leiden,
           filename = "tempF1.png",
           base_width = 7.5,
           base_height = 9.75)
-#ggsave("F1_leiden.pdf", path = figures_out, width = 7.5, height = 9.75)
+ggsave("F1_leiden.pdf", path = T_Figs, width = 7.5, height = 9.75)
 
 #Supplemental Fig1
 
@@ -63,5 +63,5 @@ save_plot(S1,
           base_width = 7.5,
           base_height = 9.75)
 
-#ggsave("S1_leiden.pdf", path = T_Figs, width = 7.5, height = 9.75)
+ggsave("S1_leiden.pdf", path = T_Figs, width = 7.5, height = 9.75)
 

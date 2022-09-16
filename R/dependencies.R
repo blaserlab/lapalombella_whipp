@@ -30,8 +30,8 @@
 # load core packages for the analysis -------------------------------------
 suppressPackageStartupMessages(library("conflicted"))
 suppressPackageStartupMessages(library("blaseRtemplates"))
-suppressPackageStartupMessages(library("blaseRtools"))
 suppressPackageStartupMessages(library("tidyverse"))
+suppressPackageStartupMessages(library("blaseRtools"))
 suppressPackageStartupMessages(library("monocle3"))
 suppressPackageStartupMessages(library("circlize"))
 suppressPackageStartupMessages(library("ComplexHeatmap"))
