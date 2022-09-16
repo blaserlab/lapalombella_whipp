@@ -2,6 +2,7 @@ the_font_size <- 10
 theme_set(theme_cowplot(font_size = the_font_size))
 
 # conflicts ---------------------------------------------------------------
+
 # resolve conflicting function names here
 
 conflict_prefer("filter", "dplyr")
