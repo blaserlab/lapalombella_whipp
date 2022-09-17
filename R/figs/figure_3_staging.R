@@ -97,8 +97,7 @@ fig3c_plotlist <- map(.x = c("Ighm","Pax5", "Ighd", "Ighe", "Ebf1", "Cd93", "Cd6
                         if (x != "Ighm") p <- p + theme(strip.text = element_blank())
                         p
                       })
-fig3c_plotlist[[1]]+ +
-  theme(panel.background = element_rect(color = "black"))
+
 F3C <-
 fig3c_plotlist[[1]] / fig3c_plotlist[[2]]/ (fig3c_plotlist[[3]]+ theme(
   legend.position = "right",
@@ -115,7 +114,7 @@ F3D1 <- bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "ag
 #F3A1/F3D1
 F3_kmeans10_tm_Top50 <-monocle3::top_markers(k10_Bclust, group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 10)
 #write_csv(F3_kmeans10_tm_Top50, file = file.path(T_Tables, "F3_kmeans10_tm_Top50.csv"))
-F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
+#F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
 
 
 
@@ -283,6 +282,34 @@ S2E9 <-S2E_plotlist[[9]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]],
 
 # S2E_2 <- (S2E5 | S2E6 | S2E7 | S2E8 | S2E9) 
 # ggsave("S2E_2.pdf", path = T_Figs, width = 7.5, height = 3)
+
+##################################################################################################################################################
+#TODO Supp 2F - Previously - Upregulated genes in 3.3, 3.4, 3.6
+### Supp2F gene modules
+
+bb_gene_modules(obj = mouse_cds_list[[1]], n_cores = 5)
+F3_cds <- mouse_cds_list[[1]]
+
+pr_graph_test_res <-
+  graph_test(
+    cds = F3_cds,
+    neighbor_graph = "knn",
+    cores = 8,
+    verbose = TRUE
+  )
+
+rowData(cds_main)
+##Supp2F top markers
+#F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
+query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.3')[["gene_short_name"]] #TCL1 Enriched
+query_C3.4 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.4')[["gene_short_name"]] #PRMT5 Enriched
+query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.6')[["gene_short_name"]] #PRMT5 Enriched
+#1 bb_goenrichment
+#2 bb_gosummary
+#3 bb_goscatter
+
+#TODO Supp 2G - Previously - Depleted genes in clusters 3.4 & 3.6  
+
 
 # ####################################################################################################################################################
 # S3E1a <- S3E_plotlist[[1]]|S3E_plotlist[[2]]|S3E_plotlist[[3]]|S3E_plotlist[[4]]
