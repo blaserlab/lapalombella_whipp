@@ -1,5 +1,5 @@
 # WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
-# WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables"
+WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs//Tables/Heatmap Tables"
 
 colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
                                                 "PRMT5" = "PRMT5/TCL1",
@@ -207,8 +207,12 @@ F5F1<-
 #top markers
 F5_k10_Top50_tm <-monocle3::top_markers(filter_cds(mouse_cds_list[[2]], 
                                                    cells = bb_cellmeta(mouse_cds_list[[2]]) |> 
-                                                     filter(kmeans_10_harmonized %in% c("5.1", "5.3", "5.5", "5.6", "5.9"))), group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 1)
+                                                     filter(kmeans_10_harmonized %in% c("5.1", "5.3", "5.5", "5.6", "5.9"))), group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 10)
+# F5_k10_Top50_clust5.1_bygenotype <- monocle3::top_markers(filter_cds(mouse_cds_list[[2]],
+#                                                      cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+#                                                        filter(kmeans_10_harmonized == "5.1")), group_cells_by = "genotype", genes_to_test_per_group = 50, cores = 10)
 #write_csv(F5_k10_Top50_tm, file = file.path(WalkerTables, "F5_k10_Top50_tm.csv"))
+#write_csv(F5_k10_Top50_clust5.1_bygenotype, file = file.path(WalkerTables, "F5_k10_Top50_clust5.1_bygenotype.csv"))
 #F5_k10_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/F5_k10_Top50_tm.csv")
 
 markers <- F5_k10_Top50_tm |> 
@@ -379,6 +383,8 @@ S4_genebubble <-
   theme(axis.text.y = element_text(face = "italic")) +
   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
 #ggsave("S4_genebubble.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs", height = 6.1, width = 5.8)
+
+#TODO Supp GO terms Supp Fig 4G
 
 ####################################################################################################################################
 

@@ -121,121 +121,6 @@ cds_main <- nadeu_11b |>
 
 ln_cds<-cds_main[,colData(cds_main)$disease_tissue == "RT LN" &
                    colData(cds_main)$leiden_assignment_1 == "B"]
-
-
-#supplemental figs - to show clustering pattern is due to clustering of both pts
-#S1A <- bb_var_umap(cds_main, "patient", facet_by = "value", legend_pos = "none", foreground_alpha = 0.2)
-#V(D)J
-
-# possible alt S1A
-S1A <-
-  (
-    bb_var_umap(
-      cds_main,
-      "patient",
-      value_to_highlight = "Pt 1",
-      legend_pos = "none",
-      plot_title = "Pt 1",
-      palette = "#EF8A62"
-    ) +
-      bb_var_umap(
-        cds_main,
-        "patient",
-        value_to_highlight = "Pt 2",
-        legend_pos = "none",
-        plot_title = "Pt 2",
-        palette = "#67A9CF"
-      )
-  ) /
-  (
-    bb_var_umap(
-      filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(tissue == "LN")),
-      "patient",
-      value_to_highlight = "Pt 1",
-      legend_pos = "none",
-      plot_title = "RT LN-Pt 1",
-      palette = "#EF8A62"
-    ) +
-      bb_var_umap(
-        filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(tissue == "LN")),
-        "patient",
-        value_to_highlight = "Pt 2",
-        legend_pos = "none",
-        plot_title = "RT LN-Pt 2",
-        palette = "#67A9CF"
-      ) 
-  )
- 
- S1B <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main)|> filter(patient == "Pt 1")), "clonotype_id", facet_by = "disease_tissue")
- S1B<- S1B + theme(legend.position = "bottom")
-
-#S1C <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main)|>filter(patient == "Pt 1")), "partition")
-S1C <- bb_var_umap(cds_main, "leiden", overwrite_labels = T)
-#S1C<- S1C + theme(legend.position = "bottom")
-
-#possible alt S1B -----
-#S1B <- bb_var_umap(cds_main, var = "partition", facet_by = "pt_recode")
-
-S1D <- bb_genebubbles(
-  cds_main,
-  genes = c("CD14","CD4","CD8A", "CD3E", "CD79A", "MS4A1", "CD19"
- ),
-  cell_grouping = c("leiden", "leiden_assignment_1"),
-  return_value = "data"
-) |> 
-  ggplot(mapping = aes(x = leiden, 
-                       y = gene_short_name, 
-                       color = expression,
-                       size = proportion)) +
-  geom_point() +
-  scale_size_area() +
-  scale_color_viridis_c() +
-  facet_wrap(~leiden_assignment_1, scales = "free_x", ) +
-  theme_minimal_grid(font_size = 8) +
-  theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
-  theme(axis.text.y = element_text(face = "italic")) +
-  labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
-
-#Supp Fig - Nadeu et al RT UP aggregate gene expression mapping 
-#Nadeu et al RT UP aggregate gene expression mapping 
-# bb_gene_umap(
-#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
-# ) + 
-#   facet_grid(row = vars(patient), col = (vars(disease_tissue)))
-
-S1EP1 <- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "Pt 1")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
-) + 
-  facet_wrap(~disease_tissue)+
-  theme(
-    axis.line.x = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.text.x = element_blank(),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank()
-  ) +
-  theme(panel.background = element_rect(color = "black")) +
-  labs(color = "*RT Gene*<br>Expression") +
-  theme(legend.title = ggtext::element_markdown())
-S1EP2 <- bb_gene_umap(
-  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "Pt 1")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_CLL_gene)
-) +
-  facet_wrap(~disease_tissue)+
-  theme(strip.text = element_blank()) +
-   theme(
-  #   axis.line.x = element_blank(),
-  #   axis.ticks.x = element_blank(),
-  #   axis.text.y = element_blank(),
-     axis.title.x = element_blank(),
-     axis.title.y = element_blank()
-   ) +
-  theme(panel.background = element_rect(color = "black")) +
-  labs(color = "*CLL Gene*<br>Expression") +
-  theme(legend.title = ggtext::element_markdown())
-#S1D <- S1DP1/S1DP2
-
-S1E <- as_ggplot(grid.arrange(patchworkGrob(S1EP1/S1EP2), left = S1EP1$labels$y, bottom = textGrob(S1EP1$labels$x, hjust = 0.85, vjust = -1)))
-
 # main Fig 1
 
 F1AP1 <-
@@ -449,9 +334,9 @@ F1E1 <- bb_var_umap(filter_cds(cds_main,
 
 #Top markers should be used to look at top 50genes in clusters of interest.
 LN_B_leiden_Top50_tm <- monocle3::top_markers(ln_cds, group_cells_by = "leiden", genes_to_test_per_group = 50, cores = 12)
-#T_tables_out <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv"
+#T_tables_out <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv"
 #write_csv(LN_B_leiden_Top50_tm, file = file.path(T_tables_out, "LN_B_leiden_Top50_tm.csv"))
-#LN_B_leiden_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
+#LN_B_leiden_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
 #bb_var_umap(ln_cds,"leiden", overwrite_labels = T) /p3
 
 #All leiden_assignment_1 B cell clusters
@@ -550,3 +435,133 @@ F1E2 <- grid.grabExpr(draw(
 F1E <- F1E1 / F1E2 +
   plot_layout(heights = c(1, 2.5))
 F1E
+
+#Supplemental Figs - to show clustering pattern is due to clustering of both pts
+#S1A <- bb_var_umap(cds_main, "patient", facet_by = "value", legend_pos = "none", foreground_alpha = 0.2)
+#V(D)J
+
+# possible alt S1A
+S1A <-
+  (
+    bb_var_umap(
+      cds_main,
+      "patient",
+      value_to_highlight = "Pt 1",
+      legend_pos = "none",
+      plot_title = "Pt 1",
+      palette = "#EF8A62"
+    ) +
+      bb_var_umap(
+        cds_main,
+        "patient",
+        value_to_highlight = "Pt 2",
+        legend_pos = "none",
+        plot_title = "Pt 2",
+        palette = "#67A9CF"
+      )
+  ) /
+  (
+    bb_var_umap(
+      filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(tissue == "LN")),
+      "patient",
+      value_to_highlight = "Pt 1",
+      legend_pos = "none",
+      plot_title = "RT LN-Pt 1",
+      palette = "#EF8A62"
+    ) +
+      bb_var_umap(
+        filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(tissue == "LN")),
+        "patient",
+        value_to_highlight = "Pt 2",
+        legend_pos = "none",
+        plot_title = "RT LN-Pt 2",
+        palette = "#67A9CF"
+      ) 
+  )
+
+S1B <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main)|> filter(patient == "Pt 1")), "clonotype_id", facet_by = "disease_tissue")
+S1B<- S1B + theme(legend.position = "bottom")
+
+#S1C <- bb_var_umap(filter_cds(cds_main, cells = bb_cellmeta(cds_main)|>filter(patient == "Pt 1")), "partition")
+S1C <- bb_var_umap(cds_main, "leiden", overwrite_labels = T)
+#S1C<- S1C + theme(legend.position = "bottom")
+
+#possible alt S1B -----
+#S1B <- bb_var_umap(cds_main, var = "partition", facet_by = "pt_recode")
+
+S1D <- bb_genebubbles(
+  cds_main,
+  genes = c("CD14","CD4","CD8A", "CD3E", "CD79A", "MS4A1", "CD19"
+  ),
+  cell_grouping = c("leiden", "leiden_assignment_1"),
+  return_value = "data"
+) |> 
+  ggplot(mapping = aes(x = leiden, 
+                       y = gene_short_name, 
+                       color = expression,
+                       size = proportion)) +
+  geom_point() +
+  scale_size_area() +
+  scale_color_viridis_c() +
+  facet_wrap(~leiden_assignment_1, scales = "free_x", ) +
+  theme_minimal_grid(font_size = 8) +
+  theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
+  theme(axis.text.y = element_text(face = "italic")) +
+  labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
+
+#Supp Fig - Nadeu et al RT UP aggregate gene expression mapping 
+#Nadeu et al RT UP aggregate gene expression mapping 
+# bb_gene_umap(
+#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(partition_assignment_1 == "B")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
+# ) + 
+#   facet_grid(row = vars(patient), col = (vars(disease_tissue)))
+
+S1EP1 <- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "Pt 1")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_RT_gene)
+) + 
+  facet_wrap(~disease_tissue)+
+  theme(
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*RT Gene*<br>Expression") +
+  theme(legend.title = ggtext::element_markdown())
+S1EP2 <- bb_gene_umap(
+  filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(patient == "Pt 1")), gene_or_genes = bb_rowmeta(cds_main) |> select(feature_id, nadeu_CLL_gene)
+) +
+  facet_wrap(~disease_tissue)+
+  theme(strip.text = element_blank()) +
+  theme(
+    #   axis.line.x = element_blank(),
+    #   axis.ticks.x = element_blank(),
+    #   axis.text.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  theme(panel.background = element_rect(color = "black")) +
+  labs(color = "*CLL Gene*<br>Expression") +
+  theme(legend.title = ggtext::element_markdown())
+#S1D <- S1DP1/S1DP2
+
+S1E <- as_ggplot(grid.arrange(patchworkGrob(S1EP1/S1EP2), left = S1EP1$labels$y, bottom = textGrob(S1EP1$labels$x, hjust = 0.85, vjust = -1)))
+
+#TODO Supp GO terms
+#LN_B_leiden_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
+
+#query_C3 <- filter(LN_B_leiden_Top50_tm, cell_group %in% '3')[["gene_short_name"]]
+library(purrr)
+purrr::map(.x = query_C3, .f = bb_goenrichment(x, reference = as_tibble(rowData(cds_main))))
+
+# map along an arbitrary number of lists or vectors
+pmap(
+  .l = list(
+    x = query_C3
+  ),
+  .f = bb_goenrichment(x, reference = as_tibble(rowData(cds_main))) {
+  }
+)
+

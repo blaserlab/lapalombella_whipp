@@ -287,23 +287,74 @@ S2E9 <-S2E_plotlist[[9]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]],
 #TODO Supp 2F - Previously - Upregulated genes in 3.3, 3.4, 3.6
 ### Supp2F gene modules
 
-bb_gene_modules(obj = mouse_cds_list[[1]], n_cores = 5)
-F3_cds <- mouse_cds_list[[1]]
+#bb_gene_modules(obj = mouse_cds_list[[1]], n_cores = )
+#F3_cds <- mouse_cds_list[[1]]
 
 pr_graph_test_res <-
   graph_test(
-    cds = F3_cds,
+    cds = mouse_cds_list[[1]],
     neighbor_graph = "knn",
     cores = 8,
     verbose = TRUE
   )
+#bb_gene_umap(mouse_cds_list[[1]], gene_or_genes = "Birc5", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2") + facet_wrap(~genotype)
+pr_deg_ids <- row.names(subset(pr_graph_test_res, q_value < 0.05))
+
+#pr_deg_ids_fix = intersect(pr_deg_ids, rownames(mouse_cds_list[[1]]@preprocess_aux$gene_loadings))
+preprocess_mat <- F3_cds@reduce_dim_aux[[preprocess_method]][['model']]$svd_v %*% diag(F3_cds@reduce_dim_aux[[preprocess_method]][['model']]$svd_sdev)
+
+gene_module_df <-
+  monocle3::find_gene_modules(mouse_cds_list[[1]][pr_deg_ids,], cores = 8) |>
+  dplyr::rename(feature_id = id)
 
 rowData(cds_main)
-##Supp2F top markers
+##TODO Supp2F top markers
 #F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
-query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.3')[["gene_short_name"]] #TCL1 Enriched
-query_C3.4 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.4')[["gene_short_name"]] #PRMT5 Enriched
-query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.6')[["gene_short_name"]] #PRMT5 Enriched
+query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.3')[["gene_short_name"]] #|> as.vector() #TCL1 Enriched
+pmap(
+  .l = list(
+    x = query_C3.3),
+  .f = bb_goenrichment(x, reference = as_tibble(rowData(mouse_cds_list[[1]]))) {
+  }
+)
+
+bb_goenrichment(query = query_C3.3, reference = as_tibble(rowData(mouse_cds_list[[1]])))
+
+purrr::map(query_C3.3, bb_goenrichment(query = query_C3.3, reference = as_tibble(rowData(mouse_cds_list[[1]]))))
+#use purrr::map to apply bb_goenrichment to each list member
+
+query <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.3')[["gene_short_name"]]
+reference <- as_tibble(rowData(mouse_cds_list[[1]]))
+selector <- function(theScore) {
+  return (theScore == 1)
+}
+
+go_db = c("org.Hs.eg.db", "org.Dr.eg.db", "org.Mm.eg.db")
+
+genes <- query
+genes_named <- reference %>%
+  as_tibble() %>%
+  mutate(selected = ifelse(gene_short_name %in% genes, 1, 0)) %>%
+  pull(selected)
+names(genes_named) <- reference %>%
+  as_tibble() %>%
+  pull(gene_short_name)
+view(genes_named)
+
+sampleGOdata <- new(
+  "topGOdata",
+  description = "Simple session",
+  ontology = "BP",
+  allGenes = genes_named,
+  geneSel = selector,
+  nodeSize = 10,
+  annot = annFUN.org,
+  mapping = go_db,
+  ID = "symbol"
+)
+
+# query_C3.4 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.4')[["gene_short_name"]] #PRMT5 Enriched
+# query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.6')[["gene_short_name"]] #PRMT5 Enriched
 #1 bb_goenrichment
 #2 bb_gosummary
 #3 bb_goscatter
