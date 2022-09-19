@@ -113,10 +113,8 @@ fig3c_plotlist[[1]] / fig3c_plotlist[[2]]/ (fig3c_plotlist[[3]]+ theme(
 F3D1 <- bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype") +labs(y= "UMAP 2", x = "UMAP 1")
 #F3A1/F3D1
 F3_kmeans10_tm_Top50 <-monocle3::top_markers(k10_Bclust, group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 10)
-#write_csv(F3_kmeans10_tm_Top50, file = file.path(T_Tables, "F3_kmeans10_tm_Top50.csv"))
+#write_csv(F3_kmeans10_tm_Top50, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1", "F3_kmeans10_tm_Top50.csv"))
 #F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
-
-
 
 markers <- F3_kmeans10_tm_Top50 |> 
   filter(cell_group %in% c('3.3', '3.4', '3.6')) |> 
@@ -308,56 +306,72 @@ gene_module_df <-
   dplyr::rename(feature_id = id)
 
 rowData(cds_main)
+
 ##TODO Supp2F top markers
-#F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
-query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.3')[["gene_short_name"]] #|> as.vector() #TCL1 Enriched
-pmap(
-  .l = list(
-    x = query_C3.3),
-  .f = bb_goenrichment(x, reference = as_tibble(rowData(mouse_cds_list[[1]]))) {
-  }
-)
+F3_kmeans10_tm_Top50 <- readr::read_csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
+#Cluster 3.3
+query_C3.3 <- dplyr::filter(F3_kmeans10_tm_Top50, cell_group %in% '3.3')[["gene_short_name"]]
+query_C3.3
 
-bb_goenrichment(query = query_C3.3, reference = as_tibble(rowData(mouse_cds_list[[1]])))
+C3.3_goenrichment <- bb_goenrichment(query = query_C3.3, 
+                                     reference = bb_rowmeta(mouse_cds_list$file_1),
+                                     go_db = "org.Mm.eg.db")
+C3.3_goenrichment
+C3.3_gosummary_0.8 <- bb_gosummary(x = C3.3_goenrichment, 
+                                   reduce_threshold = 0.8,
+                                   go_db = "org.Mm.eg.db")
+C3.3_gosummary_0.9 <- bb_gosummary(x = C3.3_goenrichment, 
+                                   reduce_threshold = 0.9,
+                                   go_db = "org.Mm.eg.db")
+C3.3_gosummary_0.98 <- bb_gosummary(x = C3.3_goenrichment, 
+                                   reduce_threshold = .98,
+                                   go_db = "org.Mm.eg.db")
 
-purrr::map(query_C3.3, bb_goenrichment(query = query_C3.3, reference = as_tibble(rowData(mouse_cds_list[[1]]))))
-#use purrr::map to apply bb_goenrichment to each list member
+bb_goscatter(simMatrix = C3.3_gosummary_0.8$simMatrix,
+             reducedTerms = C3.3_gosummary_0.8$reducedTerms)
+bb_goscatter(simMatrix = C3.3_gosummary_0.9$simMatrix,
+             reducedTerms = C3.3_gosummary_0.9$reducedTerms)
+bb_goscatter(simMatrix = C3.3_gosummary_0.98$simMatrix,
+             reducedTerms = C3.3_gosummary_0.98$reducedTerms)
+#Supp 2F Cluster 3.4
+query_C3.4 <- dplyr::filter(F3_kmeans10_tm_Top50, cell_group %in% '3.4')[["gene_short_name"]]
+C3.4_goenrichment <- bb_goenrichment(query = query_C3.4, 
+                                     reference = bb_rowmeta(mouse_cds_list$file_1),
+                                     go_db = "org.Mm.eg.db")
+C3.4_goenrichment
+C3.4_gosummary_0.8 <- bb_gosummary(x = C3.4_goenrichment, 
+                                   reduce_threshold = 0.8,
+                                   go_db = "org.Mm.eg.db")
+C3.4_gosummary_0.9 <- bb_gosummary(x = C3.4_goenrichment, 
+                                   reduce_threshold = 0.9,
+                                   go_db = "org.Mm.eg.db")
+C3.4_gosummary_0.95 <- bb_gosummary(x = C3.4_goenrichment, 
+                                   reduce_threshold = 0.95,
+                                   go_db = "org.Mm.eg.db")
 
-query <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.3')[["gene_short_name"]]
-reference <- as_tibble(rowData(mouse_cds_list[[1]]))
-selector <- function(theScore) {
-  return (theScore == 1)
-}
+bb_goscatter(simMatrix = C3.4_gosummary_0.8$simMatrix,
+             reducedTerms = C3.4_gosummary_0.8$reducedTerms)
+bb_goscatter(simMatrix = C3.4_gosummary_0.9$simMatrix,
+             reducedTerms = C3.4_gosummary_0.9$reducedTerms)
+bb_goscatter(simMatrix = C3.4_gosummary_0.95$simMatrix,
+             reducedTerms = C3.4_gosummary_0.95$reducedTerms)
+#Supp 2F Cluster 3.6
+query_C3.6 <- dplyr::filter(F3_kmeans10_tm_Top50, cell_group %in% '3.6')[["gene_short_name"]]
+C3.6_goenrichment <- bb_goenrichment(query = query_C3.6, 
+                                     reference = bb_rowmeta(mouse_cds_list$file_1),
+                                     go_db = "org.Mm.eg.db")
+C3.6_goenrichment
+C3.6_gosummary_0.8 <- bb_gosummary(x = C3.6_goenrichment, 
+                                   reduce_threshold = 0.8,
+                                   go_db = "org.Mm.eg.db")
+C3.6_gosummary_0.9 <- bb_gosummary(x = C3.6_goenrichment, 
+                                   reduce_threshold = 0.9,
+                                   go_db = "org.Mm.eg.db")
 
-go_db = c("org.Hs.eg.db", "org.Dr.eg.db", "org.Mm.eg.db")
-
-genes <- query
-genes_named <- reference %>%
-  as_tibble() %>%
-  mutate(selected = ifelse(gene_short_name %in% genes, 1, 0)) %>%
-  pull(selected)
-names(genes_named) <- reference %>%
-  as_tibble() %>%
-  pull(gene_short_name)
-view(genes_named)
-
-sampleGOdata <- new(
-  "topGOdata",
-  description = "Simple session",
-  ontology = "BP",
-  allGenes = genes_named,
-  geneSel = selector,
-  nodeSize = 10,
-  annot = annFUN.org,
-  mapping = go_db,
-  ID = "symbol"
-)
-
-# query_C3.4 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.4')[["gene_short_name"]] #PRMT5 Enriched
-# query_C3.3 <- filter(F3_kmeans10_tm_Top50, cell_group %in% '3.6')[["gene_short_name"]] #PRMT5 Enriched
-#1 bb_goenrichment
-#2 bb_gosummary
-#3 bb_goscatter
+bb_goscatter(simMatrix = C3.6_gosummary_0.8$simMatrix,
+             reducedTerms = C3.6_gosummary_0.8$reducedTerms)
+bb_goscatter(simMatrix = C3.6_gosummary_0.9$simMatrix,
+             reducedTerms = C3.6_gosummary_0.9$reducedTerms)
 
 #TODO Supp 2G - Previously - Depleted genes in clusters 3.4 & 3.6  
 
