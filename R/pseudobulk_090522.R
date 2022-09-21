@@ -1,23 +1,40 @@
-bb_genebubbles(
-   obj = filter_cds(cds_main, cells = bb_cellmeta(cds_main)),
-   genes = c("CD14", "CD3E", "CD79A", "MS4A1", "CD19","CD8A","CD4"), cell_grouping = "leiden") + labs(x = "Leiden Cluster", y = NULL) 
-
+# 
+# S1.1 <- bb_genebubbles(
+#   filter_cds(cds_main, cells = bb_cellmeta(cds_main) |> filter(leiden_assignment_1 == "B")),
+#   genes = c("PRMT5", "MYC", "MS4A1"
+#   ),
+#   cell_grouping = c("leiden", "leiden_assignment_1"),
+#   return_value = "data"
+# ) |> 
+#   ggplot(mapping = aes(x = leiden, 
+#                        y = gene_short_name, 
+#                        color = expression,
+#                        size = proportion)) +
+#   geom_point() +
+#   scale_size_area() +
+#   scale_color_viridis_c() +
+#   facet_wrap(~leiden_assignment_1, scales = "free_x", ) +
+#   theme_minimal_grid(font_size = 8) +
+#   theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
+#   theme(axis.text.y = element_text(face = "italic")) +
+#   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
+# S1.1
 #leiden_clusters<- bb_var_umap(cds_main, "leiden", overwrite_labels = T)
 #ggsave("leiden_clusters.pdf", path = WalkerTables)
 
-#bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
 #ln_cds<-cds_main[,colData(cds_main)$disease_tissue == "RT LN"]
 
+bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
 
 colData(cds_main)$leiden_assignment_2 <-
   recode(
     colData(cds_main)$leiden,
     "1" = "CLL_B",
-    "2" = "Int_B",
+    "2" = "Int_PBMC_B",
     "3" = "RT_B",
     "4" = "T",
-    "5" = "Int_B",
-    "6" = "Int_B",
+    "5" = "Int_LN_B",
+    "6" = "Int_LN_B",
     "7" = "T",
     "8" = "T",
     "9" = "CLL_B",
@@ -26,11 +43,12 @@ colData(cds_main)$leiden_assignment_2 <-
    "12" = "T",
    "13" = "Mono",
    "14" = "T",
-    "15" = "Int_B",
+    "15" = "B",
     "16" = "T",
-    "17" = "Int_B",
+    "17" = "B",
     "18" = "B"
   )
+bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
 bb_var_umap(cds_main, "leiden_assignment_1", overwrite_labels = T, facet_by= "disease_tissue")
 bb_var_umap(cds_main, "leiden_assignment_2", overwrite_labels = T, facet_by= "disease_tissue")
 bb_var_umap(cds_main, "seurat_celltype_l1", overwrite_labels = T, facet_by= "disease_tissue")
@@ -52,9 +70,10 @@ pseudobulk_res <-
 
 pseudobulk_res$Header
 
-# Differential expression results.  Positive L2FC indicates up in B vs T
-#upregulated
-genes_to_highlight <- c("MKI67", "PRMT5","FOXM1", "BIRC5")
+# Differential expression results.  Positive L2FC indicates up in B vs T upregulated
+genes_to_highlight <- unique(c("FOSB", "JUN","PRMT5","FOXM1", F1_highlights))
+genes_to_highlight <- genes_to_highlight[genes_to_highlight %in% (filter(pseudobulk_res$Result, padj < 0.1 & abs(log2FoldChange) >= 0.58)|>pull(gene_short_name))]
+
 
 volcano_data_RTvCLL <- pseudobulk_res$Result %>%
   mutate(threshold = padj < 0.1 & abs(log2FoldChange) >= 0.58) %>%
@@ -76,8 +95,8 @@ volcano_plot_RTvCLL <-
              alpha = 0.4) +
   geom_text_repel(color = "black",
                   fontface = "italic",
-                  box.padding = 0.5,
-                  point.padding = 0.25,
+                  box.padding = 0.23, #0.5
+                  point.padding = 0.1, #0.25
                   min.segment.length = 0,
                   max.overlaps = 20000,
                   size = 3,
@@ -98,22 +117,80 @@ volcano_plot_RTvCLL <-
   theme(plot.caption.position = "panel") +
   theme(plot.caption = element_text(hjust = 0.5)) +
   theme(plot.title = element_text(hjust = 0.5)) +
-  coord_cartesian(xlim = c(-1.1*max(abs(range(volcano_data_RT %>% dplyr::filter(!is.na(padj)) %>% pull(log2FoldChange)))), 1.1*max(abs(range(volcano_data_RT %>% filter(!is.na(padj)) %>% pull(log2FoldChange))))))
+  coord_cartesian(xlim = c(-1.0*max(abs(range(volcano_data_RTvCLL %>% dplyr::filter(!is.na(padj)) %>% pull(log2FoldChange)))), 1.0*max(abs(range(volcano_data_RTvCLL %>% filter(!is.na(padj)) %>% pull(log2FoldChange))))))
 volcano_plot_RTvCLL
 
-pseudobulk_RT <- leiden_3n11_vs_1n9_up |> filter(padj < 0.01)
+#Gene Ontology
+pseudo3n11_goenrichment <-
+  bb_goenrichment(
+    query = dplyr::filter(pseudobulk_res$Result, padj < 0.1 &
+                            log2FoldChange >= 0.58) |> pull(gene_short_name),
+    reference = bb_rowmeta(cds_main),
+    go_db = "org.Hs.eg.db"
+  )
+pseudo3n11_gosummary_0.9 <- bb_gosummary(x = pseudo3n11_goenrichment, 
+                                 reduce_threshold = 0.9,
+                                 go_db = "org.Hs.eg.db")
+pseudobulk_Clust3n11_GO_PCA <-
+  bb_goscatter(simMatrix = pseudo3n11_gosummary_0.9$simMatrix,
+               reducedTerms = pseudo3n11_gosummary_0.9$reducedTerms)
+#pseudoGO barplot
+pseudo3n11_goenrichment$res_table$classicFisher[pseudo3n11_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
+pseudo3n11_goenrichment$res_table$Rank <- as.numeric(as.character(pseudo3n11_goenrichment$res_table$Rank))
+pseudob_top25 <- filter(pseudo3n11_goenrichment$res_table, as.numeric(pseudo3n11_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
+pseudob_top25
 
-RTup<- as.vector(RTup$gene_short_name)
-#write_csv(leiden_3n11_vs_1n9_upregulated, file = file.path(WalkerTables, "leiden_3n11_vs_1n9_upregulated.csv"))
+pseudob_3n11vs1n9_GObp<- ggplot(data=pseudob_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
+  geom_bar(stat="identity") + 
+  coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
+pseudob_3n11vs1n9_GObp
+ggsave("pseudob_3n11vs1n9_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
 
-#downregulated
-leiden_3n11_vs_1n9_downregulated<- pseudobulk_res$Result %>%
-  filter(log2FoldChange < 0) %>%
-  arrange(padj)
-#write_csv(leiden_3n11_vs_1n9_downregulated, file = file.path(WalkerTables, "leiden_3n11_vs_1n9_downregulated.csv"))
+#Clust 3 GO:
+C3_goenrichment <-
+  bb_goenrichment(
+    query = dplyr::filter(LN_B_leiden_Top50_tm, cell_group %in% '3')[["gene_short_name"]],
+    reference = bb_rowmeta(cds_main),
+    go_db = "org.Hs.eg.db"
+  )
+C3_gosummary_0.9 <- bb_gosummary(x = C3_goenrichment, 
+                                   reduce_threshold = 0.9,
+                                   go_db = "org.Hs.eg.db")
+S1_Clust3_GO_PCA <- bb_goscatter(simMatrix = C3_gosummary_0.9$simMatrix,
+             reducedTerms = C3_gosummary_0.9$reducedTerms)
+#barplot
+C3_goenrichment$res_table$classicFisher[C3_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
+C3_goenrichment$res_table$Rank <- as.numeric(as.character(C3_goenrichment$res_table$Rank))
+C3_top25 <- filter(C3_goenrichment$res_table, as.numeric(C3_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
+C3_top25
 
-#GO
-bb_goenrichment(RTup, as_tibble(rowData(cds_main)))
-blaseRtools:::bb_goenrichment
+C3_GObp<- ggplot(data=C3_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
+  geom_bar(stat="identity") + 
+  coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
+C3_GObp
+ggsave("C3_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+#ggsave("S1_Clust3_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
 
-colData(rowData(cds_main))
+#Clust 11 GO:
+C11_goenrichment <- bb_goenrichment(query = dplyr::filter(LN_B_leiden_Top50_tm, cell_group %in% '11')[["gene_short_name"]], 
+                                   reference = bb_rowmeta(cds_main),
+                                   go_db = "org.Hs.eg.db")
+C11_gosummary_0.9 <- bb_gosummary(x = C11_goenrichment, 
+                                  reduce_threshold = 0.9,
+                                  go_db = "org.Hs.eg.db")
+S1_Clust11_GO_PCA <- bb_goscatter(simMatrix = C11_gosummary_0.9$simMatrix,
+                                 reducedTerms = C11_gosummary_0.9$reducedTerms)
+#ggsave("S1_Clust11_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+
+C11_goenrichment$res_table$classicFisher[C11_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
+C11_goenrichment$res_table$Rank <- as.numeric(as.character(C11_goenrichment$res_table$Rank))
+C11_top25 <- filter(C11_goenrichment$res_table, as.numeric(C11_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
+C11_top25
+
+C11_GObp<- ggplot(data=C11_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
+  geom_bar(stat="identity") + 
+  coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
+C11_GObp
+ggsave("C11_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+
+
