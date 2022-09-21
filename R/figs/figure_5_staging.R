@@ -301,18 +301,17 @@ S4E <- bb_var_umap(
   theme(legend.justification = "center")
 #ggsave("S4E.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs", height = 3.8, width = 5.4)
 
-
 S4F_plotlist <- map(.x = c("Cd93", "Il4"),
                     .f = \(x, dat = mouse_cds_list[[2]]) {
                       p <- bb_gene_umap(
                         dat,
                         gene_or_genes = x,
                         alt_dim_x = "aggr_UMAP_1",
-                        alt_dim_y = "aggr_UMAP_2"
+                        alt_dim_y = "aggr_UMAP_2", cell_size = 0.25 #adjusted cell size - default is 0.5
                       ) +
                         scale_color_distiller(palette = "Oranges",
                                               direction = 1,
-                                              na.value = "grey80") +
+                                              na.value = "grey80", limits = c(0,1)) + #set fixed scale (limits)
                         facet_wrap( ~ genotype) +
                         theme(panel.background = element_rect(color = "black")) +
                         theme(axis.line = element_blank()) +
@@ -323,7 +322,7 @@ S4F_plotlist <- map(.x = c("Cd93", "Il4"),
                         theme(axis.title.y = element_text(face = "italic")) +
                         theme(strip.text = element_blank()) +
                         theme(legend.title = element_blank()) #+theme(legend.position = "none")
-                      #if (x != "Cd93") p <- p + theme(strip.text = element_blank())
+                      if (x != "Il4") p <- p + theme(legend.position = "none")
                       p 
                     })
 
@@ -346,10 +345,8 @@ S4F2b <- bb_gene_violinplot(
   genes_to_plot = "Il4",
   pseudocount = 0) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
 
-#S4F1 <- S4F_plotlist[[1]]/S4F_plotlist[[2]]
-#S4F <- S4F1 | S4F2a/S4F2b + plot_layout(widths = c(2,1))
 S4F<- S4F_plotlist[[1]]/S4F2a | S4F_plotlist[[2]]/S4F2b
-#ggsave("S4F.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs", height = 4.6, width = 6.4)
+#ggsave("S4F.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Supp4", height = 4.6, width = 6.4)
 
 S4_genebubble <- 
   bb_genebubbles(
