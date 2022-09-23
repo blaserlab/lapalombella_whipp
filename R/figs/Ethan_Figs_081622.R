@@ -358,7 +358,7 @@ F1E1 <- bb_var_umap(filter_cds(cds_main,
 LN_B_leiden_Top50_tm <- monocle3::top_markers(ln_cds, group_cells_by = "leiden", genes_to_test_per_group = 50, cores = 12)
 #T_tables_out <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv"
 #write_csv(LN_B_leiden_Top50_tm, file = file.path(T_tables_out, "LN_B_leiden_Top50_tm.csv"))
-#LN_B_leiden_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
+#LN_B_leiden_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
 #bb_var_umap(ln_cds,"leiden", overwrite_labels = T) /p3
 
 #All leiden_assignment_1 B cell clusters
@@ -593,6 +593,7 @@ pseudobulk_res <-
                    result_recipe = c("leiden_assignment_2", "RT_B", "CLL_B"))
 
 pseudobulk_res$Header
+pseudobulk_res$Result
 
 # Differential expression results.  Positive L2FC indicates up in B vs T upregulated
 genes_to_highlight <- unique(c("FOSB", "JUN","PRMT5","FOXM1", F1_highlights))
@@ -603,7 +604,8 @@ volcano_data_RTvCLL <- pseudobulk_res$Result %>%
   mutate(threshold = padj < 0.1 & abs(log2FoldChange) >= 0.58) %>%
   mutate(text_label = ifelse(gene_short_name %in% genes_to_highlight, gene_short_name, ""))
 
-volcano_plot_RTvCLL <-
+library(ggtext)
+volcano_pseudob_RTvCLL <-
   ggplot(
     volcano_data_RTvCLL,
     aes(
@@ -619,7 +621,7 @@ volcano_plot_RTvCLL <-
              alpha = 0.4) +
   geom_text_repel(color = "black",
                   fontface = "italic",
-                  box.padding = 0.23, #0.5
+                  box.padding = 0.22, #0.5
                   point.padding = 0.1, #0.25
                   min.segment.length = 0,
                   max.overlaps = 20000,
@@ -642,7 +644,9 @@ volcano_plot_RTvCLL <-
   theme(plot.caption = element_text(hjust = 0.5)) +
   theme(plot.title = element_text(hjust = 0.5)) +
   coord_cartesian(xlim = c(-1.0*max(abs(range(volcano_data_RTvCLL %>% dplyr::filter(!is.na(padj)) %>% pull(log2FoldChange)))), 1.0*max(abs(range(volcano_data_RTvCLL %>% filter(!is.na(padj)) %>% pull(log2FoldChange))))))
-volcano_plot_RTvCLL
+volcano_pseudob_RTvCLL
+ggsave("volcano_pseudob_RTvCLL.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+
 
 #Gene Ontology
 ####Pseudobulk GO enrichment

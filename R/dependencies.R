@@ -44,7 +44,7 @@ suppressPackageStartupMessages(library("rstatix"))
 suppressPackageStartupMessages(library("knitr"))
 suppressPackageStartupMessages(library("pander"))
 suppressPackageStartupMessages(library("SingleCellExperiment"))
-library("topGO")
+suppressPackageStartupMessages(library("topGO"))
 
 # run this to update the data package in renv
 blaseRtemplates::bb_renv_datapkg("~/network/X/Labs/Blaser/share/collaborators/lapalombella_whipp_network/datapkg")

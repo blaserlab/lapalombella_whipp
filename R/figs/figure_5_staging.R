@@ -1,3 +1,4 @@
+
 # WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
 WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs//Tables/Heatmap Tables"
 
@@ -24,10 +25,6 @@ colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- recode(colData(mouse_cds_li
 colData(mouse_cds_list[[2]])$kmeans_10_harmonized <- factor(colData(mouse_cds_list[[2]])$kmeans_10_harmonized, 
                                                             levels = paste0("5.", 1:10))
 #cell type calling
-# cds_sub <- mouse_cds_list[[2]]
-# cds_sub$kmeans_10_harmonized <- factor(cds_sub$kmeans_10_harmonized,
-#                                                    levels = c("5.1", "5.2", "5.3", "5.4", "5.5", "5.6","5.7","5.8","5.9","5.10"))
-# levels(cds_sub$kmeans_10_harmonized) <- c("5.1", "5.2", "5.3", "5.4", "5.5", "5.6","5.7","5.8","5.9","5.10")
 # bb_genebubbles(
 #   obj = mouse_cds_list[[2]],
 #   genes = c(
@@ -213,8 +210,8 @@ F5_k10_Top50_tm <-monocle3::top_markers(filter_cds(mouse_cds_list[[2]],
 #                                                        filter(kmeans_10_harmonized == "5.1")), group_cells_by = "genotype", genes_to_test_per_group = 50, cores = 10)
 #write_csv(F5_k10_Top50_tm, file = file.path(WalkerTables, "F5_k10_Top50_tm.csv"))
 #write_csv(F5_k10_Top50_clust5.1_bygenotype, file = file.path(WalkerTables, "F5_k10_Top50_clust5.1_bygenotype.csv"))
-#F5_k10_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/F5_k10_Top50_tm.csv")
-
+#F5_k10_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig5_PRMT5xTCL1_vs_TCL1/F5_k10_Top50_tm.csv")
+#F5_k10_clust5.1_Top50_bygeno <-read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig5_PRMT5xTCL1_vs_TCL1/Cluster 5.1 by genotype/F5_k10_Top50_clust5.1_bygenotype.csv")
 markers <- F5_k10_Top50_tm |> 
   filter(cell_group %in% c("5.1", "5.6")) |> 
   pull(gene_short_name)

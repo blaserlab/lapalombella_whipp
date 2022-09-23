@@ -51,7 +51,7 @@ F3A <- grid.arrange(patchworkGrob(F3A1/F3A2), left = textGrob("UMAP 2", rot = 90
 
 # low_q<- mouse_cds_list[[1]]
 # low_q <- low_q[,colData(low_q)$k_10_assignment == "Low Quality"]
-# monocle3::top_markers(low_q, group_cells_by = "genotype", genes_to_test_per_group = 100, cores = 10)
+# monocle3::top_markers(low_q, group_cells_by = "genotype", genes_to_test_per_group = 50, cores = 10)
 
 #bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T)
 
@@ -73,7 +73,7 @@ F3B <- bb_var_umap(
   labs(y = "UMAP 2", x = "UMAP 1") +
   theme(legend.justification = "center")
 # figure 3C
-fig3c_plotlist <- map(.x = c("Ighm","Pax5", "Ighd", "Ighe", "Ebf1", "Cd93", "Cd69", "Spn","Myc", "Mki67"),
+fig3c_plotlist <- map(.x = c("Ighm","Pax5"),#, "Ighd", "Ighe", "Ebf1", "Cd93", "Cd69", "Spn","Myc", "Mki67"),
                       .f = \(x, dat = mouse_cds_list[[1]]) {
                         p <- bb_gene_umap(
                           dat,
@@ -85,13 +85,13 @@ fig3c_plotlist <- map(.x = c("Ighm","Pax5", "Ighd", "Ighe", "Ebf1", "Cd93", "Cd6
                                                 direction = 1,
                                                 na.value = "grey80", limits = c(0,3)) + #set fixed scale (limits)
                           facet_wrap( ~ genotype) + 
-                          theme_minimal() + 
                           theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
-                          theme(panel.background = element_rect(color = "black")) +
+                          theme(panel.background = element_rect(color = "black", fill = "white")) +
                           theme(axis.line = element_blank()) +
-                          theme(axis.ticks = element_blank()) +
-                          theme(axis.text = element_blank()) +
-                          labs(x = NULL, y = x) +
+                          scale_x_continuous(breaks = c(-10,0, 10))+
+                          #theme(axis.ticks = element_blank()) +
+                          #theme(axis.text = element_blank()) +
+                          labs(x = NULL, y = NULL, title = x) +
                           theme(axis.title.y = element_text(face = "italic")) + 
                           theme(legend.position = "none")
                         if (x != "Ighm") p <- p + theme(strip.text = element_blank())
@@ -214,6 +214,7 @@ S2_gene_dotplot <- bb_genebubbles(
   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
 #ggsave("S2_gene_dotplot.pdf", path = T_Figs, width = 5, height = 4.3)
 
+#TODO add limits and reduce cell size
 S2E_plotlist <- map(.x = c("Ccr7", "Il4", "Cd69", "Cd93", "Cxcr5", "Myc", "Il10", "Mki67", "Npm1"),
                       .f = \(x, dat = mouse_cds_list[[1]]) {
                         p <- bb_gene_umap(

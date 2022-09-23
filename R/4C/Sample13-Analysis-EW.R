@@ -114,8 +114,8 @@ cyto.info<-UCSC.HG19.Human.CytoBandIdeogram;
 tracks.inside<-2;
 tracks.outside<-0;
 RCircos.Set.Core.Components(cyto.info,chr.exclude,tracks.inside,tracks.outside);
-out.file<-fs::path(T_4C_Figs, "circos_plot_S13_lowInt.pdf");
-pdf(file=out.file,height=8,width=8,compress=TRUE);
+out.file<-fs::path(T_4C_Figs, "circos_plot_S13_lowInt_2.pdf");
+pdf(file=out.file,height=10.5,width=10.5,compress=TRUE);
 RCircos.Set.Plot.Area();
 RCircos.Chromosome.Ideogram.Plot()
 data(RCircos.Gene.Label.Data);
