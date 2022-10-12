@@ -385,7 +385,11 @@ rownames(f1_mat) <- tibble(feature_id = rownames(f1_mat)) |>
   left_join(bb_rowmeta(ln_cds) |>
               select(feature_id, gene_short_name)) |>
   pull(gene_short_name)
-#f1_mat
+
+# fig1_heatmap_mat <- as.data.frame(f1_mat)|> mutate(GeneID = rownames(f1_mat)) |> select(GeneID, everything())
+# write_csv(fig1_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig1 human RT data/leiden clustering", "fig1_heatmap_mat.csv"))
+#write_csv(fig1_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/EXPERIMENTS/PRMT5/Manuscripts/Drafts/Drafts_2022/Source Data", "fig1_heatmap_mat.csv"))
+
 f1_colfun = circlize::colorRamp2(breaks = c(min(f1_mat),
                                             0,
                                             max(f1_mat)),
@@ -569,14 +573,16 @@ S1EP2 <- bb_gene_umap(
 S1E <- as_ggplot(grid.arrange(patchworkGrob(S1EP1/S1EP2), left = S1EP1$labels$y, bottom = textGrob(S1EP1$labels$x, hjust = 0.85, vjust = -1)))
 
 ####Pseudobulk
-bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
-bb_var_umap(cds_main, "leiden_assignment_2", overwrite_labels = T, facet_by= "disease_tissue")
 
-bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
-bb_var_umap(cds_main, "leiden_assignment_1", overwrite_labels = T, facet_by= "disease_tissue")
-bb_var_umap(cds_main, "leiden_assignment_2", overwrite_labels = T, facet_by= "disease_tissue")
-bb_var_umap(cds_main, "seurat_celltype_l1", overwrite_labels = T, facet_by= "disease_tissue")
-bb_var_umap(cds_main, "seurat_celltype_l2", overwrite_labels = T, facet_by= "disease_tissue")
+Supp1G_UMAP<- bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
+ggsave("Supp1G_UMAP.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+
+# bb_var_umap(cds_main, "leiden_assignment_2", overwrite_labels = T, facet_by= "disease_tissue")
+# bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
+# bb_var_umap(cds_main, "leiden_assignment_1", overwrite_labels = T, facet_by= "disease_tissue")
+# bb_var_umap(cds_main, "leiden_assignment_2", overwrite_labels = T, facet_by= "disease_tissue")
+# bb_var_umap(cds_main, "seurat_celltype_l1", overwrite_labels = T, facet_by= "disease_tissue")
+# bb_var_umap(cds_main, "seurat_celltype_l2", overwrite_labels = T, facet_by= "disease_tissue")
 
 
 
@@ -755,6 +761,158 @@ C11_GObp<- ggplot(data=C11_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg
 C11_GObp
 #ggsave("C11_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
 
+####Exploratory Analysis
+# make logical values for CD19+CD5+ cells
+mat <- monocle3::exprs(cds_main)
 
+cd19_tbl <- colnames(mat[ ,mat["ENSG00000177455", ] > 0]) |> as_tibble() |> mutate(Cd19_pos = TRUE) |> rename(cell_id = value)
+cds_main <- bb_tbl_to_coldata(cds_main, min_tbl = cd19_tbl)
+
+cd5_tbl <- colnames(mat[ ,mat["ENSG00000110448", ] > 0]) |> as_tibble() |> mutate(Cd5_pos = TRUE) |> rename(cell_id = value)
+cds_main <- bb_tbl_to_coldata(cds_main, min_tbl = cd5_tbl)
+
+
+colData(cds_main)$cd19_cd5_pos <- colData(cds_main)$Cd19_pos & colData(cds_main)$Cd5_pos  
+
+cds_main <- bb_cellmeta(cds_main) |> 
+  filter(cd19_cd5_pos) |> 
+  select(cell_id) |> 
+  mutate(cd19_cd5_label = "CD19+/CD5+ cells") |> 
+  bb_tbl_to_coldata(cds_main, min_tbl = _)
+
+A<-bb_var_umap(
+  cds_main,
+  "cd19_cd5_label",
+  #facet_by = "disease_tissue",
+  value_to_highlight = "CD19+/CD5+ cells",
+  palette = "#ed718d", 
+  legend_pos = "bottom", 
+  foreground_alpha = 0.6
+) +
+  #theme(axis.text = element_blank()) +
+  #theme(axis.ticks = element_blank()) +
+  labs(x = "UMAP 1", y= "UMAP 2") +
+  theme(legend.justification = "center") +facet_grid(rows = vars(patient), cols = vars(disease_tissue))
+
+B<-bb_gene_umap(cds_main, gene_or_genes = "MS4A1") + facet_grid(rows = vars(patient), cols = vars(disease_tissue))
+
+C<-bb_var_umap(cds_main, "leiden", overwrite_labels = T)+ facet_grid(rows = vars(patient), cols = vars(disease_tissue))
+
+A/B/C
+# make logical values for PRMT5+MYC+, PRMT5+/MKI67+, and PRMT5+/MYC+/MKI67+ cells
+library(viridis); library(scales)
+show_col(viridis(25))
+mat <- monocle3::exprs(cds_main)
+
+PRMT5_tbl <- colnames(mat[ ,mat["ENSG00000100462", ] > 0]) |> as_tibble() |> mutate(prmt5_pos = TRUE) |> rename(cell_id = value)
+cds_main <- bb_tbl_to_coldata(cds_main, min_tbl = PRMT5_tbl)
+
+MYC_tbl <- colnames(mat[ ,mat["ENSG00000136997", ] > 0]) |> as_tibble() |> mutate(myc_pos = TRUE) |> rename(cell_id = value)
+cds_main <- bb_tbl_to_coldata(cds_main, min_tbl = MYC_tbl)
+
+MKI67_tbl <- colnames(mat[ ,mat["ENSG00000148773", ] > 0]) |> as_tibble() |> mutate(mki67_pos = TRUE) |> rename(cell_id = value)
+cds_main <- bb_tbl_to_coldata(cds_main, min_tbl = MKI67_tbl)
+
+
+colData(cds_main)$prmt5_myc_pos <- colData(cds_main)$prmt5_pos & colData(cds_main)$myc_pos
+colData(cds_main)$prmt5_mki67_pos <- colData(cds_main)$prmt5_pos & colData(cds_main)$mki67_pos  
+colData(cds_main)$prmt5_myc_mki67_pos <- colData(cds_main)$prmt5_pos & colData(cds_main)$mki67_pos & colData(cds_main)$myc_pos  
+
+
+cds_main <- bb_cellmeta(cds_main) |> 
+  filter(prmt5_pos) |> 
+  select(cell_id) |> 
+  mutate(prmt5_label = "PRMT5+ cells") |> 
+  bb_tbl_to_coldata(cds_main, min_tbl = _)
+cds_main <- bb_cellmeta(cds_main) |> 
+  filter(prmt5_myc_pos) |> 
+  select(cell_id) |> 
+  mutate(prmt5_myc_label = "PRMT5+/MYC+ cells") |> 
+  bb_tbl_to_coldata(cds_main, min_tbl = _)
+cds_main <- bb_cellmeta(cds_main) |> 
+  filter(prmt5_mki67_pos) |> 
+  select(cell_id) |> 
+  mutate(prmt5_mki67_label = "PRMT5+/MKI67+ cells") |> 
+  bb_tbl_to_coldata(cds_main, min_tbl = _)
+cds_main <- bb_cellmeta(cds_main) |> 
+  filter(prmt5_myc_mki67_pos) |> 
+  select(cell_id) |> 
+  mutate(prmt5_myc_mki67_label = "PRMT5+/MYC+/MKI67+ cells") |> 
+  bb_tbl_to_coldata(cds_main, min_tbl = _)
+
+A <-bb_var_umap(
+  filter_cds(cds_main, cells= bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")),
+  "prmt5_label",
+  #facet_by = "disease_tissue",
+  value_to_highlight = "PRMT5+ cells",
+  palette = "#481F70FF", 
+  legend_pos = "bottom", 
+  foreground_alpha = 0.6
+) +
+  #theme(axis.text = element_blank()) +
+  #theme(axis.ticks = element_blank()) +
+  #labs(x = "UMAP 1", y= "UMAP 2") + 
+  labs(y=NULL,x=NULL) +theme(legend.position = "right") + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  theme(panel.background = element_rect(color = "black", fill = "white"))
+
+B<- bb_var_umap(
+  filter_cds(cds_main, cells= bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")),
+  "prmt5_myc_label",
+  #facet_by = "disease_tissue",
+  value_to_highlight = "PRMT5+/MYC+ cells",
+  palette = "#365D8DFF", 
+  legend_pos = "bottom", 
+  foreground_alpha = 0.6
+) +
+  #theme(axis.text = element_blank()) +
+  #theme(axis.ticks = element_blank()) +
+  labs(x = "UMAP 1", y= "UMAP 2") + labs(y=NULL,x=NULL) +theme(legend.position = "right")+ 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  theme(panel.background = element_rect(color = "black", fill = "white"))
+
+C<-bb_var_umap(
+  filter_cds(cds_main, cells= bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")),
+  "prmt5_mki67_label",
+  #facet_by = "disease_tissue",
+  value_to_highlight = "PRMT5+/MKI67+ cells",
+  palette = "#21908CFF", 
+  legend_pos = "bottom", 
+  foreground_alpha = 0.6
+) +
+  #theme(axis.text = element_blank()) +
+  #theme(axis.ticks = element_blank()) +
+  labs(x = "UMAP 1", y= "UMAP 2") + labs(y=NULL,x=NULL) +theme(legend.position = "right")+ 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  theme(panel.background = element_rect(color = "black", fill = "white"))
+
+D<-bb_var_umap(
+  filter_cds(cds_main, cells= bb_cellmeta(cds_main) |> filter(disease_tissue == "RT LN")),
+  "prmt5_myc_mki67_label",
+  #facet_by = "disease_tissue",
+  value_to_highlight = "PRMT5+/MYC+/MKI67+ cells",
+  palette = "#47C16EFF", 
+  legend_pos = "bottom", 
+  foreground_alpha = 0.6
+) +
+  #theme(axis.text = element_blank()) +
+  #theme(axis.ticks = element_blank()) +
+  labs(x = "UMAP 1", y= "UMAP 2") + labs(y=NULL,x=NULL) +theme(legend.position = "right")+ 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  theme(panel.background = element_rect(color = "black", fill = "white"))
+
+PRMT5coexpression<- A/plot_spacer()/B/plot_spacer()/C/plot_spacer()/D+ labs(x="UMAP 1") + plot_layout(heights = c(1,-0.1,1,-0.1,1,-0.1,1))
+ggsave("PRMT5coexpression.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+ 
+#Gene Modules
+cell_group_df <- tibble::tibble(cell=row.names(colData(neurons_cds)), 
+                                cell_group=partitions(cds)[colnames(neurons_cds)])
+agg_mat <- aggregate_gene_expression(neurons_cds, gene_module_df, cell_group_df)
+row.names(agg_mat) <- stringr::str_c("Module ", row.names(agg_mat))
+colnames(agg_mat) <- stringr::str_c("Partition ", colnames(agg_mat))
+
+pheatmap::pheatmap(agg_mat, cluster_rows=TRUE, cluster_cols=TRUE,
+                   scale="column", clustering_method="ward.D2",
+                   fontsize=6)
 
 

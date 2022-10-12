@@ -1,6 +1,6 @@
 
-# WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
-WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs//Tables/Heatmap Tables"
+#WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
+#WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs//Tables/Heatmap Tables"
 
 colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
                                                 "PRMT5" = "PRMT5/TCL1",
@@ -78,18 +78,21 @@ F5E_plotlist <- map(.x = c("Myc", "Mki67", "Egr1", "Cxcr5", "Ccr7", "Il10", "Ctl
                         dat,
                         gene_or_genes = x,
                         alt_dim_x = "aggr_UMAP_1",
-                        alt_dim_y = "aggr_UMAP_2", cell_size = 0.1 #adjusted cell size - default is 0.5
+                        alt_dim_y = "aggr_UMAP_2", cell_size = 0.25 #adjusted cell size - default is 0.5
                       ) +
                         scale_color_distiller(palette = "Oranges", #?scale_color_distiller(...)
                                               direction = 1,
                                               na.value = "grey80", limits = c(0,2)) + #fix scale limit 
-                        facet_wrap( ~ genotype) +
-                        theme(panel.background = element_rect(color = "black")) +
+                        facet_wrap( ~ genotype) + scale_y_continuous(breaks = c(-10,0, 10)) + 
+                        scale_x_continuous(breaks = c(-5,5, 15))+
+                        theme(panel.spacing = unit(0.5, "lines"))+
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+                        theme(panel.background = element_rect(color = "black", fill = "white")) +
                         theme(axis.line = element_blank()) +
-                        theme(axis.ticks = element_blank()) +
-                        theme(axis.text = element_blank()) +
+                        #theme(axis.ticks = element_blank()) +
+                        #theme(axis.text = element_blank()) +
                         #labs(x = NULL, y = x) +
-                        labs(x = x, y = NULL) +
+                        labs(x = NULL, y = NULL, title = x) +
                         theme(axis.title.y = element_text(face = "italic")) +
                         theme(strip.text = element_blank()) + theme(legend.position = "none") #+
                         #theme(legend.title = element_blank()) 
@@ -97,21 +100,24 @@ F5E_plotlist <- map(.x = c("Myc", "Mki67", "Egr1", "Cxcr5", "Ccr7", "Il10", "Ctl
                       p 
                     })
 
-F5E_1 <- F5E_plotlist[[1]] | F5E_plotlist[[2]] | F5E_plotlist[[3]] | F5E_plotlist[[4]] + theme(legend.position = "top")
+#F5E_plotlist[[1]] | F5E_plotlist[[2]] | F5E_plotlist[[3]] | F5E_plotlist[[4]] + theme(legend.position = "top")
 
-
-F5E_2 <-
-  bb_gene_violinplot(
-    filter_cds(
-      mouse_cds_list[[2]],
-      cells = bb_cellmeta(mouse_cds_list[[2]]) |>
-        filter(k_10_assignment == "B")
-    ),
+F5E1<-
+  F5E_plotlist[[1]]/ plot_spacer() / bb_gene_violinplot(
+    filter_cds(mouse_cds_list[[2]],
+               cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+                 filter(k_10_assignment == "B")),
     variable = "genotype",
     genes_to_plot = "Myc",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
-  bb_gene_violinplot(
+  ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
+    t = 0,
+    r = -1.5,
+    b = 0,
+    l = -7
+  ))) + labs(y = "B cell Expression") + plot_layout(heights = c(1,-0.1 , 1))
+
+F5E2 <- F5E_plotlist[[2]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[2]],
       cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -120,8 +126,9 @@ F5E_2 <-
     variable = "genotype",
     genes_to_plot = "Mki67",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
-  bb_gene_violinplot(
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1, -0.1 ,1))
+  
+F5E3 <-F5E_plotlist[[3]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[2]],
       cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -130,8 +137,12 @@ F5E_2 <-
     variable = "genotype",
     genes_to_plot = "Egr1",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
-  bb_gene_violinplot(
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1, -0.1 ,1))
+  
+F5E4 <- (F5E_plotlist[[4]]+theme(legend.position = "right",
+                               legend.key.size = unit(4, "mm"),
+                               legend.margin = margin(c(0, -7, 0, -6.5)),
+                               legend.title = element_blank(), legend.text = ))/plot_spacer()/bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[2]],
       cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -140,17 +151,17 @@ F5E_2 <-
     variable = "genotype",
     genes_to_plot = "Cxcr5",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
-F5Ea <- F5E_1/F5E_2 + plot_layout(heights = c(1,1.5))
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 
-F5E_3 <- 
-  F5E_plotlist[[5]] |
-  F5E_plotlist[[6]] |
-  F5E_plotlist[[7]] |
-  F5E_plotlist[[8]] + theme(legend.position = "top")
+F5E_1 <- 
+  F5E1 |
+  F5E2 |
+  F5E3 |
+  F5E4
+#ggsave("F5E_1.pdf", path = WalkerAccess, width = 11.6, height = 4.4)
 
-F5E_4 <-
-  bb_gene_violinplot(
+F5E5 <-
+  F5E_plotlist[[5]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[2]],
       cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -159,8 +170,13 @@ F5E_4 <-
     variable = "genotype",
     genes_to_plot = "Ccr7",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
-  bb_gene_violinplot(
+  ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
+    t = 0,
+    r = -1.5,
+    b = 0,
+    l = -7
+  ))) + labs(y = "B cell Expression") + plot_layout(heights = c(1,-0.1, 1))
+F5E6 <- F5E_plotlist[[6]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[2]],
       cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -169,8 +185,8 @@ F5E_4 <-
     variable = "genotype",
     genes_to_plot = "Il10",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
-  bb_gene_violinplot(
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1,-0.1 , 1))
+F5E7 <- F5E_plotlist[[7]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[2]],
       cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -179,8 +195,8 @@ F5E_4 <-
     variable = "genotype",
     genes_to_plot = "Ctla4",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) |
-  bb_gene_violinplot(
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1,-0.1, 1))
+F5E8 <- F5E_plotlist[[8]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[2]],
       cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -189,9 +205,13 @@ F5E_4 <-
     variable = "genotype",
     genes_to_plot = "Cd274",
     pseudocount = 0
-  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
-F5Eb <- F5E_3/F5E_4 + plot_layout(heights = c(1,1))
-
+  ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1,-0.1 , 1))
+F5E_2 <- 
+  F5E5 |
+  F5E6 |
+  F5E7 |
+  F5E8
+ggsave("F5E_2.pdf", path = WalkerAccess, width = 11.6, height = 4.4)
 
 ######Fig 5F
 #kmeans10 UMAP
@@ -209,11 +229,10 @@ F5_k10_Top50_tm <-monocle3::top_markers(filter_cds(mouse_cds_list[[2]],
 #                                                      cells = bb_cellmeta(mouse_cds_list[[2]]) |>
 #                                                        filter(kmeans_10_harmonized == "5.1")), group_cells_by = "genotype", genes_to_test_per_group = 50, cores = 10)
 #write_csv(F5_k10_Top50_tm, file = file.path(WalkerTables, "F5_k10_Top50_tm.csv"))
-#write_csv(F5_k10_Top50_clust5.1_bygenotype, file = file.path(WalkerTables, "F5_k10_Top50_clust5.1_bygenotype.csv"))
-#F5_k10_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig5_PRMT5xTCL1_vs_TCL1/F5_k10_Top50_tm.csv")
-#F5_k10_clust5.1_Top50_bygeno <-read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig5_PRMT5xTCL1_vs_TCL1/Cluster 5.1 by genotype/F5_k10_Top50_clust5.1_bygenotype.csv")
+F5_k10_Top50_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig5_PRMT5xTCL1_vs_TCL1/F5_k10_Top50_tm.csv")
+
 markers <- F5_k10_Top50_tm |> 
-  filter(cell_group %in% c("5.1", "5.6")) |> 
+  filter(cell_group %in% c("5.1","5.6")) |> 
   pull(gene_short_name)
 
 fig5_mat <- bb_aggregate(obj = filter_cds(mouse_cds_list[[2]], 
@@ -232,6 +251,19 @@ rownames(fig5_mat) <- tibble(feature_id = rownames(fig5_mat)) |>
               select(feature_id, gene_short_name)) |> 
   pull(gene_short_name)
 
+# fig5_heatmap_mat <- as.data.frame(fig5_mat)|> mutate(GeneID = rownames(fig5_mat)) |> select(GeneID, everything())
+# write_csv(fig5_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig5_PRMT5xTCL1_vs_TCL1", "fig5_heatmap_mat.csv"))
+# write_csv(fig5_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/EXPERIMENTS/PRMT5/Manuscripts/Drafts/Drafts_2022/Source Data", "fig5_heatmap_mat.csv"))
+
+
+
+fig5_mat <- tibble(feature_id = rownames(fig5_mat)) |> 
+  left_join(bb_rowmeta(mouse_cds_list[[2]]) |> 
+              select(feature_id, gene_short_name)) |> 
+  pull(gene_short_name)
+
+# fig5_heatmap_mat <- fig5_mat |> as.data.frame()
+# write_csv(fig5_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig5_PRMT5xTCL1_vs_TCL1", "fig5_heatmap_mat.csv"))
 fig5_colfun = circlize::colorRamp2(breaks = c(min(fig5_mat),
                                               0,
                                               max(fig5_mat)),
@@ -246,7 +278,7 @@ lymphoma_genes$Gene <- str_to_title(lymphoma_genes$Gene)
 filt<- F5_k10_Top50_tm |> filter(F5_k10_Top50_tm$gene_short_name %in% lymphoma_genes$Gene)
 lymphoma_gois <- filter(filt, cell_group %in% c('5.6'))[["gene_short_name"]]
 #Human top markers
-RTLN_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
+RTLN_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
 RTLN_tm$gene_short_name <- str_to_title(RTLN_tm$gene_short_name)
 RTLN_tm <- filter(RTLN_tm, cell_group == c('3','11'))
 human_overlap<- F5_k10_Top50_tm |> filter(F5_k10_Top50_tm$gene_short_name %in% RTLN_tm$gene_short_name)
@@ -309,21 +341,65 @@ S4F_plotlist <- map(.x = c("Cd93", "Il4"),
                         scale_color_distiller(palette = "Oranges",
                                               direction = 1,
                                               na.value = "grey80", limits = c(0,1)) + #set fixed scale (limits)
-                        facet_wrap( ~ genotype) +
-                        theme(panel.background = element_rect(color = "black")) +
+                        facet_wrap( ~ genotype) + scale_y_continuous(breaks = c(-10,0, 10)) + 
+                        scale_x_continuous(breaks = c(-5,5, 15))+
+                        theme(panel.spacing = unit(0.5, "lines"))+
+                        theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+                        theme(panel.background = element_rect(color = "black", fill = "white")) +
                         theme(axis.line = element_blank()) +
-                        theme(axis.ticks = element_blank()) +
-                        theme(axis.text = element_blank()) +
+                        #theme(axis.ticks = element_blank()) +
+                        #theme(axis.text = element_blank()) +
                         #labs(x = NULL, y = x) +
-                        labs(x = x, y = NULL) +
+                        labs(x = NULL, y = NULL, title = x) +
                         theme(axis.title.y = element_text(face = "italic")) +
-                        theme(strip.text = element_blank()) +
-                        theme(legend.title = element_blank()) #+theme(legend.position = "none")
-                      if (x != "Il4") p <- p + theme(legend.position = "none")
+                        theme(strip.text = element_blank()) + theme(legend.position = "none")
                       p 
                     })
 
-S4F2a <- bb_gene_violinplot(
+#Pseudobulk
+#B cell CDS
+f5_k10_B_cds<- filter_cds(mouse_cds_list[[2]],
+           cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+             filter(k_10_assignment == "B"))
+unique(colData(f5_k10_B_cds)$kmeans_10_harmonized)
+
+# colData(mouse_cds_list[[2]])$k_10_assignment_2 <-
+#   recode(
+#     colData(mouse_cds_list[[2]])$kmeans_10_harmonized,
+#     "5.1" = "PT_B",
+#     "5.3" = "B",
+#     "5.5" = "B",
+#     "5.6" = "B",
+#     "5.8" = "B",
+#     "5.9" = "B")
+
+# kmeans_10_harmonized "5.1", "5.3", "5.5", "5.6", "5.8","5.9"
+
+colData(mouse_cds_list[[2]])$geno_k10assign <-
+  paste0(colData(mouse_cds_list[[2]])$genotype, "_", colData(mouse_cds_list[[2]])$k_10_assignment)
+
+exp_design <- 
+  bb_cellmeta(mouse_cds_list[[2]]) |>
+  group_by(genotype, kmeans_10_harmonized) |>
+  summarise()
+#exp_design
+
+##############################
+colData(mouse_cds_list[[2]])
+rowData(mouse_cds_list[[2]])
+##############################
+
+pseudobulk_res <-
+  bb_pseudobulk_mf(cds = mouse_cds_list[[2]],
+                   pseudosample_table = exp_design, 
+                   design_formula = "~ kmeans_10_harmonized",
+                   result_recipe = c("kmeans_10_harmonized", "5.3", "5.1"))
+
+pseudobulk_res$Header 
+
+#symnum.args <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+S4F1 <- S4F_plotlist[[1]]/plot_spacer()/bb_gene_violinplot(
   filter_cds(
     mouse_cds_list[[2]],
     cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -331,8 +407,16 @@ S4F2a <- bb_gene_violinplot(
   variable = "genotype",
   genes_to_plot = "Cd93",
   pseudocount = 0
-) +theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
-S4F2b <- bb_gene_violinplot(
+) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
+  t = 0,
+  r = -1.5,
+  b = 0,
+  l = -7
+))) + stat_compare_means(method = "t.test") + labs(y = "B cell Expression") +plot_layout(heights = c(1,-0.1,1))
+S4F2 <- (S4F_plotlist[[2]]+theme(legend.position = "right",
+                                legend.key.size = unit(4, "mm"),
+                                legend.margin = margin(c(0, -7, 0, -6.5)),
+                                legend.title = element_blank(), legend.text = ))/plot_spacer()/bb_gene_violinplot(
   filter_cds(
     mouse_cds_list[[2]],
     cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -340,10 +424,10 @@ S4F2b <- bb_gene_violinplot(
   ),
   variable = "genotype",
   genes_to_plot = "Il4",
-  pseudocount = 0) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())
+  pseudocount = 0) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) +plot_layout(heights = c(1,-0.1,1))
 
-S4F<- S4F_plotlist[[1]]/S4F2a | S4F_plotlist[[2]]/S4F2b
-#ggsave("S4F.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Supp4", height = 4.6, width = 6.4)
+S4F<- S4F1|S4F2
+ggsave("S4F.pdf", path = WalkerAccess, height = 2.93, width = 4.59)
 
 S4_genebubble <- 
   bb_genebubbles(

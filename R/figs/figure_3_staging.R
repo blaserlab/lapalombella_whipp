@@ -73,7 +73,7 @@ F3B <- bb_var_umap(
   labs(y = "UMAP 2", x = "UMAP 1") +
   theme(legend.justification = "center")
 # figure 3C
-fig3c_plotlist <- map(.x = c("Ighm","Pax5"),#, "Ighd", "Ighe", "Ebf1", "Cd93", "Cd69", "Spn","Myc", "Mki67"),
+fig3c_plotlist <- map(.x = c("Ighm","Pax5", "Ighd", "Ighe", "Ebf1", "Cd93", "Cd69", "Spn","Myc", "Mki67"),
                       .f = \(x, dat = mouse_cds_list[[1]]) {
                         p <- bb_gene_umap(
                           dat,
@@ -88,10 +88,10 @@ fig3c_plotlist <- map(.x = c("Ighm","Pax5"),#, "Ighd", "Ighe", "Ebf1", "Cd93", "
                           theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
                           theme(panel.background = element_rect(color = "black", fill = "white")) +
                           theme(axis.line = element_blank()) +
-                          scale_x_continuous(breaks = c(-10,0, 10))+
+                          scale_x_continuous(breaks = c(-10,0, 10))+ scale_y_continuous(breaks = c(-10, 0, 10))+
                           #theme(axis.ticks = element_blank()) +
                           #theme(axis.text = element_blank()) +
-                          labs(x = NULL, y = NULL, title = x) +
+                          labs(x = NULL, y = x) +
                           theme(axis.title.y = element_text(face = "italic")) + 
                           theme(legend.position = "none")
                         if (x != "Ighm") p <- p + theme(strip.text = element_blank())
@@ -99,22 +99,22 @@ fig3c_plotlist <- map(.x = c("Ighm","Pax5"),#, "Ighd", "Ighe", "Ebf1", "Cd93", "
                       })
 
 F3C <-
-fig3c_plotlist[[1]] / fig3c_plotlist[[2]]/ (fig3c_plotlist[[3]]+ theme(
+fig3c_plotlist[[1]] / plot_spacer()/fig3c_plotlist[[2]]/plot_spacer()/(fig3c_plotlist[[3]]+ theme(
   legend.position = "right",
-  legend.key.size = unit(3, "mm"),
+  legend.key.size = unit(4, "mm"),
   legend.margin = margin(c(0, -10, 0, -7)) #c(top,right,bottom,left)
-) + theme(legend.title = element_blank())) / fig3c_plotlist[[4]] /
-  fig3c_plotlist[[5]] / fig3c_plotlist[[6]] / fig3c_plotlist[[7]] / fig3c_plotlist[[8]] /
-  fig3c_plotlist[[9]] / fig3c_plotlist[[10]] 
+) + theme(legend.title = element_blank()))/plot_spacer()/ fig3c_plotlist[[4]] / plot_spacer()/
+  fig3c_plotlist[[5]] / plot_spacer()/fig3c_plotlist[[6]] / plot_spacer()/fig3c_plotlist[[7]] / plot_spacer()/fig3c_plotlist[[8]] /plot_spacer()/
+  fig3c_plotlist[[9]] /plot_spacer()/ fig3c_plotlist[[10]]+plot_layout(heights = c(1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1)) 
 
-#ggsave("fig3c.pdf", path = figures_out, width = 6, height = 15)
+ggsave("F3C.pdf", path = T_Figs, width = 4.5, height = 8.25)
 
 # figure 3D
 F3D1 <- bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype") +labs(y= "UMAP 2", x = "UMAP 1")
 #F3A1/F3D1
 F3_kmeans10_tm_Top50 <-monocle3::top_markers(k10_Bclust, group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 10)
 #write_csv(F3_kmeans10_tm_Top50, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1", "F3_kmeans10_tm_Top50.csv"))
-#F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
+F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
 
 markers <- F3_kmeans10_tm_Top50 |> 
   filter(cell_group %in% c('3.3', '3.4', '3.6')) |> 
@@ -136,7 +136,11 @@ rownames(fig3_mat) <- tibble(feature_id = rownames(fig3_mat)) |>
   left_join(bb_rowmeta(mouse_cds_list[[1]]) |> 
               select(feature_id, gene_short_name)) |> 
   pull(gene_short_name)
-#fig3_mat
+
+# fig3_heatmap_mat <- as.data.frame(fig3_mat)|> mutate(GeneID = rownames(fig3_mat)) |> select(GeneID, everything())
+# write_csv(fig3_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig3_PRMT5_vs_TCL1", "fig3_heatmap_mat.csv"))
+# write_csv(fig3_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/EXPERIMENTS/PRMT5/Manuscripts/Drafts/Drafts_2022/Source Data", "fig3_heatmap_mat.csv"))
+
 fig3_colfun = circlize::colorRamp2(breaks = c(min(fig3_mat),
                                               0,
                                               max(fig3_mat)),
@@ -152,7 +156,7 @@ lymphoma_genes$Gene <- str_to_title(lymphoma_genes$Gene)
 filt<- F3_kmeans10_tm_Top50 |> filter(F3_kmeans10_tm_Top50$gene_short_name %in% lymphoma_genes$Gene)
 lymphoma_gois <- filter(filt, cell_group %in% c('3.3','3.4','3.6'))[["gene_short_name"]]
 #Human top markers
-RTLN_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
+RTLN_tm <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig1 human RT data/leiden clustering/LN_B_leiden_Top50_tm.csv")
 RTLN_tm$gene_short_name <- str_to_title(RTLN_tm$gene_short_name)
 RTLN_tm <- filter(RTLN_tm, cell_group == c('3','11'))
 human_overlap<- F3_kmeans10_tm_Top50 |> filter(F3_kmeans10_tm_Top50$gene_short_name %in% RTLN_tm$gene_short_name)
@@ -221,66 +225,114 @@ S2E_plotlist <- map(.x = c("Ccr7", "Il4", "Cd69", "Cd93", "Cxcr5", "Myc", "Il10"
                           dat,
                           gene_or_genes = x,
                           alt_dim_x = "aggr_UMAP_1",
-                          alt_dim_y = "aggr_UMAP_2"
+                          alt_dim_y = "aggr_UMAP_2", cell_size = 0.25
                         ) +
                           scale_color_distiller(palette = "Oranges",
                                                 direction = 1,
-                                                na.value = "grey80") +
-                          facet_wrap( ~ genotype) +
-                          theme(panel.background = element_rect(color = "black")) +
+                                                na.value = "grey80", limits = c(0,2)) +
+                          facet_wrap( ~ genotype) + scale_x_continuous(breaks = c(-10,0, 10)) +
+                          theme(panel.spacing = unit(0.5, "lines"))+
+                          theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+                          theme(panel.background = element_rect(color = "black", fill = "white")) +
                           theme(axis.line = element_blank()) +
-                          theme(axis.ticks = element_blank()) +
-                          theme(axis.text = element_blank()) +
-                          labs(x = x, y = NULL) +
+                          theme(axis.text.y = element_blank()) +
+                          labs(x = NULL, y = NULL, title = x) +
                           theme(axis.title.y = element_text(face = "italic")) +
                           theme(legend.position = "none") + theme(strip.text = element_blank())
                         p 
                       })
+# S2E_plotlist[[1]]/S2E_plotlist[[2]]/S2E_plotlist[[3]]/S2E_plotlist[[4]]/S2E_plotlist[[5]]
+# S2E_plotlist[[6]]/S2E_plotlist[[7]]/S2E_plotlist[[8]]/S2E_plotlist[[9]]
 
-S2E1 <- S2E_plotlist[[1]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
-                                                        cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
-                                                          filter(k_10_assignment == "B")), variable = "genotype",
-                                             genes_to_plot = "Ccr7", pseudocount = 0)+ theme(strip.text = element_blank())
+S2E1 <-
+  (S2E_plotlist[[1]]+theme(axis.text.y = element_text()))/plot_spacer()/ bb_gene_violinplot(
+    filter_cds(
+      mouse_cds_list[[1]],
+      cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+        filter(k_10_assignment == "B")
+    ),
+    variable = "genotype",
+    genes_to_plot = "Ccr7",
+    pseudocount = 0
+  ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
+    t = 0,
+    r = -1.5,
+    b = 0,
+    l = -7
+  ))) + labs(y = "B cell Expression") + plot_layout(heights = c(1, -0.1 ,1))
 
-S2E2 <- S2E_plotlist[[2]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+# S2E1 <- S2E_plotlist[[1]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+#                                                         cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
+#                                                           filter(k_10_assignment == "B")), variable = "genotype",
+#                                              genes_to_plot = "Ccr7", pseudocount = 0)+ theme(strip.text = element_blank())
+
+S2E2 <- S2E_plotlist[[2]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
-                                       genes_to_plot = "Il4", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
-S2E3 <- S2E_plotlist[[3]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+                                       genes_to_plot = "Il4", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+S2E3 <- S2E_plotlist[[3]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
-                                       genes_to_plot = "Cd69", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
-S2E4 <-S2E_plotlist[[4]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+                                       genes_to_plot = "Cd69", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+S2E4 <-(S2E_plotlist[[4]]+theme(legend.position = "right",
+                               legend.key.size = unit(4, "mm"),
+                               legend.margin = margin(c(0, -7, 0, -6.5)),
+                               legend.title = element_blank()))/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
-                                       genes_to_plot = "Cd93", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
-# S2E_1 <- (S3E1 | S3E2 | S3E3 | S3E4)
-# ggsave("S2E_1.pdf", path = T_Figs, width = 7.5, height = 9.75)
+                                       genes_to_plot = "Cd93", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 
+S2F_1 <- 
+  (S2E1 |plot_spacer()|
+     S2E2 |plot_spacer()|
+     S2E3 |plot_spacer()|
+     S2E4) + plot_layout(widths = c(1,-0.1,1,-0.1,1,-0.1,1))
+ggsave("S2F_1.pdf", path = T_Figs, width = 11.6, height = 4.4)
 
-S2E5 <- S2E_plotlist[[5]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+S2E5 <- (S2E_plotlist[[5]]+theme(axis.text.y = element_text()))/plot_spacer()/ bb_gene_violinplot(
+    filter_cds(
+      mouse_cds_list[[1]],
+      cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+        filter(k_10_assignment == "B")
+    ),
+    variable = "genotype",
+    genes_to_plot = "Cxcr5",
+    pseudocount = 0
+  ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
+    t = 0,
+    r = -1.5,
+    b = 0,
+    l = -7
+  ))) + labs(y = "B cell Expression") + plot_layout(heights = c(1, -0.1 ,1))
+
+S2E6 <-S2E_plotlist[[6]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Cxcr5", pseudocount = 0)+ theme(strip.text = element_blank())
-S2E6 <-S2E_plotlist[[6]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+                                     genes_to_plot = "Myc", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+S2E7 <-S2E_plotlist[[7]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Myc", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
-S2E7 <-S2E_plotlist[[7]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+                                     genes_to_plot = "Il10", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+S2E8 <-S2E_plotlist[[8]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Il10", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
-S2E8 <-S2E_plotlist[[8]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+                                     genes_to_plot = "Mki67", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+S2E9 <-S2E_plotlist[[9]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Mki67", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
-S2E9 <-S2E_plotlist[[9]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
-                                                cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
-                                                  filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Npm1", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())
+                                     genes_to_plot = "Npm1", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 
 # S2E_2 <- (S2E5 | S2E6 | S2E7 | S2E8 | S2E9) 
 # ggsave("S2E_2.pdf", path = T_Figs, width = 7.5, height = 3)
+
+S2F_2 <- 
+  (S2E5 |plot_spacer()|
+     S2E6 |plot_spacer()|
+     S2E7 |plot_spacer()|
+     S2E8 |plot_spacer()|
+     S2E9) + plot_layout(widths = c(1,-0.1,1,-0.1,1,-0.1,1,-0.1,1))
+ggsave("S2F_2.pdf", path = T_Figs, width = 11.6, height = 4.4)
+
 
 ##################################################################################################################################################
 #TODO Supp 2F - Previously - Upregulated genes in 3.3, 3.4, 3.6

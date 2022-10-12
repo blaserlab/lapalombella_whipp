@@ -1,7 +1,7 @@
 WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs"
 T_Figs <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Supp5"
-unique(colData(mouse_cds_list[[4]])$tissue)
-unique(colData(mouse_cds_list[[4]])$genotype)
+#unique(colData(mouse_cds_list[[4]])$tissue)
+#unique(colData(mouse_cds_list[[4]])$genotype)
 
 #Lymph Node - PRMT5xTCL1 v TCL1
 colData(mouse_cds_list[[4]])$genotype <- recode(colData(mouse_cds_list[[4]])$genotype,
@@ -11,8 +11,8 @@ colData(mouse_cds_list[[4]])$genotype <- recode(colData(mouse_cds_list[[4]])$gen
 unique(colData(mouse_cds_list[[4]])$genotype)
 
 # Number of ea genotype
-# length(unique(colData(mouse_cds_list[[4]])$mouse[colData(mouse_cds_list[[4]])$genotype == "TCL1"])) #n=3
-# length(unique(colData(mouse_cds_list[[4]])$mouse[colData(mouse_cds_list[[4]])$genotype == "PRMT5/TCL1"])) #n=4
+#length(unique(colData(mouse_cds_list[[4]])$mouse[colData(mouse_cds_list[[4]])$genotype == "TCL1"])) #n=3
+#length(unique(colData(mouse_cds_list[[4]])$mouse[colData(mouse_cds_list[[4]])$genotype == "PRMT5/TCL1"])) #n=4
 
 #Harmoize clusters
 colData(mouse_cds_list[[4]])$kmeans_10_harmonized <- recode(colData(mouse_cds_list[[4]])$kmeans_10_clusters, 
@@ -60,7 +60,7 @@ mouse_cds_list[[4]] <- bb_cellmeta(mouse_cds_list[[4]]) |>
   bb_tbl_to_coldata(mouse_cds_list[[4]], min_tbl = _)
 
 ###########################Supp 5 Figs
-S5A1<-bb_var_umap(mouse_cds_list[[4]], "k10_assignment", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = F, facet_by = "genotype")+
+S5A1<-bb_var_umap(mouse_cds_list[[4]], "k10_assignment", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype")+
   theme(
     axis.line.x = element_blank(),
     axis.ticks.x = element_blank(),
@@ -74,7 +74,8 @@ S5A2 <- bb_var_umap(mouse_cds_list[[4]], "density", facet_by = "genotype", alt_d
         axis.title.x = element_blank()) +
   theme(legend.key.size = unit(3, 'mm'))
 
-S5A <- (S5A1/S5A2) 
+S5A <- (S5A1/S5A2)
+#ggsave("S5A.pdf", path = T_Figs)
 S5A <- grid.arrange(patchworkGrob(S5A1/S5A2), left = textGrob("UMAP 2", rot = 90, vjust = 1.5), bottom = textGrob("UMAP 1", vjust = -1))
 
 ######S5B
@@ -227,7 +228,7 @@ S5_LN_Bclust_Top50markers<- monocle3::top_markers(
 )
 
 #write_csv(S5_LN_Bclust_Top50markers, file = file.path(WalkerTables, "S5_LN_Bclust_Top50markers.csv"))
-S5_LN_Bclust_Top50markers <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables//Supp5_PRMT5xTCL1_vs_TCL1_LN/S5_LN_Bclust_Top50markers.csv")
+#S5_LN_Bclust_Top50markers <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables//Supp5_PRMT5xTCL1_vs_TCL1_LN/S5_LN_Bclust_Top50markers.csv")
 
 #####S5C -Heatmap -RT Clust2&7 and TCL1 Clust4
 S5C1<-bb_var_umap(mouse_cds_list[[4]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype")+labs(x="UMAP 1", y="UMAP 2")
@@ -252,6 +253,10 @@ rownames(S5_mat) <- tibble(feature_id = rownames(S5_mat)) |>
               select(feature_id, gene_short_name)) |> 
   pull(gene_short_name)
 
+# Supp5_heatmap_mat <- as.data.frame(S5_mat)|> mutate(GeneID = rownames(S5_mat)) |> select(GeneID, everything())
+#  write_csv(Supp5_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Supp5_PRMT5xTCL1_vs_TCL1_LN", "Supp5_heatmap_mat.csv"))
+#  write_csv(Supp5_heatmap_mat, file = file.path("~/network/T/Labs/EHL/Rosa/EXPERIMENTS/PRMT5/Manuscripts/Drafts/Drafts_2022/Source Data", "Supp5_heatmap_mat.csv"))
+
 S5_colfun = circlize::colorRamp2(breaks = c(min(S5_mat),
                                               0,
                                               max(S5_mat)),
@@ -273,7 +278,7 @@ RTLN_tm$gene_short_name <- str_to_title(RTLN_tm$gene_short_name)
 RTLN_tm <- filter(RTLN_tm, cell_group == c('3','11'))
 human_overlap<- S5_LN_Bclust_Top50markers |> filter(S5_LN_Bclust_Top50markers$gene_short_name %in% RTLN_tm$gene_short_name)
 human_overlap <- filter(human_overlap, cell_group %in% c("LN.2","LN.7"))[["gene_short_name"]]
-Supp5 <- c("Ms4a1","Coro1a","Cd52","Cdk1","Ccna2","Cd37","Rac2","Fau","Rhoa","Cd79b","Cd74","Cd83","Birc5","Hmgb1","Tubb5","Top2a","Hmgb2","Tuba1b"))
+Supp5 <- c("Ms4a1","Coro1a","Cd52","Cdk1","Ccna2","Cd37","Rac2","Fau","Rhoa","Cd79b","Cd74","Cd83","Birc5","Hmgb1","Tubb5","Top2a","Hmgb2","Tuba1b")
 
 highlights <- unique(c(F3_F5_analysis_highlights, human_overlap, Supp5))
 
@@ -304,3 +309,35 @@ ggsave("S5C.pdf", path = T_Figs)
 # F5_k10_Top50_tm |> filter(cell_group == "5.6") |> arrange(desc(marker_score))
 # fig5_kmeans_10_tm_Top100 |> filter(cell_group == "5.6") |> arrange(desc(mean_expression))
 
+S5_genebubble <- 
+  bb_genebubbles(
+    mouse_cds_list[[4]],
+    genes = c(
+      "Ms4a1",
+      "Cd79a",
+      "Cd19",
+      "Cd3d",
+      "Cd4",
+      "Cd14",
+      "Itgam",
+      "Cd8a",
+      "Cd177",
+      "Pdcd1",
+      "Foxp3"
+    ),
+    cell_grouping = c("kmeans_10_harmonized", "k10_assignment"),
+    return_value = "data"
+  ) |> 
+  ggplot(mapping = aes(x = kmeans_10_harmonized, 
+                       y = gene_short_name, 
+                       color = expression,
+                       size = proportion)) +
+  geom_point() +
+  scale_size_area() +
+  scale_color_viridis_c() +
+  facet_wrap(~k10_assignment, scales = "free_x", ) +
+  theme_minimal_grid(font_size = the_font_size) +
+  theme(strip.background = ggh4x::element_part_rect(side = "b", colour = "black", fill = "transparent")) +
+  theme(axis.text.y = element_text(face = "italic")) +
+  labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
+ggsave("S5_genebubble.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Supp5", height = 4.23, width = 5.27)
