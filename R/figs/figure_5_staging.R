@@ -358,45 +358,50 @@ S4F_plotlist <- map(.x = c("Cd93", "Il4"),
 
 #Pseudobulk
 #B cell CDS
-f5_k10_B_cds<- filter_cds(mouse_cds_list[[2]],
-           cells = bb_cellmeta(mouse_cds_list[[2]]) |>
-             filter(k_10_assignment == "B"))
-unique(colData(f5_k10_B_cds)$kmeans_10_harmonized)
 
-# colData(mouse_cds_list[[2]])$k_10_assignment_2 <-
-#   recode(
-#     colData(mouse_cds_list[[2]])$kmeans_10_harmonized,
-#     "5.1" = "PT_B",
-#     "5.3" = "B",
-#     "5.5" = "B",
-#     "5.6" = "B",
-#     "5.8" = "B",
-#     "5.9" = "B")
-
-# kmeans_10_harmonized "5.1", "5.3", "5.5", "5.6", "5.8","5.9"
+colData(mouse_cds_list[[2]])$genotype <-
+  recode(
+    colData(mouse_cds_list[[2]])$genotype,
+    "PRMT5/TCL1" = "PT",
+    "TCL1" = "TCL1")
 
 colData(mouse_cds_list[[2]])$geno_k10assign <-
   paste0(colData(mouse_cds_list[[2]])$genotype, "_", colData(mouse_cds_list[[2]])$k_10_assignment)
 
+f5_k10_B_cds<- filter_cds(mouse_cds_list[[2]],
+                          cells = bb_cellmeta(mouse_cds_list[[2]]) |>
+                            filter(k_10_assignment == "B"))
+unique(colData(f5_k10_B_cds)$kmeans_10_harmonized)
+
 exp_design <- 
-  bb_cellmeta(mouse_cds_list[[2]]) |>
-  group_by(genotype, kmeans_10_harmonized) |>
+  bb_cellmeta(f5_k10_B_cds) |>
+  group_by(sample, genotype) |>
+  summarise()
+exp_design
+
+exp_design <- 
+  bb_cellmeta(f5_k10_B_cds) |>
+  group_by(genotype, k_10_assignment) |>
   summarise()
 #exp_design
-
-##############################
-colData(mouse_cds_list[[2]])
-rowData(mouse_cds_list[[2]])
-##############################
+f5_k10_B_cds_copy <- f5_k10_B_cds 
+rowData(f5_k10_B_cds_copy)$id <- rownames(rowData(f5_k10_B_cds_copy))
 
 pseudobulk_res <-
-  bb_pseudobulk_mf(cds = mouse_cds_list[[2]],
+  bb_pseudobulk_mf(cds = f5_k10_B_cds_copy,
                    pseudosample_table = exp_design, 
-                   design_formula = "~ kmeans_10_harmonized",
-                   result_recipe = c("kmeans_10_harmonized", "5.3", "5.1"))
+                   design_formula = "~genotype",
+                   result_recipe = c("genotype", "PT", "TCL1"))
+
+#less conservative approach
+#bb_monocle_regression(cds = f5_k10_B_cds, gene_or_genes = "Cd93", form = "~genotype")
 
 pseudobulk_res$Header 
 
+pseudobulk_res$Result |> filter(gene_short_name == "Cd93")
+pseudobulk_res$Result |> filter(gene_short_name == "Il4")
+Fig5_pseudobulk<- pseudobulk_res$Result
+write.csv(Fig5_pseudobulk, "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Fig5_pseudobulk.csv")
 #symnum.args <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
 S4F1 <- S4F_plotlist[[1]]/plot_spacer()/bb_gene_violinplot(
@@ -427,7 +432,8 @@ S4F2 <- (S4F_plotlist[[2]]+theme(legend.position = "right",
   pseudocount = 0) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) +plot_layout(heights = c(1,-0.1,1))
 
 S4F<- S4F1|S4F2
-ggsave("S4F.pdf", path = WalkerAccess, height = 2.93, width = 4.59)
+S4F
+#ggsave("S4F.pdf", path = WalkerAccess, height = 2.93, width = 4.59)
 
 S4_genebubble <- 
   bb_genebubbles(
