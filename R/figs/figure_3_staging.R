@@ -1,3 +1,4 @@
+T_Figs <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
 #unique(colData(mouse_cds_list[[1]])$tissue)
 #unique(colData(mouse_cds_list[[1]])$genotype)
 colData(mouse_cds_list[[1]])$kmeans_10_harmonized <- recode(colData(mouse_cds_list[[1]])$kmeans_10_clusters, 
@@ -235,7 +236,7 @@ S2E_plotlist <- map(.x = c("Ccr7", "Il4", "Cd69", "Cd93", "Cxcr5", "Myc", "Il10"
                           theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
                           theme(panel.background = element_rect(color = "black", fill = "white")) +
                           theme(axis.line = element_blank()) +
-                          theme(axis.text.y = element_blank()) +
+                          #theme(axis.text.y = element_blank()) +
                           labs(x = NULL, y = NULL, title = x) +
                           theme(axis.title.y = element_text(face = "italic")) +
                           theme(legend.position = "none") + theme(strip.text = element_blank())
@@ -243,6 +244,42 @@ S2E_plotlist <- map(.x = c("Ccr7", "Il4", "Cd69", "Cd93", "Cxcr5", "Myc", "Il10"
                       })
 # S2E_plotlist[[1]]/S2E_plotlist[[2]]/S2E_plotlist[[3]]/S2E_plotlist[[4]]/S2E_plotlist[[5]]
 # S2E_plotlist[[6]]/S2E_plotlist[[7]]/S2E_plotlist[[8]]/S2E_plotlist[[9]]
+
+###############################
+#Pseudobulk - for size effect (log2FC &padj on violin plots)
+#B cell CDS
+#unique(colData(mouse_cds_list[[1]])$genotype)
+
+s2_k10_B_cds<- filter_cds(mouse_cds_list[[1]],
+                          cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+                            filter(k_10_assignment == "B"))
+
+exp_design <- 
+  bb_cellmeta(s2_k10_B_cds) |>
+  group_by(sample, genotype) |>
+  summarise()
+exp_design
+
+#exp_design
+s2_k10_B_cds_copy <- s2_k10_B_cds 
+
+rowData(s2_k10_B_cds_copy)$id <- rownames(rowData(s2_k10_B_cds_copy))
+
+pseudobulk_res <-
+  bb_pseudobulk_mf(cds = s2_k10_B_cds_copy,
+                   pseudosample_table = exp_design, 
+                   design_formula = "~genotype",
+                   result_recipe = c("genotype", "PRMT5", "TCL1"))
+
+#less conservative approach (pseudobulk is a very conservative approach)
+#bb_monocle_regression(cds = f5_k10_B_cds, gene_or_genes = "Cd93", form = "~genotype")
+
+pseudobulk_res$Header 
+
+pseudobulk_res$Result |> filter(gene_short_name == "Cd93")
+pseudobulk_res$Result |> filter(gene_short_name == "Il4")
+Fig3_PRMT5vsTCL1_spleenB_pseudobulk<- pseudobulk_res$Result
+write.csv(Fig3_PRMT5vsTCL1_spleenB_pseudobulk, "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Fig3_PRMT5vsTCL1_spleenB_pseudobulk.csv")
 
 S2E1 <-
   (S2E_plotlist[[1]]+theme(axis.text.y = element_text()))/plot_spacer()/ bb_gene_violinplot(
@@ -253,7 +290,7 @@ S2E1 <-
     ),
     variable = "genotype",
     genes_to_plot = "Ccr7",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE
   ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
     t = 0,
     r = -1.5,
@@ -269,25 +306,26 @@ S2E1 <-
 S2E2 <- S2E_plotlist[[2]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
-                                       genes_to_plot = "Il4", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+                                       genes_to_plot = "Il4", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 S2E3 <- S2E_plotlist[[3]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
-                                       genes_to_plot = "Cd69", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+                                       genes_to_plot = "Cd69", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 S2E4 <-(S2E_plotlist[[4]]+theme(legend.position = "right",
                                legend.key.size = unit(4, "mm"),
                                legend.margin = margin(c(0, -7, 0, -6.5)),
                                legend.title = element_blank()))/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                   cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                     filter(k_10_assignment == "B")), variable = "genotype",
-                                       genes_to_plot = "Cd93", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+                                       genes_to_plot = "Cd93", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 
-S2F_1 <- 
-  (S2E1 |plot_spacer()|
-     S2E2 |plot_spacer()|
-     S2E3 |plot_spacer()|
-     S2E4) + plot_layout(widths = c(1,-0.1,1,-0.1,1,-0.1,1))
-ggsave("S2F_1.pdf", path = T_Figs, width = 11.6, height = 4.4)
+# S2F_1 <- 
+#   (S2E1 |plot_spacer()|
+#      S2E2 |plot_spacer()|
+#      S2E3 |plot_spacer()|
+#      S2E4) + plot_layout(widths = c(1,-0.1,1,-0.1,1,-0.1,1))
+S2F_1 <- S2E1|S2E2|S2E3|S2E4
+ggsave("S2F_1.pdf", path = T_Figs, width = 11.6, height = 3.3)
 
 S2E5 <- (S2E_plotlist[[5]]+theme(axis.text.y = element_text()))/plot_spacer()/ bb_gene_violinplot(
     filter_cds(
@@ -297,7 +335,7 @@ S2E5 <- (S2E_plotlist[[5]]+theme(axis.text.y = element_text()))/plot_spacer()/ b
     ),
     variable = "genotype",
     genes_to_plot = "Cxcr5",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE
   ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
     t = 0,
     r = -1.5,
@@ -308,30 +346,30 @@ S2E5 <- (S2E_plotlist[[5]]+theme(axis.text.y = element_text()))/plot_spacer()/ b
 S2E6 <-S2E_plotlist[[6]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Myc", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+                                     genes_to_plot = "Myc", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 S2E7 <-S2E_plotlist[[7]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Il10", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+                                     genes_to_plot = "Il10", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 S2E8 <-S2E_plotlist[[8]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Mki67", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+                                     genes_to_plot = "Mki67", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 S2E9 <-S2E_plotlist[[9]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                 cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                   filter(k_10_assignment == "B")), variable = "genotype",
-                                     genes_to_plot = "Npm1", pseudocount = 0)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
+                                     genes_to_plot = "Npm1", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 
-# S2E_2 <- (S2E5 | S2E6 | S2E7 | S2E8 | S2E9) 
-# ggsave("S2E_2.pdf", path = T_Figs, width = 7.5, height = 3)
+S2F_2 <- (S2E5 | S2E6 | S2E7 | S2E8 | S2E9) 
+ggsave("S2F_2.pdf", path = T_Figs, width = 11.6, height = 3.3)
 
-S2F_2 <- 
-  (S2E5 |plot_spacer()|
-     S2E6 |plot_spacer()|
-     S2E7 |plot_spacer()|
-     S2E8 |plot_spacer()|
-     S2E9) + plot_layout(widths = c(1,-0.1,1,-0.1,1,-0.1,1,-0.1,1))
-ggsave("S2F_2.pdf", path = T_Figs, width = 11.6, height = 4.4)
+# S2F_2 <- 
+#   (S2E5 |plot_spacer()|
+#      S2E6 |plot_spacer()|
+#      S2E7 |plot_spacer()|
+#      S2E8 |plot_spacer()|
+#      S2E9) + plot_layout(widths = c(1,-0.1,1,-0.1,1,-0.1,1,-0.1,1))
+# ggsave("S2F_2.pdf", path = T_Figs, width = 11.6, height = 4.4)
 
 
 ##################################################################################################################################################

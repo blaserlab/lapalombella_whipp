@@ -1,5 +1,5 @@
 
-#WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
+WalkerAccess <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs"
 #WalkerTables <- "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs//Tables/Heatmap Tables"
 
 colData(mouse_cds_list[[2]])$genotype <- recode(colData(mouse_cds_list[[2]])$genotype,
@@ -109,7 +109,7 @@ F5E1<-
                  filter(k_10_assignment == "B")),
     variable = "genotype",
     genes_to_plot = "Myc",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE
   ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
     t = 0,
     r = -1.5,
@@ -125,7 +125,7 @@ F5E2 <- F5E_plotlist[[2]]/plot_spacer()/bb_gene_violinplot(
     ),
     variable = "genotype",
     genes_to_plot = "Mki67",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = 0.1, include_jitter = TRUE
   ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1, -0.1 ,1))
   
 F5E3 <-F5E_plotlist[[3]]/plot_spacer()/bb_gene_violinplot(
@@ -136,7 +136,7 @@ F5E3 <-F5E_plotlist[[3]]/plot_spacer()/bb_gene_violinplot(
     ),
     variable = "genotype",
     genes_to_plot = "Egr1",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = 0.1, include_jitter = TRUE
   ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1, -0.1 ,1))
   
 F5E4 <- (F5E_plotlist[[4]]+theme(legend.position = "right",
@@ -150,7 +150,7 @@ F5E4 <- (F5E_plotlist[[4]]+theme(legend.position = "right",
     ),
     variable = "genotype",
     genes_to_plot = "Cxcr5",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = 0.1, include_jitter = TRUE
   ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 
 F5E_1 <- 
@@ -158,7 +158,7 @@ F5E_1 <-
   F5E2 |
   F5E3 |
   F5E4
-#ggsave("F5E_1.pdf", path = WalkerAccess, width = 11.6, height = 4.4)
+ggsave("F5E_1.pdf", path = WalkerAccess, width = 11.6, height = 4.4)
 
 F5E5 <-
   F5E_plotlist[[5]]/plot_spacer()/bb_gene_violinplot(
@@ -169,7 +169,7 @@ F5E5 <-
     ),
     variable = "genotype",
     genes_to_plot = "Ccr7",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = 0.1, include_jitter = TRUE
   ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
     t = 0,
     r = -1.5,
@@ -184,7 +184,7 @@ F5E6 <- F5E_plotlist[[6]]/plot_spacer()/bb_gene_violinplot(
     ),
     variable = "genotype",
     genes_to_plot = "Il10",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = 0.1, include_jitter = TRUE
   ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1,-0.1 , 1))
 F5E7 <- F5E_plotlist[[7]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
@@ -194,7 +194,7 @@ F5E7 <- F5E_plotlist[[7]]/plot_spacer()/bb_gene_violinplot(
     ),
     variable = "genotype",
     genes_to_plot = "Ctla4",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = 0.1, include_jitter = TRUE
   ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1,-0.1, 1))
 F5E8 <- F5E_plotlist[[8]]/plot_spacer()/bb_gene_violinplot(
     filter_cds(
@@ -204,14 +204,14 @@ F5E8 <- F5E_plotlist[[8]]/plot_spacer()/bb_gene_violinplot(
     ),
     variable = "genotype",
     genes_to_plot = "Cd274",
-    pseudocount = 0
+    pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = 0.1, include_jitter = TRUE
   ) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) + plot_layout(heights = c(1,-0.1 , 1))
 F5E_2 <- 
   F5E5 |
   F5E6 |
   F5E7 |
   F5E8
-ggsave("F5E_2.pdf", path = WalkerAccess, width = 11.6, height = 4.4)
+#ggsave("F5E_2.pdf", path = WalkerAccess, width = 11.6, height = 4.4)
 
 ######Fig 5F
 #kmeans10 UMAP
@@ -355,7 +355,7 @@ S4F_plotlist <- map(.x = c("Cd93", "Il4"),
                         theme(strip.text = element_blank()) + theme(legend.position = "none")
                       p 
                     })
-
+###############################
 #Pseudobulk
 #B cell CDS
 
@@ -364,9 +364,6 @@ colData(mouse_cds_list[[2]])$genotype <-
     colData(mouse_cds_list[[2]])$genotype,
     "PRMT5/TCL1" = "PT",
     "TCL1" = "TCL1")
-
-colData(mouse_cds_list[[2]])$geno_k10assign <-
-  paste0(colData(mouse_cds_list[[2]])$genotype, "_", colData(mouse_cds_list[[2]])$k_10_assignment)
 
 f5_k10_B_cds<- filter_cds(mouse_cds_list[[2]],
                           cells = bb_cellmeta(mouse_cds_list[[2]]) |>
@@ -379,12 +376,9 @@ exp_design <-
   summarise()
 exp_design
 
-exp_design <- 
-  bb_cellmeta(f5_k10_B_cds) |>
-  group_by(genotype, k_10_assignment) |>
-  summarise()
 #exp_design
 f5_k10_B_cds_copy <- f5_k10_B_cds 
+
 rowData(f5_k10_B_cds_copy)$id <- rownames(rowData(f5_k10_B_cds_copy))
 
 pseudobulk_res <-
@@ -402,7 +396,8 @@ pseudobulk_res$Result |> filter(gene_short_name == "Cd93")
 pseudobulk_res$Result |> filter(gene_short_name == "Il4")
 Fig5_pseudobulk<- pseudobulk_res$Result
 write.csv(Fig5_pseudobulk, "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Fig5_pseudobulk.csv")
-#symnum.args <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+############################
+ #+ stat_compare_means(method = "t.test")
 
 S4F1 <- S4F_plotlist[[1]]/plot_spacer()/bb_gene_violinplot(
   filter_cds(
@@ -411,13 +406,13 @@ S4F1 <- S4F_plotlist[[1]]/plot_spacer()/bb_gene_violinplot(
       filter(k_10_assignment == "B")),
   variable = "genotype",
   genes_to_plot = "Cd93",
-  pseudocount = 0
+  pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE
 ) + theme(strip.text = element_blank()) + theme(axis.title.y = element_text(margin = margin(
   t = 0,
   r = -1.5,
   b = 0,
   l = -7
-))) + stat_compare_means(method = "t.test") + labs(y = "B cell Expression") +plot_layout(heights = c(1,-0.1,1))
+))) + labs(y = "B cell Expression") +plot_layout(heights = c(1,-0.1,1)) #+ stat_compare_means(method = "t.test")
 S4F2 <- (S4F_plotlist[[2]]+theme(legend.position = "right",
                                 legend.key.size = unit(4, "mm"),
                                 legend.margin = margin(c(0, -7, 0, -6.5)),
@@ -429,11 +424,11 @@ S4F2 <- (S4F_plotlist[[2]]+theme(legend.position = "right",
   ),
   variable = "genotype",
   genes_to_plot = "Il4",
-  pseudocount = 0) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) +plot_layout(heights = c(1,-0.1,1))
+  pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE) + theme(axis.title.y = element_blank()) + theme(strip.text = element_blank()) +plot_layout(heights = c(1,-0.1,1))
 
 S4F<- S4F1|S4F2
 S4F
-#ggsave("S4F.pdf", path = WalkerAccess, height = 2.93, width = 4.59)
+ggsave("S4F.pdf", path = WalkerAccess, height = 2.93, width = 4.59)
 
 S4_genebubble <- 
   bb_genebubbles(
