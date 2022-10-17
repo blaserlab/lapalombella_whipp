@@ -517,7 +517,7 @@ S1C <- bb_var_umap(cds_main, "leiden", overwrite_labels = T)
 
 S1D <- bb_genebubbles(
   cds_main,
-  genes = c("CD14","CD4","CD8A", "CD3E", "CD79A", "MS4A1", "CD19",
+  genes = c("CD14","CD4","CD8A", "CD3E", "CD79A", "MS4A1", "CD19"
   ),
   cell_grouping = c("leiden", "leiden_assignment_1"),
   return_value = "data"
@@ -575,7 +575,7 @@ S1E <- as_ggplot(grid.arrange(patchworkGrob(S1EP1/S1EP2), left = S1EP1$labels$y,
 ####Pseudobulk
 
 Supp1G_UMAP<- bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
-ggsave("Supp1G_UMAP.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+#ggsave("Supp1G_UMAP.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
 
 # bb_var_umap(cds_main, "leiden_assignment_2", overwrite_labels = T, facet_by= "disease_tissue")
 # bb_var_umap(cds_main, "leiden", overwrite_labels = T, facet_by= "disease_tissue")
@@ -609,6 +609,7 @@ genes_to_highlight <- genes_to_highlight[genes_to_highlight %in% (filter(pseudob
 volcano_data_RTvCLL <- pseudobulk_res$Result %>%
   mutate(threshold = padj < 0.1 & abs(log2FoldChange) >= 0.58) %>%
   mutate(text_label = ifelse(gene_short_name %in% genes_to_highlight, gene_short_name, ""))
+#write.csv(volcano_data_RTvCLL, "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/volcano_data_RTvCLL.csv")
 
 library(ggtext)
 volcano_pseudob_RTvCLL <-
@@ -651,114 +652,114 @@ volcano_pseudob_RTvCLL <-
   theme(plot.title = element_text(hjust = 0.5)) +
   coord_cartesian(xlim = c(-1.0*max(abs(range(volcano_data_RTvCLL %>% dplyr::filter(!is.na(padj)) %>% pull(log2FoldChange)))), 1.0*max(abs(range(volcano_data_RTvCLL %>% filter(!is.na(padj)) %>% pull(log2FoldChange))))))
 volcano_pseudob_RTvCLL
-ggsave("volcano_pseudob_RTvCLL.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+#ggsave("volcano_pseudob_RTvCLL.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
 
 
 #Gene Ontology
 ####Pseudobulk GO enrichment
 #####RT Upregulated
-pseudo3n11_goenrichment <-
-  bb_goenrichment(
-    query = dplyr::filter(pseudobulk_res$Result, padj < 0.1 &
-                            log2FoldChange >= 0.58) |> pull(gene_short_name),
-    reference = bb_rowmeta(cds_main),
-    go_db = "org.Hs.eg.db"
-  )
-pseudo3n11_gosummary_0.9 <- bb_gosummary(x = pseudo3n11_goenrichment, 
-                                         reduce_threshold = 0.9,
-                                         go_db = "org.Hs.eg.db")
-pseudobulk_Clust3n11.Up_GO_PCA <-
-  bb_goscatter(simMatrix = pseudo3n11_gosummary_0.9$simMatrix,
-               reducedTerms = pseudo3n11_gosummary_0.9$reducedTerms)
-ggsave("pseudobulk_Clust3n11.Up_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
-
-#pseudoGO barplot
-####RT Upregulated
-pseudo3n11_goenrichment$res_table$classicFisher[pseudo3n11_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
-pseudo3n11_goenrichment$res_table$Rank <- as.numeric(as.character(pseudo3n11_goenrichment$res_table$Rank))
-pseudob_top25 <- filter(pseudo3n11_goenrichment$res_table, as.numeric(pseudo3n11_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
-pseudob_top25
-
-pseudob_3n11.Up_GObp<- ggplot(data=pseudob_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
-  geom_bar(stat="identity") + 
-  coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
-pseudob_3n11vs1n9_GObp
-#ggsave("pseudob_3n11v.Up_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
-
-####Pseudobulk GO enrichment
-#####CLL Upregulated
-pseudo1n9_goenrichment <-
-  bb_goenrichment(
-    query = dplyr::filter(pseudobulk_res$Result, padj < 0.1 &
-                            log2FoldChange <= -0.58) |> pull(gene_short_name),
-    reference = bb_rowmeta(cds_main),
-    go_db = "org.Hs.eg.db"
-  )
-pseudo1n9_gosummary_0.9 <- bb_gosummary(x = pseudo1n9_goenrichment, 
-                                         reduce_threshold = 0.9,
-                                         go_db = "org.Hs.eg.db")
-pseudobulk_Clust1n9.Up_GO_PCA <-
-  bb_goscatter(simMatrix = pseudo1n9_gosummary_0.9$simMatrix,
-               reducedTerms = pseudo1n9_gosummary_0.9$reducedTerms)
-ggsave("pseudobulk_Clust1n9.Up_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
-
-#CLL Up pseudoGO barplot
-pseudo1n9_goenrichment$res_table$Rank <- as.numeric(as.character(pseudo1n9_goenrichment$res_table$Rank))
-pseudob_CLL_top25 <- filter(pseudo1n9_goenrichment$res_table, as.numeric(pseudo1n9_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
-pseudob_CLL_top25
-
-pseudob_1n9.Up_GObp<- ggplot(data=pseudob_CLL_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
-  geom_bar(stat="identity") + 
-  coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
-pseudob_1n9.Up_GObp
-#ggsave("pseudob_1n9.Up_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
-
-#Clust 3 GO:
-C3_goenrichment <-
-  bb_goenrichment(
-    query = dplyr::filter(LN_B_leiden_Top50_tm, cell_group %in% '3')[["gene_short_name"]],
-    reference = bb_rowmeta(cds_main),
-    go_db = "org.Hs.eg.db"
-  )
-C3_gosummary_0.9 <- bb_gosummary(x = C3_goenrichment, 
-                                 reduce_threshold = 0.9,
-                                 go_db = "org.Hs.eg.db")
-S1_Clust3_GO_PCA <- bb_goscatter(simMatrix = C3_gosummary_0.9$simMatrix,
-                                 reducedTerms = C3_gosummary_0.9$reducedTerms)
-#C3 GO barplot
-C3_goenrichment$res_table$classicFisher[C3_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
-C3_goenrichment$res_table$Rank <- as.numeric(as.character(C3_goenrichment$res_table$Rank))
-C3_top25 <- filter(C3_goenrichment$res_table, as.numeric(C3_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
-C3_top25
-
-C3_GObp<- ggplot(data=C3_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
-  geom_bar(stat="identity") + 
-  coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
-C3_GObp
-ggsave("C3_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
-#ggsave("S1_Clust3_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
-
-#Clust 11 GO:
-C11_goenrichment <- bb_goenrichment(query = dplyr::filter(LN_B_leiden_Top50_tm, cell_group %in% '11')[["gene_short_name"]], 
-                                    reference = bb_rowmeta(cds_main),
-                                    go_db = "org.Hs.eg.db")
-C11_gosummary_0.9 <- bb_gosummary(x = C11_goenrichment, 
-                                  reduce_threshold = 0.9,
-                                  go_db = "org.Hs.eg.db")
-S1_Clust11_GO_PCA <- bb_goscatter(simMatrix = C11_gosummary_0.9$simMatrix,
-                                  reducedTerms = C11_gosummary_0.9$reducedTerms)
-#ggsave("S1_Clust11_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
-
-C11_goenrichment$res_table$classicFisher[C11_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
-C11_goenrichment$res_table$Rank <- as.numeric(as.character(C11_goenrichment$res_table$Rank))
-C11_top25 <- filter(C11_goenrichment$res_table, as.numeric(C11_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
-C11_top25
-
-#C11 GO barplot
-C11_GObp<- ggplot(data=C11_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
-  geom_bar(stat="identity") + 
-  coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
-C11_GObp
+# pseudo3n11_goenrichment <-
+#   bb_goenrichment(
+#     query = dplyr::filter(pseudobulk_res$Result, padj < 0.1 &
+#                             log2FoldChange >= 0.58) |> pull(gene_short_name),
+#     reference = bb_rowmeta(cds_main),
+#     go_db = "org.Hs.eg.db"
+#   )
+# pseudo3n11_gosummary_0.9 <- bb_gosummary(x = pseudo3n11_goenrichment, 
+#                                          reduce_threshold = 0.9,
+#                                          go_db = "org.Hs.eg.db")
+# pseudobulk_Clust3n11.Up_GO_PCA <-
+#   bb_goscatter(simMatrix = pseudo3n11_gosummary_0.9$simMatrix,
+#                reducedTerms = pseudo3n11_gosummary_0.9$reducedTerms)
+# #ggsave("pseudobulk_Clust3n11.Up_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
+# 
+# #pseudoGO barplot
+# ####RT Upregulated
+# pseudo3n11_goenrichment$res_table$classicFisher[pseudo3n11_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
+# pseudo3n11_goenrichment$res_table$Rank <- as.numeric(as.character(pseudo3n11_goenrichment$res_table$Rank))
+# pseudob_top25 <- filter(pseudo3n11_goenrichment$res_table, as.numeric(pseudo3n11_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
+# pseudob_top25
+# 
+# pseudob_3n11.Up_GObp<- ggplot(data=pseudob_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
+#   geom_bar(stat="identity") + 
+#   coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
+# pseudob_3n11vs1n9_GObp
+# #ggsave("pseudob_3n11v.Up_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
+# 
+# ####Pseudobulk GO enrichment
+# #####CLL Upregulated
+# pseudo1n9_goenrichment <-
+#   bb_goenrichment(
+#     query = dplyr::filter(pseudobulk_res$Result, padj < 0.1 &
+#                             log2FoldChange <= -0.58) |> pull(gene_short_name),
+#     reference = bb_rowmeta(cds_main),
+#     go_db = "org.Hs.eg.db"
+#   )
+# pseudo1n9_gosummary_0.9 <- bb_gosummary(x = pseudo1n9_goenrichment, 
+#                                          reduce_threshold = 0.9,
+#                                          go_db = "org.Hs.eg.db")
+# pseudobulk_Clust1n9.Up_GO_PCA <-
+#   bb_goscatter(simMatrix = pseudo1n9_gosummary_0.9$simMatrix,
+#                reducedTerms = pseudo1n9_gosummary_0.9$reducedTerms)
+# ggsave("pseudobulk_Clust1n9.Up_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
+# 
+# #CLL Up pseudoGO barplot
+# pseudo1n9_goenrichment$res_table$Rank <- as.numeric(as.character(pseudo1n9_goenrichment$res_table$Rank))
+# pseudob_CLL_top25 <- filter(pseudo1n9_goenrichment$res_table, as.numeric(pseudo1n9_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
+# pseudob_CLL_top25
+# 
+# pseudob_1n9.Up_GObp<- ggplot(data=pseudob_CLL_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
+#   geom_bar(stat="identity") + 
+#   coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
+# pseudob_1n9.Up_GObp
+# #ggsave("pseudob_1n9.Up_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1/S1_GO_&_Pathway_Analysis/pseudobulk")
+# 
+# #Clust 3 GO:
+# C3_goenrichment <-
+#   bb_goenrichment(
+#     query = dplyr::filter(LN_B_leiden_Top50_tm, cell_group %in% '3')[["gene_short_name"]],
+#     reference = bb_rowmeta(cds_main),
+#     go_db = "org.Hs.eg.db"
+#   )
+# C3_gosummary_0.9 <- bb_gosummary(x = C3_goenrichment, 
+#                                  reduce_threshold = 0.9,
+#                                  go_db = "org.Hs.eg.db")
+# S1_Clust3_GO_PCA <- bb_goscatter(simMatrix = C3_gosummary_0.9$simMatrix,
+#                                  reducedTerms = C3_gosummary_0.9$reducedTerms)
+# #C3 GO barplot
+# C3_goenrichment$res_table$classicFisher[C3_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
+# C3_goenrichment$res_table$Rank <- as.numeric(as.character(C3_goenrichment$res_table$Rank))
+# C3_top25 <- filter(C3_goenrichment$res_table, as.numeric(C3_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
+# C3_top25
+# 
+# C3_GObp<- ggplot(data=C3_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
+#   geom_bar(stat="identity") + 
+#   coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
+# C3_GObp
+# ggsave("C3_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+# #ggsave("S1_Clust3_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+# 
+# #Clust 11 GO:
+# C11_goenrichment <- bb_goenrichment(query = dplyr::filter(LN_B_leiden_Top50_tm, cell_group %in% '11')[["gene_short_name"]], 
+#                                     reference = bb_rowmeta(cds_main),
+#                                     go_db = "org.Hs.eg.db")
+# C11_gosummary_0.9 <- bb_gosummary(x = C11_goenrichment, 
+#                                   reduce_threshold = 0.9,
+#                                   go_db = "org.Hs.eg.db")
+# S1_Clust11_GO_PCA <- bb_goscatter(simMatrix = C11_gosummary_0.9$simMatrix,
+#                                   reducedTerms = C11_gosummary_0.9$reducedTerms)
+# #ggsave("S1_Clust11_GO_PCA.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
+# 
+# C11_goenrichment$res_table$classicFisher[C11_goenrichment$res_table$classicFisher=="< 1e-30"]<-"1.0e-30"
+# C11_goenrichment$res_table$Rank <- as.numeric(as.character(C11_goenrichment$res_table$Rank))
+# C11_top25 <- filter(C11_goenrichment$res_table, as.numeric(C11_goenrichment$res_table$Rank) <= 25) |> mutate(neg_log10_pval = -log10(as.numeric(classicFisher))) |> rename(GO_Term = Term, Genes_Mapped = Significant)
+# C11_top25
+# 
+# #C11 GO barplot
+# C11_GObp<- ggplot(data=C11_top25, aes(reorder(x= GO_Term, y= neg_log10_pval, neg_log10_pval), y= neg_log10_pval, fill = Genes_Mapped)) +
+#   geom_bar(stat="identity") + 
+#   coord_flip() + scale_fill_viridis_c() + labs(x = "GO Terms", y = "-log(pval)")#theme(axis.title.x = element_text("GO Terms"), axis.title.y = element_text("-log(pval)"))
+# C11_GObp
 #ggsave("C11_GObp.pdf", path = "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Figure1_Supp1")
 
 ####Exploratory Analysis
