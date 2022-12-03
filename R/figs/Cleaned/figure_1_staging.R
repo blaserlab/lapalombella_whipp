@@ -1,3 +1,5 @@
+source("R/dependencies.R")
+source("R/configs.R")
 #TODO modifications to CDS. Incorporate into data package -----------
 
 #Create Disease_tissue column in cds
@@ -358,7 +360,7 @@ volcano_data_RTvCLL <- pseudobulk_res$Result %>%
   mutate(text_label = ifelse(gene_short_name %in% genes_to_highlight, gene_short_name, ""))
 
 library(ggtext)
-volcano_pseudob_RTvCLL <-
+F1H <-
   ggplot(
     volcano_data_RTvCLL,
     aes(
@@ -397,4 +399,3 @@ volcano_pseudob_RTvCLL <-
   theme(plot.caption = element_text(hjust = 0.5)) +
   theme(plot.title = element_text(hjust = 0.5)) +
   coord_cartesian(xlim = c(-1.0*max(abs(range(volcano_data_RTvCLL %>% dplyr::filter(!is.na(padj)) %>% pull(log2FoldChange)))), 1.0*max(abs(range(volcano_data_RTvCLL %>% filter(!is.na(padj)) %>% pull(log2FoldChange))))))
-volcano_pseudob_RTvCLL
