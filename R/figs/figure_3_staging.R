@@ -48,7 +48,7 @@ F3A2 <- bb_var_umap(mouse_cds_list[[1]], "density", facet_by = "genotype", alt_d
   theme(legend.key.size = unit(3, 'mm'))
 
 F3A <- (F3A1/F3A2) 
-F3A <- grid.arrange(patchworkGrob(F3A1/F3A2), left = textGrob("UMAP 2", rot = 90, vjust = 1.5), bottom = textGrob("UMAP 1", vjust = -1))
+#F3A <- grid.arrange(patchworkGrob(F3A1/F3A2), left = textGrob("UMAP 2", rot = 90, vjust = 1.5), bottom = textGrob("UMAP 1", vjust = -1))
 
 # low_q<- mouse_cds_list[[1]]
 # low_q <- low_q[,colData(low_q)$k_10_assignment == "Low Quality"]
@@ -108,14 +108,14 @@ fig3c_plotlist[[1]] / plot_spacer()/fig3c_plotlist[[2]]/plot_spacer()/(fig3c_plo
   fig3c_plotlist[[5]] / plot_spacer()/fig3c_plotlist[[6]] / plot_spacer()/fig3c_plotlist[[7]] / plot_spacer()/fig3c_plotlist[[8]] /plot_spacer()/
   fig3c_plotlist[[9]] /plot_spacer()/ fig3c_plotlist[[10]]+plot_layout(heights = c(1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1,-0.5,1)) 
 
-ggsave("F3C.pdf", path = T_Figs, width = 4.5, height = 8.25)
+#ggsave("F3C.pdf", path = T_Figs, width = 4.5, height = 8.25)
 
 # figure 3D
 F3D1 <- bb_var_umap(mouse_cds_list[[1]], "kmeans_10_harmonized", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype") +labs(y= "UMAP 2", x = "UMAP 1")
 #F3A1/F3D1
 F3_kmeans10_tm_Top50 <-monocle3::top_markers(k10_Bclust, group_cells_by = "kmeans_10_harmonized", genes_to_test_per_group = 50, cores = 10)
 #write_csv(F3_kmeans10_tm_Top50, file = file.path("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap Tables/Fig3_PRMT5_vs_TCL1", "F3_kmeans10_tm_Top50.csv"))
-F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
+#F3_kmeans10_tm_Top50 <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Tables/Heatmap_IPA_Tables/Fig3_PRMT5_vs_TCL1/F3_kmeans10_tm_Top50.csv")
 
 markers <- F3_kmeans10_tm_Top50 |> 
   filter(cell_group %in% c('3.3', '3.4', '3.6')) |> 
@@ -169,7 +169,7 @@ fig3_anno <- ComplexHeatmap::rowAnnotation(link =  anno_mark(
   at = which(rownames(fig3_mat) %in% highlights),
   labels = rownames(fig3_mat)[rownames(fig3_mat) %in% highlights],
   labels_gp = gpar(fontsize = 5),
-  padding = 0.8
+  padding = 1.2
 ))
 
 F3D2<- grid.grabExpr(draw(
@@ -185,7 +185,21 @@ F3D2<- grid.grabExpr(draw(
                                                       title_position = "lefttop-rot", 
                                                       title_gp = gpar(fontsize = 6)
                           ))))
-F3D <- F3D1 / F3D2 + plot_layout(heights = c(1, 3))
+F33<-ComplexHeatmap::Heatmap(fig3_mat,
+                             col = fig3_colfun,
+                             name = "Expression", 
+                             show_row_names = F, 
+                             right_annotation = fig3_anno,
+                             row_dend_width = unit(3, "mm"),
+                             column_dend_height = unit(3, "mm"),
+                             heatmap_legend_param = list(legend_direction = "vertical",
+                                                         #legend_width = unit(1, "mm"),
+                                                         title_position = "lefttop-rot", 
+                                                         title_gp = gpar(fontsize = 6)
+                             ))
+
+F3D <- F3D1 / F3D2 + plot_layout(heights = c(1, 5))
+ggsave("F3D.pdf", path = T_Figs, width = 3.25, height = 5.5)
 #F3D
 
 # supplemental figure 2

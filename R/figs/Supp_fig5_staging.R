@@ -114,7 +114,7 @@ s5_k10_B_cds<- filter_cds(mouse_cds_list[[4]],
                             filter(k10_assignment == "B"))
 
 exp_design <- 
-  bb_cellmeta(s2_k10_B_cds) |>
+  bb_cellmeta(s5_k10_B_cds) |>
   group_by(sample, genotype) |>
   summarise()
 exp_design
@@ -224,7 +224,7 @@ S5B_2 <-
   S5B9 |plot_spacer()|
   S5B10)+ plot_layout(widths = c(1,-0.125,1,-0.125,1,-0.125,1,-0.125,1))
 
-S5B_2 <-S5B6|S5B7|S5B8|S5B8|S5B10
+S5B_2 <-S5B6|S5B7|S5B8|S5B9|S5B10
 ggsave("S5B_2.pdf", path = T_Figs, width = 11.6, height = 3.3)
 
 #S5B<- plot_spacer()/S5B_1/plot_spacer()/S5B_2/plot_spacer() + plot_layout(heights = c(-0.1,1, -0.175 ,1,-0.15))
