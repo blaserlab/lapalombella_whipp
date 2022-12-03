@@ -2,6 +2,7 @@
 
 #Supplemental Figure 2i - CLEAR RNAseq: PRMT5 vs. TCL1 mice
 CLEARseq_data <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/CLEAR Bulk RNAseq/CLEAR_v2_sheet_prmt5_vs_tscl1.2.3.4.csv")[,c(1,3,7)]
+####################################################################
 
 S2I_highlights <-
   c(
