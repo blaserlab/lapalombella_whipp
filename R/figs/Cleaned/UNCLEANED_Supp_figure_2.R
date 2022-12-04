@@ -1,5 +1,5 @@
 # supplemental figure 2
-S2_gene_dotplot <- bb_genebubbles(
+S2E <- bb_genebubbles(
   mouse_cds_list[[1]],
   genes = c(
     "Cd19",
@@ -29,8 +29,7 @@ S2_gene_dotplot <- bb_genebubbles(
   labs(x = NULL, y = NULL, size = "Proportion", color = "Expression")
 #ggsave("S2_gene_dotplot.pdf", path = T_Figs, width = 5, height = 4.3)
 
-#TODO add limits and reduce cell size
-S2E_plotlist <- map(.x = c("Ccr7", "Il4", "Cd69", "Cd93", "Cxcr5", "Myc", "Il10", "Mki67", "Npm1"),
+S2F_plotlist <- map(.x = c("Ccr7", "Il4", "Cd69", "Cd93", "Cxcr5", "Myc", "Il10", "Mki67", "Npm1"),
                     .f = \(x, dat = mouse_cds_list[[1]]) {
                       p <- bb_gene_umap(
                         dat,
@@ -52,46 +51,7 @@ S2E_plotlist <- map(.x = c("Ccr7", "Il4", "Cd69", "Cd93", "Cxcr5", "Myc", "Il10"
                         theme(legend.position = "none") + theme(strip.text = element_blank())
                       p 
                     })
-# S2E_plotlist[[1]]/S2E_plotlist[[2]]/S2E_plotlist[[3]]/S2E_plotlist[[4]]/S2E_plotlist[[5]]
-# S2E_plotlist[[6]]/S2E_plotlist[[7]]/S2E_plotlist[[8]]/S2E_plotlist[[9]]
-
-###############################
-#Pseudobulk - for size effect (log2FC &padj on violin plots)
-#B cell CDS
-#unique(colData(mouse_cds_list[[1]])$genotype)
-
-s2_k10_B_cds<- filter_cds(mouse_cds_list[[1]],
-                          cells = bb_cellmeta(mouse_cds_list[[1]]) |>
-                            filter(k_10_assignment == "B"))
-
-exp_design <- 
-  bb_cellmeta(s2_k10_B_cds) |>
-  group_by(sample, genotype) |>
-  summarise()
-exp_design
-
-#exp_design
-s2_k10_B_cds_copy <- s2_k10_B_cds 
-
-rowData(s2_k10_B_cds_copy)$id <- rownames(rowData(s2_k10_B_cds_copy))
-
-pseudobulk_res <-
-  bb_pseudobulk_mf(cds = s2_k10_B_cds_copy,
-                   pseudosample_table = exp_design, 
-                   design_formula = "~genotype",
-                   result_recipe = c("genotype", "PRMT5", "TCL1"))
-
-#less conservative approach (pseudobulk is a very conservative approach)
-#bb_monocle_regression(cds = f5_k10_B_cds, gene_or_genes = "Cd93", form = "~genotype")
-
-pseudobulk_res$Header 
-
-pseudobulk_res$Result |> filter(gene_short_name == "Cd93")
-pseudobulk_res$Result |> filter(gene_short_name == "Il4")
-Fig3_PRMT5vsTCL1_spleenB_pseudobulk<- pseudobulk_res$Result
-write.csv(Fig3_PRMT5vsTCL1_spleenB_pseudobulk, "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Fig3_PRMT5vsTCL1_spleenB_pseudobulk.csv")
-
-S2E1 <-
+S2F1 <-
   (S2E_plotlist[[1]]+theme(axis.text.y = element_text()))/plot_spacer()/ bb_gene_violinplot(
     filter_cds(
       mouse_cds_list[[1]],
@@ -108,34 +68,28 @@ S2E1 <-
     l = -7
   ))) + labs(y = "B cell Expression") + plot_layout(heights = c(1, -0.1 ,1))
 
-# S2E1 <- S2E_plotlist[[1]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
-#                                                         cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
-#                                                           filter(k_10_assignment == "B")), variable = "genotype",
-#                                              genes_to_plot = "Ccr7", pseudocount = 0)+ theme(strip.text = element_blank())
+S2F1 <- S2E_plotlist[[1]]/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]],
+                                                        cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+                                                          filter(k_10_assignment == "B")), variable = "genotype",
+                                             genes_to_plot = "Ccr7", pseudocount = 0)+ theme(strip.text = element_blank())
 
-S2E2 <- S2E_plotlist[[2]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+S2F2 <- S2E_plotlist[[2]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                                       cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                                         filter(k_10_assignment == "B")), variable = "genotype",
                                                            genes_to_plot = "Il4", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
-S2E3 <- S2E_plotlist[[3]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
+S2F3 <- S2E_plotlist[[3]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                                       cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                                         filter(k_10_assignment == "B")), variable = "genotype",
                                                            genes_to_plot = "Cd69", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
-S2E4 <-(S2E_plotlist[[4]]+theme(legend.position = "right",
+S2F4 <-(S2E_plotlist[[4]]+theme(legend.position = "right",
                                 legend.key.size = unit(4, "mm"),
                                 legend.margin = margin(c(0, -7, 0, -6.5)),
                                 legend.title = element_blank()))/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_list[[1]], 
                                                                                                              cells = bb_cellmeta(mouse_cds_list[[1]]) |> 
                                                                                                                filter(k_10_assignment == "B")), variable = "genotype",
                                                                                                   genes_to_plot = "Cd93", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
-
-# S2F_1 <- 
-#   (S2E1 |plot_spacer()|
-#      S2E2 |plot_spacer()|
-#      S2E3 |plot_spacer()|
-#      S2E4) + plot_layout(widths = c(1,-0.1,1,-0.1,1,-0.1,1))
-S2F_1 <- S2E1|S2E2|S2E3|S2E4
-ggsave("S2F_1.pdf", path = T_Figs, width = 11.6, height = 3.3)
+S2F_1 <- S2F1|S2F2|S2F3|S2F4
+#ggsave("S2F_1.pdf", path = T_Figs, width = 11.6, height = 3.3)
 
 S2E5 <- (S2E_plotlist[[5]]+theme(axis.text.y = element_text()))/plot_spacer()/ bb_gene_violinplot(
   filter_cds(
@@ -170,8 +124,46 @@ S2E9 <-S2E_plotlist[[9]]/plot_spacer()/bb_gene_violinplot(filter_cds(mouse_cds_l
                                                                        filter(k_10_assignment == "B")), variable = "genotype",
                                                           genes_to_plot = "Npm1", pseudocount = 0, jitter_fill = "transparent", violin_alpha = 0.55, jitter_alpha = .1, include_jitter = TRUE)+ theme(strip.text = element_blank()) +theme(axis.title.y = element_blank())+ plot_layout(heights = c(1, -0.1 ,1))
 
-S2F_2 <- (S2E5 | S2E6 | S2E7 | S2E8 | S2E9) 
-ggsave("S2F_2.pdf", path = T_Figs, width = 11.6, height = 3.3)
+S2F_2 <- (S2E5 | S2E6 | S2E7 | S2E8 | S2E9)
+
+###############################
+#Pseudobulk - size effect (log2FC on violin plots)
+#B cell CDS
+#unique(colData(mouse_cds_list[[1]])$genotype)
+
+s2_k10_B_cds<- filter_cds(mouse_cds_list[[1]],
+                          cells = bb_cellmeta(mouse_cds_list[[1]]) |>
+                            filter(k_10_assignment == "B"))
+
+exp_design <- 
+  bb_cellmeta(s2_k10_B_cds) |>
+  group_by(sample, genotype) |>
+  summarise()
+exp_design
+
+#exp_design
+s2_k10_B_cds_copy <- s2_k10_B_cds 
+
+rowData(s2_k10_B_cds_copy)$id <- rownames(rowData(s2_k10_B_cds_copy))
+
+pseudobulk_res <-
+  bb_pseudobulk_mf(cds = s2_k10_B_cds_copy,
+                   pseudosample_table = exp_design, 
+                   design_formula = "~genotype",
+                   result_recipe = c("genotype", "PRMT5", "TCL1"))
+
+#less conservative approach (pseudobulk is a very conservative approach)
+#bb_monocle_regression(cds = f5_k10_B_cds, gene_or_genes = "Cd93", form = "~genotype")
+
+pseudobulk_res$Header 
+
+pseudobulk_res$Result |> filter(gene_short_name == "Cd93")
+pseudobulk_res$Result |> filter(gene_short_name == "Il4")
+Fig3_PRMT5vsTCL1_spleenB_pseudobulk<- pseudobulk_res$Result
+write.csv(Fig3_PRMT5vsTCL1_spleenB_pseudobulk, "~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/10X Project Update/Figs/Composed Figs/Fig3_PRMT5vsTCL1_spleenB_pseudobulk.csv")
+
+ 
+#ggsave("S2F_2.pdf", path = T_Figs, width = 11.6, height = 3.3)
 
 # S2F_2 <- 
 #   (S2E5 |plot_spacer()|
