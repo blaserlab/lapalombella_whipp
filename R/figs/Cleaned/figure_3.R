@@ -80,14 +80,14 @@ fig3c_plotlist <-
         gene_or_genes = x,
         alt_dim_x = "aggr_UMAP_1",
         alt_dim_y = "aggr_UMAP_2",
-        cell_size = 0.25 #adjusted cell size - default is 0.5
+        cell_size = 0.25 
       ) +
         scale_color_distiller(
           palette = "Oranges",
           direction = 1,
           na.value = "grey80",
           limits = c(0, 3)
-        ) + #set fixed scale (limits)
+        ) + 
         facet_wrap(~ genotype) +
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank()) +
