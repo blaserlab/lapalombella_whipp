@@ -7,7 +7,7 @@ This repository holds the analysis scripts for the manuscript entitled, "Dysregu
 
 1.  Clone this repository to your computer.
 
-2.  Download the latest available companion data package from zenodo at 10.5281/zenodo.7406465.  Store in a convenient location on your system.
+2.  Download the latest available companion data package from zenodo at https://doi.org/10.5281/zenodo.7406465.  Store in a convenient location on your system.
 
 3.  Install our helper R package, blaseRtemplates, from blaserlab.r-universe.dev.  Instructions available at https://blaserlab.r-universe.dev/ui#package:blaseRtemplates 
 
