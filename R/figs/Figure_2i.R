@@ -1,9 +1,3 @@
-#TODO add RNAseq to datapkg?
-
-#Supplemental Figure 2i - CLEAR RNAseq: PRMT5 vs. TCL1 mice
-CLEARseq_data <- read.csv("~/network/T/Labs/EHL/Rosa/Ethan/EHL/PRMT5/Hing et al manuscript - NatComm/CLEAR Bulk RNAseq/CLEAR_v2_sheet_prmt5_vs_tscl1.2.3.4.csv")[,c(1,3,7)]
-####################################################################
-
 S2I_highlights <-
   c(
     "CD79B",
@@ -61,8 +55,8 @@ volcano_CLEAR <-
                   segment.inflect = TRUE) +
   xlab("log<sub>2</sub> fold change") +
   ylab("-log<sub>10</sub> adjusted p-value") +
-  theme(axis.title.x =  element_markdown()) +
-  theme(axis.title.y = element_markdown()) +
+  theme(axis.title.x =  ggtext::element_markdown()) +
+  theme(axis.title.y = ggtext::element_markdown()) +
   theme(legend.position = "none") +
   scale_color_manual(values = c("grey80", "#DC0000")) +
   scale_fill_manual(values = c("transparent", "#DC0000")) +

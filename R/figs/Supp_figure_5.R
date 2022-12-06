@@ -1,49 +1,5 @@
 source("R/dependencies.R")
 source("R/configs.R")
-#TODO incorporate cds modifications into datapkg
-#Lymph Node - PRMT5xTCL1 v TCL1
-colData(mouse_cds_list[[4]])$genotype <- recode(colData(mouse_cds_list[[4]])$genotype,
-                                                "PRMT5" = "PRMT5/TCL1",
-                                                "TCL1" = "TCL1",
-                                                "P/T" = "PRMT5/TCL1")
-#Harmoize clusters
-colData(mouse_cds_list[[4]])$kmeans_10_harmonized <- recode(colData(mouse_cds_list[[4]])$kmeans_10_clusters, 
-                                                            "1" = "LN.1",
-                                                            "2" = "LN.2",
-                                                            "3" = "LN.3", 
-                                                            "4" = "LN.4",
-                                                            "5" = "LN.5",
-                                                            "6" = "LN.6", 
-                                                            "7" = "LN.7",
-                                                            "8" = "LN.8",
-                                                            "9" = "LN.9", 
-                                                            "10" = "LN.10")
-
-colData(mouse_cds_list[[4]])$kmeans_10_harmonized <- factor(colData(mouse_cds_list[[4]])$kmeans_10_harmonized, 
-                                                            levels = paste0("LN.", 1:10))
-
-colData(mouse_cds_list[[4]])$k10_assignment <- recode(colData(mouse_cds_list[[4]])$kmeans_10_clusters, "1" = "Cd8+ T", "2" = "B", "3" = "Cd8+ T",
-                                                      "4" = "B", "5" = "B", "6" = "Cd4+ T","7" = "B", "8" = "Other",
-                                                      "9" = "Neutrophils", "10" = "Monocytes")
-# make logical values for CD19+CD5+ cells
-mat <- monocle3::exprs(mouse_cds_list[[4]])
-
-cd19_tbl <- colnames(mat[ ,mat["ENSMUSG00000030724", ] > 0]) |> as_tibble() |> mutate(Cd19_pos = TRUE) |> rename(cell_id = value)
-mouse_cds_list[[4]] <- bb_tbl_to_coldata(mouse_cds_list[[4]], min_tbl = cd19_tbl)
-
-cd5_tbl <- colnames(mat[ ,mat["ENSMUSG00000024669", ] > 0]) |> as_tibble() |> mutate(Cd5_pos = TRUE) |> rename(cell_id = value)
-mouse_cds_list[[4]] <- bb_tbl_to_coldata(mouse_cds_list[[4]], min_tbl = cd5_tbl)
-
-
-colData(mouse_cds_list[[4]])$cd19_cd5_pos <- colData(mouse_cds_list[[4]])$Cd19_pos & colData(mouse_cds_list[[4]])$Cd5_pos  
-
-mouse_cds_list[[4]] <- bb_cellmeta(mouse_cds_list[[4]]) |> 
-  filter(cd19_cd5_pos) |> 
-  select(cell_id) |> 
-  mutate(cd19_cd5_label = "CD19+/CD5+ cells") |> 
-  bb_tbl_to_coldata(mouse_cds_list[[4]], min_tbl = _)
-
-######################################################################################################
 
 #Supplemental Figure 5A
 S5A1<-bb_var_umap(mouse_cds_list[[4]], "k10_assignment", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T, facet_by = "genotype")+

@@ -1,30 +1,5 @@
 source("R/dependencies.R")
 source("R/configs.R")
-#TODO incorporate cds modifications into datapkg
-
-colData(mouse_cds_list[[1]])$kmeans_10_harmonized <- recode(colData(mouse_cds_list[[1]])$kmeans_10_clusters, 
-                                                       "1" = "3.1",
-                                                       "2" = "3.2",
-                                                       "3" = "3.3", 
-                                                       "4" = "3.4",
-                                                       "5" = "3.5",
-                                                       "6" = "3.6", 
-                                                       "7" = "3.7",
-                                                       "8" = "3.8",
-                                                       "9" = "3.9", 
-                                                       "10" = "3.10")
-
-colData(mouse_cds_list[[1]])$kmeans_10_harmonized <- factor(colData(mouse_cds_list[[1]])$kmeans_10_harmonized, 
-                                                            levels = paste0("3.", 1:10))
-
-colData(mouse_cds_list[[1]])$k_10_assignment <- recode(colData(mouse_cds_list[[1]])$k_10_assignment, "Low Quality" = "Other")
-
-mouse_cds_list[[1]] <- bb_cellmeta(mouse_cds_list[[1]]) |> 
-  filter(cd19_cd5_pos) |> 
-  select(cell_id) |> 
-  mutate(cd19_cd5_label = "CD19+/CD5+ cells") |> 
-  bb_tbl_to_coldata(mouse_cds_list[[1]], min_tbl = _)
-##########################################
 
 #Figure 3A
 F3A1 <- bb_var_umap(mouse_cds_list[[1]], "k_10_assignment", facet_by = "genotype", alt_dim_x = "aggr_UMAP_1", alt_dim_y = "aggr_UMAP_2", overwrite_labels = T) + 
