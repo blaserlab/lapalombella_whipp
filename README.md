@@ -11,7 +11,7 @@ This repository holds the analysis scripts for the manuscript entitled, "Dysregu
 
 3.  Install our helper R package, blaseRtemplates, from blaserlab.r-universe.dev.  Instructions available at https://blaserlab.r-universe.dev/ui#package:blaseRtemplates 
 
-4.  Open R/dependencies.R, edit the line at the bottom starting "blaseRtemplates::bb_renv_datapkg" to point to the directory where you unzipped the project data package.
+4.  Open R/dependencies.R, edit the line at the bottom starting "blaseRtemplates::bb_renv_datapkg" to point to the directory where you saved the project data package.
 
 5.  Source R/dependencies.R and then source R/configs.R
 
